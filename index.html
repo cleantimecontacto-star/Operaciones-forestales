@@ -223,6 +223,16 @@ body{font-family:'DM Sans',sans-serif;background:var(--bg);color:var(--text);hei
 <script src="https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore-compat.js"></script>
 </head>
 <body>
+<script>
+// Reset de emergencia: ?reset=1 en la URL
+(function(){
+  if(location.search.includes('reset=1')){
+    localStorage.removeItem('gq_users');
+    history.replaceState(null,'',location.pathname);
+    alert('✅ Credenciales reseteadas. Usuario: Admin | Contraseña: 1981');
+  }
+})();
+</script>
 <div id="login-screen">
   <div class="login-box">
     <div class="login-logo" style="flex-direction:column">
