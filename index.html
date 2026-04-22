@@ -219,6 +219,8 @@ body{font-family:'DM Sans',sans-serif;background:var(--bg);color:var(--text);hei
 })();
 </script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+<script src="https://www.gstatic.com/firebasejs/10.12.0/firebase-app-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore-compat.js"></script>
 </head>
 <body>
 <div id="login-screen">
@@ -869,6 +871,11 @@ function loadAdminEmpresa(){
   document.getElementById('cfg-gg').value=DB.cfg.gg;document.getElementById('cfg-mg').value=DB.cfg.mg;document.getElementById('cfg-tub').value=DB.cfg.tub;document.getElementById('cfg-asp').value=DB.cfg.asp;document.getElementById('cfg-got').value=DB.cfg.got;document.getElementById('cfg-ctrl').value=DB.cfg.ctrl;document.getElementById('cfg-mo').value=DB.cfg.mo;
 }
 function saveEmpresa(){DB.empresa={nombre:document.getElementById('e-nombre').value,rut:document.getElementById('e-rut').value,tel:document.getElementById('e-tel').value,dir:document.getElementById('e-dir').value,email:document.getElementById('e-email').value,wa:document.getElementById('e-wa').value};document.getElementById('hdr-empresa').textContent=DB.empresa.nombre||'Operaciones';saveDB();toast('Datos guardados','ok');}
+
+function syncNow(){
+  toast('Sincronizando...','ok');
+  loadFromCloud();
+}
 function saveCfg(){DB.cfg={gg:parseInt(document.getElementById('cfg-gg').value)||10,mg:parseInt(document.getElementById('cfg-mg').value)||25,tub:parseInt(document.getElementById('cfg-tub').value)||850,asp:parseInt(document.getElementById('cfg-asp').value)||12500,got:parseInt(document.getElementById('cfg-got').value)||3200,ctrl:parseInt(document.getElementById('cfg-ctrl').value)||85000,mo:parseInt(document.getElementById('cfg-mo').value)||2500};saveDB();toast('Variables guardadas','ok');}
 
 function renderEspecies(){
@@ -935,6 +942,78 @@ function statusLabel(s){return{borrador:'Borrador',enviada:'Enviada',aprobada:'A
 function cerrarMo(id){document.getElementById(id).classList.remove('open');}
 
 document.querySelectorAll('.mo').forEach(el=>{el.addEventListener('click',function(e){if(e.target===el)el.classList.remove('open');});});
+
+// ── FIREBASE SYNC ────────────────────────────────────────────────────────────
+const _fbConfig = {
+  apiKey: "AIzaSyDBTO7TxFcXHCUF7aAzvyMWRI534NGT11g",
+  authDomain: "operaciones-app-db24d.firebaseapp.com",
+  projectId: "operaciones-app-db24d",
+  storageBucket: "operaciones-app-db24d.firebasestorage.app",
+  messagingSenderId: "734951310729",
+  appId: "1:734951310729:web:140aa3965107af24cd4d58"
+};
+let _fbApp, _fsDB, _fsDoc, _cloudEnabled = false;
+try {
+  _fbApp = firebase.initializeApp(_fbConfig);
+  _fsDB  = firebase.firestore();
+  _fsDoc = _fsDB.collection('app').doc('data');
+  _cloudEnabled = true;
+} catch(e) { console.warn('Firebase init error:', e); }
+
+async function saveToCloud(payload) {
+  if (!_cloudEnabled) return;
+  try { await _fsDoc.set(payload, { merge: true }); }
+  catch(e) { console.warn('Cloud save error:', e); }
+}
+
+async function loadFromCloud() {
+  if (!_cloudEnabled) return;
+  try {
+    const snap = await _fsDoc.get();
+    if (snap.exists) {
+      const d = snap.data();
+      if (d.cotizaciones) DB.cotizaciones = d.cotizaciones;
+      if (d.clientes)     DB.clientes     = d.clientes;
+      if (d.especies)     DB.especies     = d.especies;
+      if (d.servicios)    DB.servicios    = d.servicios;
+      if (d.riegoComps)   DB.riegoComps   = d.riegoComps;
+      if (d.stock)        DB.stock        = d.stock;
+      if (d.empresa)      DB.empresa      = d.empresa;
+      if (d.cfg)          DB.cfg          = d.cfg;
+      if (d.cotizNum)     cotizNum        = d.cotizNum;
+      if (d.cats)         localStorage.setItem('gq_cats', JSON.stringify(d.cats));
+      if (d.users)        localStorage.setItem('gq_users', JSON.stringify(d.users));
+      saveDB();
+      renderDash();
+      if (DB.empresa && DB.empresa.nombre)
+        document.getElementById('hdr-empresa').textContent = DB.empresa.nombre;
+      toast('☁️ Datos sincronizados', 'ok');
+    } else {
+      // Primera vez: subir datos locales a la nube
+      await _pushLocalToCloud();
+    }
+  } catch(e) { console.warn('Cloud load error:', e); }
+}
+
+async function _pushLocalToCloud() {
+  if (!_cloudEnabled) return;
+  const cats = JSON.parse(localStorage.getItem('gq_cats') || '[]');
+  const users = JSON.parse(localStorage.getItem('gq_users') || '[]');
+  await saveToCloud({
+    cotizaciones: DB.cotizaciones,
+    clientes:     DB.clientes,
+    especies:     DB.especies,
+    servicios:    DB.servicios,
+    riegoComps:   DB.riegoComps,
+    stock:        DB.stock,
+    empresa:      DB.empresa,
+    cfg:          DB.cfg,
+    cotizNum:     cotizNum,
+    cats:         cats,
+    users:        users
+  });
+}
+// ── FIN FIREBASE SYNC ────────────────────────────────────────────────────────
 // ── LOCALSTORAGE PERSISTENCE ─────────────────────────────────────────────────
 function saveDB(){
   try{
@@ -947,6 +1026,22 @@ function saveDB(){
     localStorage.setItem('gq_empresa',JSON.stringify(DB.empresa));
     localStorage.setItem('gq_cfg',JSON.stringify(DB.cfg));
     localStorage.setItem('gq_cotnum',cotizNum);
+    // Sync to cloud
+    const cats  = JSON.parse(localStorage.getItem('gq_cats')||'[]');
+    const users = JSON.parse(localStorage.getItem('gq_users')||'[]');
+    saveToCloud({
+      cotizaciones: DB.cotizaciones,
+      clientes:     DB.clientes,
+      especies:     DB.especies,
+      servicios:    DB.servicios,
+      riegoComps:   DB.riegoComps,
+      stock:        DB.stock,
+      empresa:      DB.empresa,
+      cfg:          DB.cfg,
+      cotizNum:     cotizNum,
+      cats:         cats,
+      users:        users
+    });
   }catch(e){console.error('saveDB:',e);}
 }
 function loadDB(){
@@ -965,7 +1060,9 @@ function loadDB(){
 }
 loadDB();
 renderDash();
-setTimeout(initLogo,50);
+// Sincronizar con Firebase (async)
+setTimeout(loadFromCloud, 300);
+// initLogo called after definition
 if(DB.empresa&&DB.empresa.nombre)document.getElementById('hdr-empresa').textContent=DB.empresa.nombre;
 
 function toast(msg,type=''){
@@ -1293,6 +1390,8 @@ function saveLogoFromFile(input){
   reader.readAsDataURL(file);
 }
 function deleteLogo(){localStorage.removeItem('gq_logo');initLogo();toast('Logo restablecido','ok');}
+
+setTimeout(initLogo,50);
 
 // ── CATEGORY MANAGEMENT ───────────────────────────────────────────────────────
 function abrirNuevaCat(){document.getElementById('nueva-cat-input').value='';document.getElementById('mo-nueva-cat').classList.add('open');}
