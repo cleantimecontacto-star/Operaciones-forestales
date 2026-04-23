@@ -857,7 +857,7 @@ function verCotiz(id){
   document.getElementById('mo-cotiz').classList.add('open');
 }
 function cambiarStatus(id,st){const c=DB.cotizaciones.find(x=>x.id===id);if(c){c.status=st;cerrarMo('mo-cotiz');renderCotiz();toast('Estado actualizado: '+statusLabel(st),'ok');}}
-function eliminarCotiz(id){DB.cotizaciones=DB.cotizaciones.filter(c=>c.id!==id);cerrarMo('mo-cotiz');renderCotiz();toast('Cotización eliminada','ok');}
+function eliminarCotiz(id){if(!confirm('¿Eliminar esta cotización?'))return;DB.cotizaciones=DB.cotizaciones.filter(c=>c.id!==id);saveDB();cerrarMo('mo-cotiz');renderCotiz();toast('Cotización eliminada','ok');}
 
 function renderClientes(){
   const q=(document.getElementById('cli-search')?.value||'').toLowerCase();
@@ -898,7 +898,7 @@ function renderEspecies(){
 }
 function abrirEspecie(id=null){editEspId=id;if(id){const e=DB.especies.find(x=>x.id===id);document.getElementById('me-nombre').value=e.nombre;document.getElementById('me-sci').value=e.sci;document.getElementById('me-precio').value=e.precio;document.getElementById('me-cat').value=e.cat;document.getElementById('me-desc').value=e.desc||'';document.getElementById('mo-esp-title').textContent='Editar Especie';}else{['me-nombre','me-sci','me-precio','me-desc'].forEach(i=>document.getElementById(i).value='');document.getElementById('mo-esp-title').textContent='Nueva Especie';}document.getElementById('mo-especie').classList.add('open');}
 function saveEspecie(){const n=document.getElementById('me-nombre').value.trim(),p=parseInt(document.getElementById('me-precio').value);if(!n||!p){toast('Completa nombre y precio','err');return;}const obj={nombre:n,sci:document.getElementById('me-sci').value,precio:p,cat:document.getElementById('me-cat').value,desc:document.getElementById('me-desc').value};if(editEspId){Object.assign(DB.especies.find(x=>x.id===editEspId),obj);}else{obj.id=Date.now();DB.especies.push(obj);}cerrarMo('mo-especie');renderEspecies();}
-function elimEspecie(id){DB.especies=DB.especies.filter(x=>x.id!==id);renderEspecies();toast('Especie eliminada','ok');}
+function elimEspecie(id){if(!confirm('¿Eliminar esta especie?'))return;DB.especies=DB.especies.filter(x=>x.id!==id);saveDB();renderEspecies();toast('Especie eliminada','ok');}
 
 function renderServicios(){
   document.getElementById('svc-count').textContent=DB.servicios.length+' servicios';
@@ -906,7 +906,7 @@ function renderServicios(){
 }
 function abrirServicio(id=null){editSvcId=id;if(id){const s=DB.servicios.find(x=>x.id===id);document.getElementById('ms-nombre').value=s.nombre;document.getElementById('ms-cat').value=s.cat;document.getElementById('ms-unidad').value=s.unidad;document.getElementById('ms-precio').value=s.precio;document.getElementById('mo-svc-title').textContent='Editar Servicio';}else{['ms-nombre','ms-unidad','ms-precio'].forEach(i=>document.getElementById(i).value='');document.getElementById('mo-svc-title').textContent='Nuevo Servicio';}document.getElementById('mo-servicio').classList.add('open');}
 function saveServicio(){const n=document.getElementById('ms-nombre').value.trim(),p=parseInt(document.getElementById('ms-precio').value);if(!n||!p){toast('Completa los campos','err');return;}const obj={nombre:n,cat:document.getElementById('ms-cat').value,unidad:document.getElementById('ms-unidad').value||'ud',precio:p};if(editSvcId){Object.assign(DB.servicios.find(x=>x.id===editSvcId),obj);}else{obj.id=Date.now();DB.servicios.push(obj);}cerrarMo('mo-servicio');renderServicios();}
-function elimServicio(id){DB.servicios=DB.servicios.filter(x=>x.id!==id);renderServicios();toast('Servicio eliminado','ok');}
+function elimServicio(id){if(!confirm('¿Eliminar este servicio?'))return;DB.servicios=DB.servicios.filter(x=>x.id!==id);saveDB();renderServicios();toast('Servicio eliminado','ok');}
 
 function renderRiegoComps(){
   document.getElementById('ri-count').textContent=DB.riegoComps.length+' componentes';
@@ -914,7 +914,7 @@ function renderRiegoComps(){
 }
 function abrirRiegoComp(id=null){editRiId=id;if(id){const r=DB.riegoComps.find(x=>x.id===id);document.getElementById('mr-nombre').value=r.nombre;document.getElementById('mr-unidad').value=r.unidad;document.getElementById('mr-precio').value=r.precio;document.getElementById('mr-cat').value=r.cat;document.getElementById('mo-ri-title').textContent='Editar Componente';}else{['mr-nombre','mr-unidad','mr-precio','mr-cat'].forEach(i=>document.getElementById(i).value='');document.getElementById('mo-ri-title').textContent='Nuevo Componente';}document.getElementById('mo-riego').classList.add('open');}
 function saveRiegoComp(){const n=document.getElementById('mr-nombre').value.trim(),p=parseInt(document.getElementById('mr-precio').value);if(!n||!p){toast('Completa los campos','err');return;}const obj={nombre:n,unidad:document.getElementById('mr-unidad').value||'ud',precio:p,cat:document.getElementById('mr-cat').value||'otro'};if(editRiId){Object.assign(DB.riegoComps.find(x=>x.id===editRiId),obj);}else{obj.id=Date.now();DB.riegoComps.push(obj);}cerrarMo('mo-riego');renderRiegoComps();}
-function elimRiegoComp(id){DB.riegoComps=DB.riegoComps.filter(x=>x.id!==id);renderRiegoComps();toast('Componente eliminado','ok');}
+function elimRiegoComp(id){if(!confirm('¿Eliminar este componente?'))return;DB.riegoComps=DB.riegoComps.filter(x=>x.id!==id);saveDB();renderRiegoComps();toast('Componente eliminado','ok');}
 
 function exportCSV(tipo){
   let csv='',fn='';
