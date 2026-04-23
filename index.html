@@ -17,19 +17,19 @@
 :root{--v1:#0e3d52;--v2:#1a7a55;--v3:#2ec98a;--v4:#e0f5ee;--c1:#3d2b1f;--c2:#7d5a50;--c3:#c4a882;--c4:#f5ebe0;--p:#8d8c8a;--pl:#e8e6e1;--cr:#faf8f4;--bg:var(--cr);--text:var(--c1);--muted:var(--p);--card:#fff;--border:#ddd9d0;--danger:#c0392b;--info:#1a73e8}
 *{box-sizing:border-box;margin:0;padding:0}
 body{font-family:'DM Sans',sans-serif;background:var(--bg);color:var(--text);height:100vh;display:flex;flex-direction:column;overflow:hidden}
-.hdr{background:var(--v1);color:#fff;padding:9px 12px 7px;display:flex;align-items:center;justify-content:space-between;flex-shrink:0;border-bottom:2px solid var(--v2)}
+.hdr{background:var(--v1);color:#fff;padding:6px 10px 5px;display:flex;align-items:center;justify-content:space-between;flex-shrink:0;border-bottom:2px solid var(--v2)}
 .hdr-brand{display:flex;align-items:center;gap:8px}
 .hdr-title{font-family:'Playfair Display',serif;font-size:17px;font-weight:600}
 .hdr-sub{font-size:10px;color:rgba(255,255,255,.55);letter-spacing:.05em}
 .hdr-btn{background:rgba(255,255,255,.12);border:none;border-radius:8px;color:#fff;padding:6px 12px;font-size:12px;cursor:pointer;font-family:'DM Sans',sans-serif}
 .main{flex:1;overflow:hidden;position:relative;min-width:0;order:1}
-.page{display:none;height:100%;overflow-y:auto;padding:8px}
+.page{display:none;height:100%;overflow-y:auto;padding:6px}
 .page.active{display:block}
 .nav{background:var(--v1);display:flex;flex-direction:row;border-top:1px solid rgba(255,255,255,.1);flex-shrink:0;order:2}
-.nb{flex:1;display:flex;flex-direction:column;align-items:center;gap:2px;padding:6px 2px 8px;background:none;border:none;color:rgba(255,255,255,.45);cursor:pointer;font-size:9px;font-family:'DM Sans',sans-serif;letter-spacing:.03em;transition:background .18s,color .18s}
-.nb.active{color:var(--v3)}
+.nb{flex:1;display:flex;flex-direction:column;align-items:center;gap:2px;padding:6px 2px 8px;background:none;border:none;color:rgba(255,255,255,.5);cursor:pointer;font-size:10px;font-family:'DM Sans',sans-serif;letter-spacing:.02em;transition:background .18s,color .18s;border-radius:8px}
+.nb.active{color:var(--v3);background:rgba(255,255,255,.1)}
 .nb svg{width:16px;height:16px}
-.card{background:var(--card);border-radius:14px;border:1px solid var(--border);padding:10px;margin-bottom:9px}
+.card{background:var(--card);border-radius:12px;border:1px solid var(--border);padding:8px;margin-bottom:6px}
 .card-title{font-family:'Playfair Display',serif;font-size:14px;font-weight:600;color:var(--v1);margin-bottom:8px;display:flex;align-items:center;gap:7px}
 .sg{display:grid;grid-template-columns:1fr 1fr;gap:7px;margin-bottom:10px}
 .sc{background:var(--card);border-radius:12px;border:1px solid var(--border);padding:10px 9px}
@@ -42,13 +42,13 @@ body{font-family:'DM Sans',sans-serif;background:var(--bg);color:var(--text);hei
 .b-enviada{background:#e8f4fd;color:var(--info)}
 .b-aprobada{background:var(--v4);color:var(--v2)}
 .b-rechazada{background:#fde8e8;color:var(--danger)}
-.fg{margin-bottom:9px}
+.fg{margin-bottom:7px}
 .fl{font-size:11px;font-weight:500;color:var(--muted);letter-spacing:.04em;margin-bottom:5px;display:block;text-transform:uppercase}
 .fi,.fs,.fta{width:100%;padding:8px 10px;border:1.5px solid var(--border);border-radius:10px;font-size:14px;font-family:'DM Sans',sans-serif;background:var(--card);color:var(--text);transition:border-color .2s;-webkit-appearance:none}
 .fi:focus,.fs:focus,.fta:focus{outline:none;border-color:var(--v2)}
 .fta{resize:vertical;min-height:72px}
 .fr{display:grid;grid-template-columns:1fr 1fr;gap:9px}
-.btn{display:flex;align-items:center;justify-content:center;gap:7px;padding:9px 14px;border-radius:10px;border:none;font-family:'DM Sans',sans-serif;font-size:13px;font-weight:500;cursor:pointer;transition:all .2s;width:100%}
+.btn{display:flex;align-items:center;justify-content:center;gap:7px;padding:10px 14px;border-radius:10px;border:none;font-family:'DM Sans',sans-serif;font-size:13px;font-weight:500;cursor:pointer;transition:all .2s;width:100%;min-height:44px}
 .bp{background:var(--v1);color:#fff}.bp:hover{background:var(--v2)}
 .bs{background:transparent;color:var(--v1);border:1.5px solid var(--v1)}.bs:hover{background:var(--v4)}
 .bd{background:#fde8e8;color:var(--danger)}
@@ -61,7 +61,7 @@ body{font-family:'DM Sans',sans-serif;background:var(--bg);color:var(--text);hei
 .tc-icon{font-size:26px;margin-bottom:7px}
 .tc-label{font-size:13px;font-weight:500;color:var(--v1)}
 .tc-desc{font-size:10px;color:var(--muted);margin-top:2px}
-.li{background:var(--card);border-radius:12px;border:1px solid var(--border);padding:10px;margin-bottom:7px;cursor:pointer;transition:transform .15s}
+.li{background:var(--card);border-radius:10px;border:1px solid var(--border);padding:8px;margin-bottom:5px;cursor:pointer;transition:transform .15s}
 .li:hover{transform:translateY(-1px);box-shadow:0 4px 14px rgba(26,61,43,.07)}
 .li-top{display:flex;justify-content:space-between;align-items:flex-start;margin-bottom:5px}
 .li-name{font-weight:600;font-size:14px;color:var(--v1)}
@@ -93,8 +93,8 @@ body{font-family:'DM Sans',sans-serif;background:var(--bg);color:var(--text);hei
 .ci-sub{font-size:11px;color:var(--muted);margin-top:1px}
 .mi{width:78px;text-align:center;padding:5px 7px;border:1.5px solid var(--v2);border-radius:8px;font-size:13px;font-family:'DM Sans',sans-serif;font-weight:600;color:var(--v1)}
 .tabs{display:flex;gap:0;margin-bottom:10px;border-bottom:2px solid var(--border)}
-.tab{flex:1;padding:7px 4px;font-size:12px;font-family:'DM Sans',sans-serif;font-weight:500;background:none;border:none;cursor:pointer;color:var(--muted);border-bottom:2px solid transparent;margin-bottom:-2px;transition:all .2s}
-.tab.active{color:var(--v1);border-bottom-color:var(--v2)}
+.tab{flex:1;padding:8px 6px;font-size:12px;font-family:'DM Sans',sans-serif;font-weight:500;background:none;border:none;cursor:pointer;color:var(--muted);border-bottom:2px solid transparent;margin-bottom:-2px;transition:all .2s;border-radius:6px 6px 0 0}
+.tab.active{color:var(--v1);border-bottom-color:var(--v2);background:var(--v4)}
 .qa{display:grid;grid-template-columns:1fr 1fr;gap:7px;margin-bottom:10px}
 .qb{background:var(--card);border:1px solid var(--border);border-radius:12px;padding:10px 8px;cursor:pointer;text-align:center;transition:all .2s;font-family:'DM Sans',sans-serif}
 .qb:hover{background:var(--v4);border-color:var(--v2)}
@@ -264,7 +264,7 @@ body{font-family:'DM Sans',sans-serif;background:var(--bg);color:var(--text);hei
     <img class="app-logo" id="hdr-logo-img" src="data:image/svg+xml;base64,PHN2ZyB2aWV3Qm94PSIwIDAgMjAwIDIwMCIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIiB3aWR0aD0iMjAwIiBoZWlnaHQ9IjIwMCI+CiAgPGRlZnM+CiAgICA8bGluZWFyR3JhZGllbnQgaWQ9ImxnNGIiIHgxPSIwIiB5MT0iMCIgeDI9IjEiIHkyPSIxIj4KICAgICAgPHN0b3Agb2Zmc2V0PSIwJSIgc3RvcC1jb2xvcj0iIzAwYzg1MyIvPgogICAgICA8c3RvcCBvZmZzZXQ9IjEwMCUiIHN0b3AtY29sb3I9IiMxNTY1YzAiLz4KICAgIDwvbGluZWFyR3JhZGllbnQ+CiAgICA8bGluZWFyR3JhZGllbnQgaWQ9ImxnNGJnIiB4MT0iMCIgeTE9IjAiIHgyPSIwIiB5Mj0iMSI+CiAgICAgIDxzdG9wIG9mZnNldD0iMCUiIHN0b3AtY29sb3I9IiNmMGZmZjQiLz4KICAgICAgPHN0b3Agb2Zmc2V0PSIxMDAlIiBzdG9wLWNvbG9yPSIjZTBmMmZlIi8+CiAgICA8L2xpbmVhckdyYWRpZW50PgogIDwvZGVmcz4KICA8cmVjdCB4PSI1IiB5PSI1IiB3aWR0aD0iMTkwIiBoZWlnaHQ9IjE5MCIgcng9IjIyIiBmaWxsPSJ1cmwoI2xnNGJnKSIgc3Ryb2tlPSIjMDBjODUzIiBzdHJva2Utd2lkdGg9IjMiLz4KICA8cmVjdCB4PSIxMSIgeT0iMTEiIHdpZHRoPSIxNzgiIGhlaWdodD0iMTc4IiByeD0iMTgiIGZpbGw9Im5vbmUiIHN0cm9rZT0iIzAwZTY3NiIgc3Ryb2tlLXdpZHRoPSIxIiBvcGFjaXR5PSIwLjQiLz4KICA8cGF0aCBkPSJNNSAxNDggUTUwIDEzNCAxMDAgMTQ4IFExNTAgMTYyIDE5NSAxNDggTDE5NSAxOTUgTDUgMTk1IFoiIGZpbGw9IiMwMGM4NTMxOCIvPgogIDxwYXRoIGQ9Ik01IDE2MCBRNTAgMTQ2IDEwMCAxNjAgUTE1MCAxNzQgMTk1IDE2MCBMMTk1IDE5NSBMNSAxOTUgWiIgZmlsbD0iIzAwYzg1MzMwIi8+CiAgPGNpcmNsZSBjeD0iMTAwIiBjeT0iNzAiIHI9IjQwIiBmaWxsPSJ1cmwoI2xnNGIpIi8+CiAgPGVsbGlwc2UgY3g9Ijg4IiBjeT0iNTQiIHJ4PSIxNCIgcnk9IjgiIGZpbGw9IndoaXRlIiBvcGFjaXR5PSIwLjE4Ii8+CiAgPHBhdGggZD0iTTEwMCA0MiBRMTMyIDU3IDEyMiA4MiBRMTEyIDk3IDEwMCA5NyBRODggOTcgNzggODIgUTY4IDU3IDEwMCA0MiBaIiBmaWxsPSIjNjlmZjljIi8+CiAgPHBhdGggZD0iTTEwMCA0NCBRMTAwIDcwIDEwMCA5NSIgc3Ryb2tlPSIjMDA3MDFhIiBzdHJva2Utd2lkdGg9IjIiIGZpbGw9Im5vbmUiLz4KICA8cGF0aCBkPSJNMTAwIDYwIFExMTQgNjIgMTIyIDc0IiBzdHJva2U9IiMwMDcwMWEiIHN0cm9rZS13aWR0aD0iMS41IiBmaWxsPSJub25lIi8+CiAgPHBhdGggZD0iTTEwMCA3MiBRODYgNzQgNzggODIiIHN0cm9rZT0iIzAwNzAxYSIgc3Ryb2tlLXdpZHRoPSIxLjUiIGZpbGw9Im5vbmUiLz4KICA8cGF0aCBkPSJNMTAwIDUyIFExMTAgNTQgMTE2IDYyIiBzdHJva2U9IiMwMDcwMWEiIHN0cm9rZS13aWR0aD0iMSIgZmlsbD0ibm9uZSIgb3BhY2l0eT0iMC43Ii8+CiAgPHRleHQgeD0iMTAwIiB5PSIxMjgiIGZvbnQtZmFtaWx5PSJBcmlhbCBCbGFjaywgQXJpYWwsIHNhbnMtc2VyaWYiIGZvbnQtc2l6ZT0iMTciIGZvbnQtd2VpZ2h0PSI5MDAiIGZpbGw9IiMwMDY0MDAiIHRleHQtYW5jaG9yPSJtaWRkbGUiIGxldHRlci1zcGFjaW5nPSIyLjUiPkJJT0RJVkVSU088L3RleHQ+CiAgPGxpbmUgeDE9IjIyIiB5MT0iMTM2IiB4Mj0iNzAiIHkyPSIxMzYiIHN0cm9rZT0iIzAwYzg1MyIgc3Ryb2tlLXdpZHRoPSIxLjUiIG9wYWNpdHk9IjAuOCIvPgogIDxsaW5lIHgxPSIxMzAiIHkxPSIxMzYiIHgyPSIxNzgiIHkyPSIxMzYiIHN0cm9rZT0iIzAwYzg1MyIgc3Ryb2tlLXdpZHRoPSIxLjUiIG9wYWNpdHk9IjAuOCIvPgogIDx0ZXh0IHg9IjEwMCIgeT0iMTUwIiBmb250LWZhbWlseT0iQXJpYWwsIHNhbnMtc2VyaWYiIGZvbnQtc2l6ZT0iNyIgZmlsbD0iIzE1NjVjMCIgdGV4dC1hbmNob3I9Im1pZGRsZSIgbGV0dGVyLXNwYWNpbmc9IjEuNSIgZm9udC13ZWlnaHQ9ImJvbGQiPlNFUlZJQ0lPUyBZIENPTlNVTFRPUiYjeENEO0E8L3RleHQ+CiAgPGNpcmNsZSBjeD0iMjIiIGN5PSIxMjgiIHI9IjMiIGZpbGw9IiMwMGM4NTMiLz4KICA8Y2lyY2xlIGN4PSIxNzgiIGN5PSIxMjgiIHI9IjMiIGZpbGw9IiMxNTY1YzAiLz4KPC9zdmc+" alt="Logo" style="height:32px;object-fit:contain">
     <div><div class="hdr-title" id="hdr-empresa">Operaciones</div><div class="hdr-sub">Cotizaciones Forestales</div></div>
   </div>
-  <div style="display:flex;gap:8px;align-items:center"><button class="hdr-btn no-print" onclick="showPage('nueva')">+ Nueva</button><button class="hdr-btn no-print" onclick="doLogout()" title="Cerrar sesión" style="background:rgba(255,255,255,.08);padding:6px 10px">⏻</button></div>
+  <div style="display:flex;gap:8px;align-items:center"><button id="btn-instalar" class="hdr-btn no-print" onclick="instalarApp()" style="display:none;background:var(--v3);color:var(--v1);font-weight:600">⬇️ Instalar</button><button class="hdr-btn no-print" onclick="showPage('nueva')">+ Nueva</button><button class="hdr-btn no-print" onclick="doLogout()" title="Cerrar sesión" style="background:rgba(255,255,255,.08);padding:6px 10px">⏻</button></div>
 </header>
 
 <div class="layout"><nav class="nav no-print">
@@ -412,7 +412,7 @@ body{font-family:'DM Sans',sans-serif;background:var(--bg);color:var(--text);hei
   </div>
   <div id="s3" style="display:none">
     <div class="si"><div class="st done"></div><div class="st done"></div><div class="st active"></div></div>
-    <div class="print-hdr" id="print-hdr"><img id="print-logo-img" src="data:image/svg+xml;base64,PHN2ZyB2aWV3Qm94PSIwIDAgMjAwIDIwMCIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIiB3aWR0aD0iMjAwIiBoZWlnaHQ9IjIwMCI+CiAgPGRlZnM+CiAgICA8bGluZWFyR3JhZGllbnQgaWQ9ImxnNGIiIHgxPSIwIiB5MT0iMCIgeDI9IjEiIHkyPSIxIj4KICAgICAgPHN0b3Agb2Zmc2V0PSIwJSIgc3RvcC1jb2xvcj0iIzAwYzg1MyIvPgogICAgICA8c3RvcCBvZmZzZXQ9IjEwMCUiIHN0b3AtY29sb3I9IiMxNTY1YzAiLz4KICAgIDwvbGluZWFyR3JhZGllbnQ+CiAgICA8bGluZWFyR3JhZGllbnQgaWQ9ImxnNGJnIiB4MT0iMCIgeTE9IjAiIHgyPSIwIiB5Mj0iMSI+CiAgICAgIDxzdG9wIG9mZnNldD0iMCUiIHN0b3AtY29sb3I9IiNmMGZmZjQiLz4KICAgICAgPHN0b3Agb2Zmc2V0PSIxMDAlIiBzdG9wLWNvbG9yPSIjZTBmMmZlIi8+CiAgICA8L2xpbmVhckdyYWRpZW50PgogIDwvZGVmcz4KICA8cmVjdCB4PSI1IiB5PSI1IiB3aWR0aD0iMTkwIiBoZWlnaHQ9IjE5MCIgcng9IjIyIiBmaWxsPSJ1cmwoI2xnNGJnKSIgc3Ryb2tlPSIjMDBjODUzIiBzdHJva2Utd2lkdGg9IjMiLz4KICA8cmVjdCB4PSIxMSIgeT0iMTEiIHdpZHRoPSIxNzgiIGhlaWdodD0iMTc4IiByeD0iMTgiIGZpbGw9Im5vbmUiIHN0cm9rZT0iIzAwZTY3NiIgc3Ryb2tlLXdpZHRoPSIxIiBvcGFjaXR5PSIwLjQiLz4KICA8cGF0aCBkPSJNNSAxNDggUTUwIDEzNCAxMDAgMTQ4IFExNTAgMTYyIDE5NSAxNDggTDE5NSAxOTUgTDUgMTk1IFoiIGZpbGw9IiMwMGM4NTMxOCIvPgogIDxwYXRoIGQ9Ik01IDE2MCBRNTAgMTQ2IDEwMCAxNjAgUTE1MCAxNzQgMTk1IDE2MCBMMTk1IDE5NSBMNSAxOTUgWiIgZmlsbD0iIzAwYzg1MzMwIi8+CiAgPGNpcmNsZSBjeD0iMTAwIiBjeT0iNzAiIHI9IjQwIiBmaWxsPSJ1cmwoI2xnNGIpIi8+CiAgPGVsbGlwc2UgY3g9Ijg4IiBjeT0iNTQiIHJ4PSIxNCIgcnk9IjgiIGZpbGw9IndoaXRlIiBvcGFjaXR5PSIwLjE4Ii8+CiAgPHBhdGggZD0iTTEwMCA0MiBRMTMyIDU3IDEyMiA4MiBRMTEyIDk3IDEwMCA5NyBRODggOTcgNzggODIgUTY4IDU3IDEwMCA0MiBaIiBmaWxsPSIjNjlmZjljIi8+CiAgPHBhdGggZD0iTTEwMCA0NCBRMTAwIDcwIDEwMCA5NSIgc3Ryb2tlPSIjMDA3MDFhIiBzdHJva2Utd2lkdGg9IjIiIGZpbGw9Im5vbmUiLz4KICA8cGF0aCBkPSJNMTAwIDYwIFExMTQgNjIgMTIyIDc0IiBzdHJva2U9IiMwMDcwMWEiIHN0cm9rZS13aWR0aD0iMS41IiBmaWxsPSJub25lIi8+CiAgPHBhdGggZD0iTTEwMCA3MiBRODYgNzQgNzggODIiIHN0cm9rZT0iIzAwNzAxYSIgc3Ryb2tlLXdpZHRoPSIxLjUiIGZpbGw9Im5vbmUiLz4KICA8cGF0aCBkPSJNMTAwIDUyIFExMTAgNTQgMTE2IDYyIiBzdHJva2U9IiMwMDcwMWEiIHN0cm9rZS13aWR0aD0iMSIgZmlsbD0ibm9uZSIgb3BhY2l0eT0iMC43Ii8+CiAgPHRleHQgeD0iMTAwIiB5PSIxMjgiIGZvbnQtZmFtaWx5PSJBcmlhbCBCbGFjaywgQXJpYWwsIHNhbnMtc2VyaWYiIGZvbnQtc2l6ZT0iMTciIGZvbnQtd2VpZ2h0PSI5MDAiIGZpbGw9IiMwMDY0MDAiIHRleHQtYW5jaG9yPSJtaWRkbGUiIGxldHRlci1zcGFjaW5nPSIyLjUiPkJJT0RJVkVSU088L3RleHQ+CiAgPGxpbmUgeDE9IjIyIiB5MT0iMTM2IiB4Mj0iNzAiIHkyPSIxMzYiIHN0cm9rZT0iIzAwYzg1MyIgc3Ryb2tlLXdpZHRoPSIxLjUiIG9wYWNpdHk9IjAuOCIvPgogIDxsaW5lIHgxPSIxMzAiIHkxPSIxMzYiIHgyPSIxNzgiIHkyPSIxMzYiIHN0cm9rZT0iIzAwYzg1MyIgc3Ryb2tlLXdpZHRoPSIxLjUiIG9wYWNpdHk9IjAuOCIvPgogIDx0ZXh0IHg9IjEwMCIgeT0iMTUwIiBmb250LWZhbWlseT0iQXJpYWwsIHNhbnMtc2VyaWYiIGZvbnQtc2l6ZT0iNyIgZmlsbD0iIzE1NjVjMCIgdGV4dC1hbmNob3I9Im1pZGRsZSIgbGV0dGVyLXNwYWNpbmc9IjEuNSIgZm9udC13ZWlnaHQ9ImJvbGQiPlNFUlZJQ0lPUyBZIENPTlNVTFRPUiYjeENEO0E8L3RleHQ+CiAgPGNpcmNsZSBjeD0iMjIiIGN5PSIxMjgiIHI9IjMiIGZpbGw9IiMwMGM4NTMiLz4KICA8Y2lyY2xlIGN4PSIxNzgiIGN5PSIxMjgiIHI9IjMiIGZpbGw9IiMxNTY1YzAiLz4KPC9zdmc+" style="height:48px;object-fit:contain"><div><div style="font-family:'Playfair Display',serif;font-size:20px;font-weight:600" id="print-empresa">GreenQuote</div><div style="font-size:12px;color:var(--muted)" id="print-datos"></div></div></div>
+    <div class="print-hdr" id="print-hdr"><img id="print-logo-img" src="data:image/svg+xml;base64,PHN2ZyB2aWV3Qm94PSIwIDAgMjAwIDIwMCIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIiB3aWR0aD0iMjAwIiBoZWlnaHQ9IjIwMCI+CiAgPGRlZnM+CiAgICA8bGluZWFyR3JhZGllbnQgaWQ9ImxnNGIiIHgxPSIwIiB5MT0iMCIgeDI9IjEiIHkyPSIxIj4KICAgICAgPHN0b3Agb2Zmc2V0PSIwJSIgc3RvcC1jb2xvcj0iIzAwYzg1MyIvPgogICAgICA8c3RvcCBvZmZzZXQ9IjEwMCUiIHN0b3AtY29sb3I9IiMxNTY1YzAiLz4KICAgIDwvbGluZWFyR3JhZGllbnQ+CiAgICA8bGluZWFyR3JhZGllbnQgaWQ9ImxnNGJnIiB4MT0iMCIgeTE9IjAiIHgyPSIwIiB5Mj0iMSI+CiAgICAgIDxzdG9wIG9mZnNldD0iMCUiIHN0b3AtY29sb3I9IiNmMGZmZjQiLz4KICAgICAgPHN0b3Agb2Zmc2V0PSIxMDAlIiBzdG9wLWNvbG9yPSIjZTBmMmZlIi8+CiAgICA8L2xpbmVhckdyYWRpZW50PgogIDwvZGVmcz4KICA8cmVjdCB4PSI1IiB5PSI1IiB3aWR0aD0iMTkwIiBoZWlnaHQ9IjE5MCIgcng9IjIyIiBmaWxsPSJ1cmwoI2xnNGJnKSIgc3Ryb2tlPSIjMDBjODUzIiBzdHJva2Utd2lkdGg9IjMiLz4KICA8cmVjdCB4PSIxMSIgeT0iMTEiIHdpZHRoPSIxNzgiIGhlaWdodD0iMTc4IiByeD0iMTgiIGZpbGw9Im5vbmUiIHN0cm9rZT0iIzAwZTY3NiIgc3Ryb2tlLXdpZHRoPSIxIiBvcGFjaXR5PSIwLjQiLz4KICA8cGF0aCBkPSJNNSAxNDggUTUwIDEzNCAxMDAgMTQ4IFExNTAgMTYyIDE5NSAxNDggTDE5NSAxOTUgTDUgMTk1IFoiIGZpbGw9IiMwMGM4NTMxOCIvPgogIDxwYXRoIGQ9Ik01IDE2MCBRNTAgMTQ2IDEwMCAxNjAgUTE1MCAxNzQgMTk1IDE2MCBMMTk1IDE5NSBMNSAxOTUgWiIgZmlsbD0iIzAwYzg1MzMwIi8+CiAgPGNpcmNsZSBjeD0iMTAwIiBjeT0iNzAiIHI9IjQwIiBmaWxsPSJ1cmwoI2xnNGIpIi8+CiAgPGVsbGlwc2UgY3g9Ijg4IiBjeT0iNTQiIHJ4PSIxNCIgcnk9IjgiIGZpbGw9IndoaXRlIiBvcGFjaXR5PSIwLjE4Ii8+CiAgPHBhdGggZD0iTTEwMCA0MiBRMTMyIDU3IDEyMiA4MiBRMTEyIDk3IDEwMCA5NyBRODggOTcgNzggODIgUTY4IDU3IDEwMCA0MiBaIiBmaWxsPSIjNjlmZjljIi8+CiAgPHBhdGggZD0iTTEwMCA0NCBRMTAwIDcwIDEwMCA5NSIgc3Ryb2tlPSIjMDA3MDFhIiBzdHJva2Utd2lkdGg9IjIiIGZpbGw9Im5vbmUiLz4KICA8cGF0aCBkPSJNMTAwIDYwIFExMTQgNjIgMTIyIDc0IiBzdHJva2U9IiMwMDcwMWEiIHN0cm9rZS13aWR0aD0iMS41IiBmaWxsPSJub25lIi8+CiAgPHBhdGggZD0iTTEwMCA3MiBRODYgNzQgNzggODIiIHN0cm9rZT0iIzAwNzAxYSIgc3Ryb2tlLXdpZHRoPSIxLjUiIGZpbGw9Im5vbmUiLz4KICA8cGF0aCBkPSJNMTAwIDUyIFExMTAgNTQgMTE2IDYyIiBzdHJva2U9IiMwMDcwMWEiIHN0cm9rZS13aWR0aD0iMSIgZmlsbD0ibm9uZSIgb3BhY2l0eT0iMC43Ii8+CiAgPHRleHQgeD0iMTAwIiB5PSIxMjgiIGZvbnQtZmFtaWx5PSJBcmlhbCBCbGFjaywgQXJpYWwsIHNhbnMtc2VyaWYiIGZvbnQtc2l6ZT0iMTciIGZvbnQtd2VpZ2h0PSI5MDAiIGZpbGw9IiMwMDY0MDAiIHRleHQtYW5jaG9yPSJtaWRkbGUiIGxldHRlci1zcGFjaW5nPSIyLjUiPkJJT0RJVkVSU088L3RleHQ+CiAgPGxpbmUgeDE9IjIyIiB5MT0iMTM2IiB4Mj0iNzAiIHkyPSIxMzYiIHN0cm9rZT0iIzAwYzg1MyIgc3Ryb2tlLXdpZHRoPSIxLjUiIG9wYWNpdHk9IjAuOCIvPgogIDxsaW5lIHgxPSIxMzAiIHkxPSIxMzYiIHgyPSIxNzgiIHkyPSIxMzYiIHN0cm9rZT0iIzAwYzg1MyIgc3Ryb2tlLXdpZHRoPSIxLjUiIG9wYWNpdHk9IjAuOCIvPgogIDx0ZXh0IHg9IjEwMCIgeT0iMTUwIiBmb250LWZhbWlseT0iQXJpYWwsIHNhbnMtc2VyaWYiIGZvbnQtc2l6ZT0iNyIgZmlsbD0iIzE1NjVjMCIgdGV4dC1hbmNob3I9Im1pZGRsZSIgbGV0dGVyLXNwYWNpbmc9IjEuNSIgZm9udC13ZWlnaHQ9ImJvbGQiPlNFUlZJQ0lPUyBZIENPTlNVTFRPUiYjeENEO0E8L3RleHQ+CiAgPGNpcmNsZSBjeD0iMjIiIGN5PSIxMjgiIHI9IjMiIGZpbGw9IiMwMGM4NTMiLz4KICA8Y2lyY2xlIGN4PSIxNzgiIGN5PSIxMjgiIHI9IjMiIGZpbGw9IiMxNTY1YzAiLz4KPC9zdmc+" style="height:48px;object-fit:contain"><div><div style="font-family:'Playfair Display',serif;font-size:20px;font-weight:600" id="print-empresa"></div><div style="font-size:12px;color:var(--muted)" id="print-datos"></div></div></div>
     <div class="card">
       <div class="card-title">📄 Resumen Cotización</div>
       <div id="res-cli" style="margin-bottom:11px"></div>
@@ -681,7 +681,7 @@ let DB={
     {id:4,nombre:'Controlador elect.',unidad:'ud',precio:85000,cat:'control'},
     {id:5,nombre:'Válvula solenoide',unidad:'ud',precio:28000,cat:'control'},
   ],
-  empresa:{nombre:'GreenQuote',rut:'',tel:'',dir:'',email:'',wa:'Estimado/a {cliente}, cotización N°{numero} por {tipo} por un total de {total}. Válida {validez} días. Saludos, {empresa}'},
+  empresa:{nombre:'',rut:'',tel:'',dir:'',email:'',wa:'Estimado/a {cliente}, cotización N°{numero} por {tipo} por un total de {total}. Válida {validez} días. Saludos, {empresa}'},
   cfg:{gg:10,mg:25,tub:850,asp:12500,got:3200,ctrl:85000,mo:2500},
   stock:[
     {id:1,nombre:'Fertilizante NPK',cat:'Fertilizante',unidad:'kg',actual:80,minimo:20,precio:3500,proveedor:'AgroSur'},
@@ -797,7 +797,7 @@ function calcFinal(){
   document.getElementById('sub-neto').textContent=fmt(subneto);document.getElementById('iva-val').textContent=fmt(iva);
   document.getElementById('tot-final').textContent=fmt(total);
   document.getElementById('tot-tipo').textContent=tipoLabel(currentTipo)+' · '+document.getElementById('n-nombre').value;
-  document.getElementById('print-empresa').textContent=DB.empresa.nombre||'GreenQuote';
+  document.getElementById('print-empresa').textContent=DB.empresa.nombre||'Operaciones Forestales';
   document.getElementById('print-datos').textContent=[DB.empresa.rut,DB.empresa.tel,DB.empresa.email].filter(Boolean).join(' · ');
   document.getElementById('res-cli').innerHTML=`<div style="font-weight:600;font-size:14px;color:var(--v1)">${document.getElementById('n-nombre').value}</div><div style="font-size:12px;color:var(--muted);margin-top:3px">${document.getElementById('n-proyecto').value||'Sin proyecto'}</div><div style="font-size:12px;color:var(--muted)">${document.getElementById('n-ubic').value||'Sin ubicación'}</div>`;
   let rows=[],matRows=[];
@@ -822,7 +822,7 @@ function calcFinal(){
 }
 
 function guardar(){
-  const num='GQ-'+String(cotizNum++).padStart(4,'0');
+  const num='OF-'+String(cotizNum++).padStart(4,'0');
   const c={id:Date.now(),numero:num,spData:currentTipo==='mixto'||currentTipo==='plantacion'?{...selectedSps}:null,svcData:currentTipo==='mixto'?{...selectedSvcs}:null,clienteNombre:document.getElementById('n-nombre').value,proyecto:document.getElementById('n-proyecto').value,rut:document.getElementById('n-rut').value,tel:document.getElementById('n-tel').value,email:document.getElementById('n-email').value,ubicacion:document.getElementById('n-ubic').value,notas:document.getElementById('n-notas').value,tipo:currentTipo,tipoLabel:tipoLabel(currentTipo),costoBase:_calc.costoBase||0,gg:_calc.gg||0,mg:_calc.mg||0,subtotal:_calc.subneto||0,iva:_calc.iva||0,total:_calc.total||0,status:'borrador',validez:document.getElementById('n-validez').value,createdAt:new Date().toISOString(),fotos:[...photoList],matRows:[..._matRows]};
   DB.cotizaciones.push(c);
   saveDB();
@@ -831,14 +831,14 @@ function guardar(){
 }
 
 function whatsappNueva(){
-  const nombre=document.getElementById('n-nombre').value||'Cliente',tel=(document.getElementById('n-tel').value||'').replace(/\D/g,''),num='GQ-'+String(cotizNum).padStart(4,'0'),total=document.getElementById('tot-final').textContent,validez=document.getElementById('n-validez').value;
-  const msg=(DB.empresa.wa||'Cotización {total}').replace('{cliente}',nombre).replace('{numero}',num).replace('{tipo}',tipoLabel(currentTipo)).replace('{total}',total).replace('{validez}',validez+' días').replace('{empresa}',DB.empresa.nombre||'GreenQuote');
+  const nombre=document.getElementById('n-nombre').value||'Cliente',tel=(document.getElementById('n-tel').value||'').replace(/\D/g,''),num='OF-'+String(cotizNum).padStart(4,'0'),total=document.getElementById('tot-final').textContent,validez=document.getElementById('n-validez').value;
+  const msg=(DB.empresa.wa||'Cotización {total}').replace('{cliente}',nombre).replace('{numero}',num).replace('{tipo}',tipoLabel(currentTipo)).replace('{total}',total).replace('{validez}',validez+' días').replace('{empresa}',DB.empresa.nombre||'Operaciones Forestales');
   window.open('https://api.whatsapp.com/send?phone='+(tel||'56912345678')+'&text='+encodeURIComponent(msg),'_blank');
 }
 function whatsappCotiz(id){
   const c=DB.cotizaciones.find(x=>x.id===id);if(!c)return;
   const tel=(c.tel||'').replace(/\D/g,'');
-  const msg=(DB.empresa.wa||'Cotización {total}').replace('{cliente}',c.clienteNombre).replace('{numero}',c.numero).replace('{tipo}',c.tipoLabel).replace('{total}',fmt(c.total)).replace('{validez}',c.validez+' días').replace('{empresa}',DB.empresa.nombre||'GreenQuote');
+  const msg=(DB.empresa.wa||'Cotización {total}').replace('{cliente}',c.clienteNombre).replace('{numero}',c.numero).replace('{tipo}',c.tipoLabel).replace('{total}',fmt(c.total)).replace('{validez}',c.validez+' días').replace('{empresa}',DB.empresa.nombre||'Operaciones Forestales');
   window.open('https://api.whatsapp.com/send?phone='+(tel||'56912345678')+'&text='+encodeURIComponent(msg),'_blank');
 }
 
@@ -853,7 +853,7 @@ function renderCotiz(){
 function renderQCard(c){return`<div class="li" onclick="verCotiz(${c.id})"><div class="li-top"><div><div class="li-name">${c.proyecto||c.clienteNombre}</div><div class="li-sub">${c.clienteNombre} · ${c.numero}</div></div><span class="badge b-${c.status}">${statusLabel(c.status)}</span></div><div class="li-bot"><span class="li-tipo">${c.tipoLabel} · ${new Date(c.createdAt).toLocaleDateString('es-CL')}</span><span class="li-monto">${fmt(c.total)}</span></div></div>`;}
 function verCotiz(id){
   const c=DB.cotizaciones.find(x=>x.id===id);if(!c)return;
-  document.getElementById('mo-cotiz-body').innerHTML=`<div class="mt">${c.numero}</div><div style="margin-bottom:12px"><div style="font-weight:600;font-size:15px;color:var(--v1)">${c.clienteNombre}</div><div style="font-size:12px;color:var(--muted)">${c.proyecto||''}</div><div style="font-size:12px;color:var(--muted)">${c.rut||''} ${c.tel?'· '+c.tel:''}</div><div style="font-size:12px;color:var(--muted)">📍 ${c.ubicacion||'Sin ubicación'}</div></div><div class="div"></div><div style="display:flex;gap:6px;flex-wrap:wrap;margin-bottom:11px"><span class="tag">${c.tipoLabel}</span><span class="tag">Validez: ${c.validez} días</span><span class="tag">${new Date(c.createdAt).toLocaleDateString('es-CL')}</span></div><div class="cr"><span style="color:var(--muted)">Costo directo</span><span>${fmt(c.costoBase)}</span></div><div class="cr"><span style="color:var(--muted)">Gastos generales</span><span>${fmt(c.gg)}</span></div><div class="cr"><span style="color:var(--muted)">Margen utilidad</span><span>${fmt(c.mg)}</span></div><div class="cr"><span style="color:var(--muted)">IVA 19%</span><span>${fmt(c.iva)}</span></div><div class="tbox" style="margin-top:10px"><div class="tl">Total con IVA</div><div class="tv">${fmt(c.total)}</div></div>${c.notas?`<div style="margin-top:10px;padding:10px;background:var(--c4);border-radius:9px;font-size:12px">📝 ${c.notas}</div>`:''}<div class="fg" style="margin-top:13px"><label class="fl">Cambiar estado</label><select class="fs" onchange="cambiarStatus(${c.id},this.value)"><option value="borrador" ${c.status==='borrador'?'selected':''}>Borrador</option><option value="enviada" ${c.status==='enviada'?'selected':''}>Enviada</option><option value="aprobada" ${c.status==='aprobada'?'selected':''}>Aprobada</option><option value="rechazada" ${c.status==='rechazada'?'selected':''}>Rechazada</option></select></div><div style="display:flex;flex-direction:column;gap:8px;margin-top:4px"><button class="btn bg" onclick="whatsappCotiz(${c.id})">📱 Enviar WhatsApp</button><button class="btn bd bsm" onclick="eliminarCotiz(${c.id})">🗑 Eliminar</button><button class="btn bs" onclick="cerrarMo('mo-cotiz')">Cerrar</button></div>`;
+  document.getElementById('mo-cotiz-body').innerHTML=`<div class="mt">${c.numero}</div><div style="margin-bottom:12px"><div style="font-weight:600;font-size:15px;color:var(--v1)">${c.clienteNombre}</div><div style="font-size:12px;color:var(--muted)">${c.proyecto||''}</div><div style="font-size:12px;color:var(--muted)">${c.rut||''} ${c.tel?'· '+c.tel:''}</div><div style="font-size:12px;color:var(--muted)">📍 ${c.ubicacion||'Sin ubicación'}</div></div><div class="div"></div><div style="display:flex;gap:6px;flex-wrap:wrap;margin-bottom:11px"><span class="tag">${c.tipoLabel}</span><span class="tag">Validez: ${c.validez} días</span><span class="tag">${new Date(c.createdAt).toLocaleDateString('es-CL')}</span></div><div class="cr"><span style="color:var(--muted)">Costo directo</span><span>${fmt(c.costoBase)}</span></div><div class="cr"><span style="color:var(--muted)">Gastos generales</span><span>${fmt(c.gg)}</span></div><div class="cr"><span style="color:var(--muted)">Margen utilidad</span><span>${fmt(c.mg)}</span></div><div class="cr"><span style="color:var(--muted)">IVA 19%</span><span>${fmt(c.iva)}</span></div><div class="tbox" style="margin-top:10px"><div class="tl">Total con IVA</div><div class="tv">${fmt(c.total)}</div></div>${c.notas?`<div style="margin-top:10px;padding:10px;background:var(--c4);border-radius:9px;font-size:12px">📝 ${c.notas}</div>`:''}<div class="fg" style="margin-top:13px"><label class="fl">Cambiar estado</label><select class="fs" onchange="cambiarStatus(${c.id},this.value)"><option value="borrador" ${c.status==='borrador'?'selected':''}>Borrador</option><option value="enviada" ${c.status==='enviada'?'selected':''}>Enviada</option><option value="aprobada" ${c.status==='aprobada'?'selected':''}>Aprobada</option><option value="rechazada" ${c.status==='rechazada'?'selected':''}>Rechazada</option></select></div><div style="display:flex;flex-direction:column;gap:8px;margin-top:4px"><button class="btn bp" onclick="generarPDFCotiz(${c.id})">📄 Descargar PDF</button><button class="btn bg" onclick="whatsappCotiz(${c.id})">📱 Enviar WhatsApp</button><button class="btn bd bsm" onclick="eliminarCotiz(${c.id})">🗑 Eliminar</button><button class="btn bs" onclick="cerrarMo('mo-cotiz')">Cerrar</button></div>`;
   document.getElementById('mo-cotiz').classList.add('open');
 }
 function cambiarStatus(id,st){const c=DB.cotizaciones.find(x=>x.id===id);if(c){c.status=st;cerrarMo('mo-cotiz');renderCotiz();toast('Estado actualizado: '+statusLabel(st),'ok');}}
@@ -1390,7 +1390,7 @@ function toggleSec(id){
 
 // ── LOGO MANAGEMENT ──────────────────────────────────────────────────────────
 const DEFAULT_LOGO_URI='data:image/svg+xml;base64,PHN2ZyB2aWV3Qm94PSIwIDAgMjAwIDIwMCIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIiB3aWR0aD0iMjAwIiBoZWlnaHQ9IjIwMCI+CiAgPGRlZnM+CiAgICA8bGluZWFyR3JhZGllbnQgaWQ9ImxnNGIiIHgxPSIwIiB5MT0iMCIgeDI9IjEiIHkyPSIxIj4KICAgICAgPHN0b3Agb2Zmc2V0PSIwJSIgc3RvcC1jb2xvcj0iIzAwYzg1MyIvPgogICAgICA8c3RvcCBvZmZzZXQ9IjEwMCUiIHN0b3AtY29sb3I9IiMxNTY1YzAiLz4KICAgIDwvbGluZWFyR3JhZGllbnQ+CiAgICA8bGluZWFyR3JhZGllbnQgaWQ9ImxnNGJnIiB4MT0iMCIgeTE9IjAiIHgyPSIwIiB5Mj0iMSI+CiAgICAgIDxzdG9wIG9mZnNldD0iMCUiIHN0b3AtY29sb3I9IiNmMGZmZjQiLz4KICAgICAgPHN0b3Agb2Zmc2V0PSIxMDAlIiBzdG9wLWNvbG9yPSIjZTBmMmZlIi8+CiAgICA8L2xpbmVhckdyYWRpZW50PgogIDwvZGVmcz4KICA8cmVjdCB4PSI1IiB5PSI1IiB3aWR0aD0iMTkwIiBoZWlnaHQ9IjE5MCIgcng9IjIyIiBmaWxsPSJ1cmwoI2xnNGJnKSIgc3Ryb2tlPSIjMDBjODUzIiBzdHJva2Utd2lkdGg9IjMiLz4KICA8cmVjdCB4PSIxMSIgeT0iMTEiIHdpZHRoPSIxNzgiIGhlaWdodD0iMTc4IiByeD0iMTgiIGZpbGw9Im5vbmUiIHN0cm9rZT0iIzAwZTY3NiIgc3Ryb2tlLXdpZHRoPSIxIiBvcGFjaXR5PSIwLjQiLz4KICA8cGF0aCBkPSJNNSAxNDggUTUwIDEzNCAxMDAgMTQ4IFExNTAgMTYyIDE5NSAxNDggTDE5NSAxOTUgTDUgMTk1IFoiIGZpbGw9IiMwMGM4NTMxOCIvPgogIDxwYXRoIGQ9Ik01IDE2MCBRNTAgMTQ2IDEwMCAxNjAgUTE1MCAxNzQgMTk1IDE2MCBMMTk1IDE5NSBMNSAxOTUgWiIgZmlsbD0iIzAwYzg1MzMwIi8+CiAgPGNpcmNsZSBjeD0iMTAwIiBjeT0iNzAiIHI9IjQwIiBmaWxsPSJ1cmwoI2xnNGIpIi8+CiAgPGVsbGlwc2UgY3g9Ijg4IiBjeT0iNTQiIHJ4PSIxNCIgcnk9IjgiIGZpbGw9IndoaXRlIiBvcGFjaXR5PSIwLjE4Ii8+CiAgPHBhdGggZD0iTTEwMCA0MiBRMTMyIDU3IDEyMiA4MiBRMTEyIDk3IDEwMCA5NyBRODggOTcgNzggODIgUTY4IDU3IDEwMCA0MiBaIiBmaWxsPSIjNjlmZjljIi8+CiAgPHBhdGggZD0iTTEwMCA0NCBRMTAwIDcwIDEwMCA5NSIgc3Ryb2tlPSIjMDA3MDFhIiBzdHJva2Utd2lkdGg9IjIiIGZpbGw9Im5vbmUiLz4KICA8cGF0aCBkPSJNMTAwIDYwIFExMTQgNjIgMTIyIDc0IiBzdHJva2U9IiMwMDcwMWEiIHN0cm9rZS13aWR0aD0iMS41IiBmaWxsPSJub25lIi8+CiAgPHBhdGggZD0iTTEwMCA3MiBRODYgNzQgNzggODIiIHN0cm9rZT0iIzAwNzAxYSIgc3Ryb2tlLXdpZHRoPSIxLjUiIGZpbGw9Im5vbmUiLz4KICA8cGF0aCBkPSJNMTAwIDUyIFExMTAgNTQgMTE2IDYyIiBzdHJva2U9IiMwMDcwMWEiIHN0cm9rZS13aWR0aD0iMSIgZmlsbD0ibm9uZSIgb3BhY2l0eT0iMC43Ii8+CiAgPHRleHQgeD0iMTAwIiB5PSIxMjgiIGZvbnQtZmFtaWx5PSJBcmlhbCBCbGFjaywgQXJpYWwsIHNhbnMtc2VyaWYiIGZvbnQtc2l6ZT0iMTciIGZvbnQtd2VpZ2h0PSI5MDAiIGZpbGw9IiMwMDY0MDAiIHRleHQtYW5jaG9yPSJtaWRkbGUiIGxldHRlci1zcGFjaW5nPSIyLjUiPkJJT0RJVkVSU088L3RleHQ+CiAgPGxpbmUgeDE9IjIyIiB5MT0iMTM2IiB4Mj0iNzAiIHkyPSIxMzYiIHN0cm9rZT0iIzAwYzg1MyIgc3Ryb2tlLXdpZHRoPSIxLjUiIG9wYWNpdHk9IjAuOCIvPgogIDxsaW5lIHgxPSIxMzAiIHkxPSIxMzYiIHgyPSIxNzgiIHkyPSIxMzYiIHN0cm9rZT0iIzAwYzg1MyIgc3Ryb2tlLXdpZHRoPSIxLjUiIG9wYWNpdHk9IjAuOCIvPgogIDx0ZXh0IHg9IjEwMCIgeT0iMTUwIiBmb250LWZhbWlseT0iQXJpYWwsIHNhbnMtc2VyaWYiIGZvbnQtc2l6ZT0iNyIgZmlsbD0iIzE1NjVjMCIgdGV4dC1hbmNob3I9Im1pZGRsZSIgbGV0dGVyLXNwYWNpbmc9IjEuNSIgZm9udC13ZWlnaHQ9ImJvbGQiPlNFUlZJQ0lPUyBZIENPTlNVTFRPUiYjeENEO0E8L3RleHQ+CiAgPGNpcmNsZSBjeD0iMjIiIGN5PSIxMjgiIHI9IjMiIGZpbGw9IiMwMGM4NTMiLz4KICA8Y2lyY2xlIGN4PSIxNzgiIGN5PSIxMjgiIHI9IjMiIGZpbGw9IiMxNTY1YzAiLz4KPC9zdmc+';
-function getCurrentLogo(){return localStorage.getItem('gq_logo')||DEFAULT_LOGO_URI;}
+function getCurrentLogo(){return localStorage.getItem('op_logo')||DEFAULT_LOGO_URI;}
 function initLogo(){
   const src=getCurrentLogo();
   document.querySelectorAll('.app-logo').forEach(el=>el.src=src);
@@ -1398,10 +1398,10 @@ function initLogo(){
 function saveLogoFromFile(input){
   const file=input.files[0];if(!file)return;
   const reader=new FileReader();
-  reader.onload=e=>{localStorage.setItem('gq_logo',e.target.result);initLogo();toast('Logo actualizado','ok');};
+  reader.onload=e=>{localStorage.setItem('op_logo',e.target.result);initLogo();toast('Logo actualizado','ok');};
   reader.readAsDataURL(file);
 }
-function deleteLogo(){localStorage.removeItem('gq_logo');initLogo();toast('Logo restablecido','ok');}
+function deleteLogo(){localStorage.removeItem('op_logo');initLogo();toast('Logo restablecido','ok');}
 
 setTimeout(initLogo,50);
 
@@ -1423,7 +1423,7 @@ function generarPDF(){
   const nombre=document.getElementById('n-nombre')?.value||'Cliente';
   const proyecto=document.getElementById('n-proyecto')?.value||'';
   const empresa=DB.empresa.nombre||'Operaciones';
-  const numStr='GQ-'+String(cotizNum).padStart(4,'0');
+  const numStr='OF-'+String(cotizNum).padStart(4,'0');
   const dateStr=new Date().toLocaleDateString('es-CL');
   const validez=document.getElementById('n-validez')?.value||'30';
 
@@ -1543,15 +1543,91 @@ function generarPDF(){
 }
 
 
+// ── PDF DESDE HISTORIAL ───────────────────────────────────────────────────────
+function generarPDFCotiz(id){
+  if(!window.jspdf){toast('jsPDF no disponible','err');return;}
+  const c=DB.cotizaciones.find(x=>x.id===id);if(!c){toast('Cotización no encontrada','err');return;}
+  const {jsPDF}=window.jspdf;
+  const doc=new jsPDF({orientation:'portrait',unit:'mm',format:'a4'});
+  const empresa=DB.empresa.nombre||'Operaciones Forestales';
+  const dateStr=new Date(c.createdAt).toLocaleDateString('es-CL');
+  try{
+    const logoSrc=getCurrentLogo();
+    const tmpImg=new Image();tmpImg.src=logoSrc;
+    const lw=tmpImg.naturalWidth||400,lh=tmpImg.naturalHeight||130;
+    const logoW=42,logoH=Math.min(logoW*(lh/lw),18);
+    const fmt_=logoSrc.startsWith('data:image/png')?'PNG':'JPEG';
+    doc.addImage(logoSrc,fmt_,14,10,logoW,logoH);
+  }catch(e){}
+  doc.setFont('helvetica','bold');doc.setFontSize(18);doc.setTextColor(0);
+  doc.text('COTIZACIÓN',196,17,{align:'right'});
+  doc.setFont('helvetica','normal');doc.setFontSize(9);doc.setTextColor(80);
+  doc.text(empresa,196,23,{align:'right'});
+  if(DB.empresa.rut)doc.text('RUT: '+DB.empresa.rut,196,28,{align:'right'});
+  if(DB.empresa.email)doc.text(DB.empresa.email,196,33,{align:'right'});
+  doc.setDrawColor(200);doc.setLineWidth(0.4);doc.line(14,37,196,37);
+  let y=45;
+  doc.setFont('helvetica','bold');doc.setFontSize(9);doc.setTextColor(0);
+  doc.text('DATOS DEL CLIENTE',14,y);
+  doc.setFont('helvetica','normal');doc.setFontSize(10);y+=6;
+  doc.text(c.clienteNombre||'',14,y);
+  if(c.proyecto){y+=5;doc.setFontSize(9);doc.setTextColor(60);doc.text(c.proyecto,14,y);doc.setTextColor(0);}
+  if(c.rut){y+=5;doc.setFontSize(9);doc.text('RUT: '+c.rut,14,y);}
+  if(c.ubicacion){y+=5;doc.setFontSize(8);doc.setTextColor(80);doc.text(c.ubicacion,14,y);doc.setTextColor(0);}
+  doc.setFont('helvetica','bold');doc.setFontSize(9);doc.setTextColor(0);
+  doc.text('N° COTIZACIÓN:',130,45);doc.text('FECHA:',130,51);doc.text('TIPO:',130,57);doc.text('VALIDEZ:',130,63);
+  doc.setFont('helvetica','normal');
+  doc.text(c.numero,196,45,{align:'right'});
+  doc.text(dateStr,196,51,{align:'right'});
+  doc.text(c.tipoLabel||'',196,57,{align:'right'});
+  doc.text((c.validez||'30')+' días',196,63,{align:'right'});
+  y=Math.max(y+12,72);
+  const PH=282;
+  doc.setFillColor(240,240,240);doc.rect(14,y,182,7,'F');
+  doc.setDrawColor(180);doc.rect(14,y,182,7,'S');
+  doc.setFont('helvetica','bold');doc.setFontSize(9);doc.setTextColor(0);
+  doc.text('DESCRIPCIÓN',17,y+5);doc.text('MONTO',193,y+5,{align:'right'});
+  y+=7;
+  function addRow2(desc,monto,bold,section){
+    if(y>PH){doc.addPage();y=20;}
+    if(section){doc.setFillColor(248,248,248);doc.rect(14,y,182,7,'F');doc.setDrawColor(200);doc.rect(14,y,182,7,'S');doc.setFont('helvetica','bold');doc.setFontSize(8);doc.setTextColor(60);doc.text(desc,17,y+5);y+=7;return;}
+    doc.setFont('helvetica',bold?'bold':'normal');doc.setFontSize(9);doc.setTextColor(0);
+    doc.text(String(desc).slice(0,70),17,y+5);doc.text(String(monto),193,y+5,{align:'right'});
+    doc.setDrawColor(220);doc.line(14,y+7,196,y+7);y+=7;
+  }
+  (c.matRows||[]).forEach(r=>addRow2(r.desc+' x'+r.qty+' '+r.unit,fmt(r.total),false,false));
+  addRow2('COSTO DIRECTO',fmt(c.costoBase),true,false);
+  y+=5;
+  function addTot2(lbl,val,bold){
+    if(y>PH){doc.addPage();y=20;}
+    doc.setFont('helvetica',bold?'bold':'normal');doc.setFontSize(9);doc.setTextColor(bold?0:80);
+    doc.text(lbl,120,y);doc.text(String(val),193,y,{align:'right'});y+=6;
+  }
+  addTot2('Gastos generales',fmt(c.gg),false);
+  addTot2('Margen utilidad',fmt(c.mg),false);
+  addTot2('Subtotal neto',fmt(c.subtotal||0),true);
+  addTot2('IVA 19%',fmt(c.iva),false);
+  y+=2;
+  if(y>PH-12){doc.addPage();y=20;}
+  doc.setFillColor(230,230,230);doc.rect(120,y,76,10,'F');doc.setDrawColor(180);doc.rect(120,y,76,10,'S');
+  doc.setFont('helvetica','bold');doc.setFontSize(11);doc.setTextColor(0);
+  doc.text('TOTAL CON IVA',123,y+7);doc.text(fmt(c.total),193,y+7,{align:'right'});
+  y+=18;
+  if(c.notas&&c.notas.trim()){
+    doc.setFont('helvetica','bold');doc.setFontSize(9);doc.text('OBSERVACIONES',14,y);y+=5;
+    doc.setFont('helvetica','normal');doc.setFontSize(8);doc.setTextColor(60);
+    const notasLines=doc.splitTextToSize(c.notas,180);doc.text(notasLines,14,y);
+  }
+  doc.setFont('helvetica','normal');doc.setFontSize(7);doc.setTextColor(150);
+  doc.text(empresa+' · Cotización válida '+(c.validez||'30')+' días · Generado '+new Date().toLocaleDateString('es-CL'),105,290,{align:'center'});
+  doc.save('cotizacion-'+c.clienteNombre.replace(/\s+/g,'-')+'-'+c.numero+'.pdf');
+  toast('✅ PDF generado','ok');
+  cerrarMo('mo-cotiz');
+}
+
+
 if('serviceWorker' in navigator){
-  const swCode=`
-    const CACHE='operaciones-v1';
-    self.addEventListener('install',e=>e.waitUntil(caches.open(CACHE).then(c=>c.addAll(['/']))));
-    self.addEventListener('fetch',e=>e.respondWith(caches.match(e.request).then(r=>r||fetch(e.request).catch(()=>r))));
-  `;
-  const blob=new Blob([swCode],{type:'application/javascript'});
-  const swUrl=URL.createObjectURL(blob);
-  navigator.serviceWorker.register(swUrl).catch(()=>{});
+  navigator.serviceWorker.register('./sw.js').catch(()=>{});
 }
 
 // Banner de instalación
