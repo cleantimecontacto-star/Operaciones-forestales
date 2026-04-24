@@ -1650,6 +1650,19 @@ if('serviceWorker' in navigator){
 
 // Banner de instalación
 let deferredPrompt;
+
+// Mostrar botón instalar si el navegador soporta PWA y no está instalada
+function checkInstallable(){
+  const btn = document.getElementById('btn-instalar');
+  if(!btn) return;
+  // No mostrar si ya está instalada como PWA
+  const isStandalone = window.matchMedia('(display-mode: standalone)').matches || window.navigator.standalone;
+  if(isStandalone){ btn.style.display='none'; return; }
+  // Mostrar en Chrome/Edge desktop y Android (no Safari iOS que no soporta el evento)
+  const isIOS = /iphone|ipad|ipod/i.test(navigator.userAgent);
+  if(!isIOS){ btn.style.display='flex'; }
+}
+
 window.addEventListener('beforeinstallprompt', e => {
   e.preventDefault();
   deferredPrompt = e;
@@ -1668,8 +1681,18 @@ function instalarApp(){
     deferredPrompt.userChoice.then(c => {
       deferredPrompt = null;
     });
+  } else {
+    // Fallback: instrucciones manuales
+    const isIOS = /iphone|ipad|ipod/i.test(navigator.userAgent);
+    if(isIOS){
+      toast('En iPhone: toca el ícono compartir ⬆ → "Añadir a pantalla de inicio"', 'ok');
+    } else {
+      toast('Busca el ícono de instalación ⊕ en la barra de direcciones del navegador', 'ok');
+    }
   }
 }
+// Ejecutar al cargar
+window.addEventListener('load', checkInstallable);
 </script>
 </body>
 </html>
