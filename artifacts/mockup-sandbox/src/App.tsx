@@ -1,146 +1,70 @@
-import { useEffect, useState, type ComponentType } from "react";
+import { useState } from "react";
+import { BosqueProfundo } from "./components/mockups/biodiverso-app/BosqueProfundo";
+import { BosqueProfundoDesktop } from "./components/mockups/biodiverso-app/BosqueProfundoDesktop";
+import { MapaVivo } from "./components/mockups/biodiverso-app/MapaVivo";
+import { MapaVivoDesktop } from "./components/mockups/biodiverso-app/MapaVivoDesktop";
+import { VerdeVivo } from "./components/mockups/biodiverso-app/VerdeVivo";
 
-import { modules as discoveredModules } from "./.generated/mockup-components";
+type Screen = {
+  id: string;
+  label: string;
+  component: React.ComponentType;
+};
 
-type ModuleMap = Record<string, () => Promise<Record<string, unknown>>>;
+const screens: Screen[] = [
+  { id: "bosque-mobile", label: "Bosque Profundo · Móvil", component: BosqueProfundo },
+  { id: "bosque-desktop", label: "Bosque Profundo · Desktop", component: BosqueProfundoDesktop },
+  { id: "mapa-mobile", label: "Mapa Vivo · Móvil", component: MapaVivo },
+  { id: "mapa-desktop", label: "Mapa Vivo · Desktop", component: MapaVivoDesktop },
+  { id: "verde-mobile", label: "Verde Vivo · Móvil", component: VerdeVivo },
+];
 
-function _resolveComponent(
-  mod: Record<string, unknown>,
-  name: string,
-): ComponentType | undefined {
-  const fns = Object.values(mod).filter(
-    (v) => typeof v === "function",
-  ) as ComponentType[];
+export default function App() {
+  const [active, setActive] = useState("bosque-mobile");
+  const current = screens.find((s) => s.id === active) ?? screens[0];
+  const Component = current.component;
+
   return (
-    (mod.default as ComponentType) ||
-    (mod.Preview as ComponentType) ||
-    (mod[name] as ComponentType) ||
-    fns[fns.length - 1]
-  );
-}
+    <div style={{ display: "flex", flexDirection: "column", height: "100vh", background: "#0a0a0a" }}>
+      {/* Nav bar */}
+      <div
+        style={{
+          display: "flex",
+          gap: 4,
+          padding: "8px 12px",
+          background: "#111",
+          borderBottom: "1px solid rgba(255,255,255,0.08)",
+          overflowX: "auto",
+          flexShrink: 0,
+        }}
+      >
+        {screens.map((s) => (
+          <button
+            key={s.id}
+            onClick={() => setActive(s.id)}
+            style={{
+              padding: "6px 14px",
+              borderRadius: 6,
+              border: "none",
+              cursor: "pointer",
+              fontSize: 12,
+              fontFamily: "'Inter', sans-serif",
+              fontWeight: active === s.id ? 600 : 400,
+              background: active === s.id ? "rgba(168,230,193,0.15)" : "transparent",
+              color: active === s.id ? "#a8e6c1" : "rgba(255,255,255,0.45)",
+              whiteSpace: "nowrap",
+              transition: "all 0.15s",
+            }}
+          >
+            {s.label}
+          </button>
+        ))}
+      </div>
 
-function PreviewRenderer({
-  componentPath,
-  modules,
-}: {
-  componentPath: string;
-  modules: ModuleMap;
-}) {
-  const [Component, setComponent] = useState<ComponentType | null>(null);
-  const [error, setError] = useState<string | null>(null);
-
-  useEffect(() => {
-    let cancelled = false;
-
-    setComponent(null);
-    setError(null);
-
-    async function loadComponent(): Promise<void> {
-      const key = `./components/mockups/${componentPath}.tsx`;
-      const loader = modules[key];
-      if (!loader) {
-        setError(`No component found at ${componentPath}.tsx`);
-        return;
-      }
-
-      try {
-        const mod = await loader();
-        if (cancelled) {
-          return;
-        }
-        const name = componentPath.split("/").pop()!;
-        const comp = _resolveComponent(mod, name);
-        if (!comp) {
-          setError(
-            `No exported React component found in ${componentPath}.tsx\n\nMake sure the file has at least one exported function component.`,
-          );
-          return;
-        }
-        setComponent(() => comp);
-      } catch (e) {
-        if (cancelled) {
-          return;
-        }
-
-        const message = e instanceof Error ? e.message : String(e);
-        setError(`Failed to load preview.\n${message}`);
-      }
-    }
-
-    void loadComponent();
-
-    return () => {
-      cancelled = true;
-    };
-  }, [componentPath, modules]);
-
-  if (error) {
-    return (
-      <pre style={{ color: "red", padding: "2rem", fontFamily: "system-ui" }}>
-        {error}
-      </pre>
-    );
-  }
-
-  if (!Component) return null;
-
-  return <Component />;
-}
-
-function getBasePath(): string {
-  return import.meta.env.BASE_URL.replace(/\/$/, "");
-}
-
-function getPreviewExamplePath(): string {
-  const basePath = getBasePath();
-  return `${basePath}/preview/ComponentName`;
-}
-
-function Gallery() {
-  return (
-    <div className="min-h-screen bg-gray-50 flex items-center justify-center p-8">
-      <div className="text-center max-w-md">
-        <h1 className="text-2xl font-semibold text-gray-900 mb-3">
-          Component Preview Server
-        </h1>
-        <p className="text-gray-500 mb-4">
-          This server renders individual components for the workspace canvas.
-        </p>
-        <p className="text-sm text-gray-400">
-          Access component previews at{" "}
-          <code className="bg-gray-100 px-1.5 py-0.5 rounded text-gray-600">
-            {getPreviewExamplePath()}
-          </code>
-        </p>
+      {/* Screen content */}
+      <div style={{ flex: 1, overflow: "hidden" }}>
+        <Component />
       </div>
     </div>
   );
 }
-
-function getPreviewPath(): string | null {
-  const basePath = getBasePath();
-  const { pathname } = window.location;
-  const local =
-    basePath && pathname.startsWith(basePath)
-      ? pathname.slice(basePath.length) || "/"
-      : pathname;
-  const match = local.match(/^\/preview\/(.+)$/);
-  return match ? match[1] : null;
-}
-
-function App() {
-  const previewPath = getPreviewPath();
-
-  if (previewPath) {
-    return (
-      <PreviewRenderer
-        componentPath={previewPath}
-        modules={discoveredModules}
-      />
-    );
-  }
-
-  return <Gallery />;
-}
-
-export default App;
