@@ -1,5 +1,5 @@
-// Service Worker — Operaciones Forestales · Biodiverso (Verde Vivo)
-const CACHE = 'operaciones-forestales-v4';
+// Service Worker — Operaciones Forestales
+const CACHE = 'operaciones-forestales-v5';
 const ASSETS = ['./', './index.html', './manifest.json'];
 
 self.addEventListener('install', e => {
@@ -13,16 +13,24 @@ self.addEventListener('activate', e => {
   e.waitUntil(
     caches.keys().then(keys =>
       Promise.all(keys.filter(k => k !== CACHE).map(k => caches.delete(k)))
-    )
+    ).then(() => self.clients.claim()).then(() => {
+      // Avisar a todas las pestañas/PWA que hay versión nueva
+      return self.clients.matchAll({type:'window'}).then(list => {
+        list.forEach(c => { try { c.postMessage({type:'SW_UPDATED', cache: CACHE}); } catch(e){} });
+      });
+    })
   );
-  self.clients.claim();
+});
+
+self.addEventListener('message', e => {
+  if (e.data && e.data.type === 'SKIP_WAITING') self.skipWaiting();
 });
 
 self.addEventListener('fetch', e => {
   const url = new URL(e.request.url);
   // Nunca cachear el endpoint de datos: siempre va al servidor (nube)
   if (url.pathname.startsWith('/api/')) {
-    return; // bypass: dejar que el navegador haga la petición directa
+    return; // bypass
   }
   // Estrategia: red primero para HTML, cache primero para resto
   if (e.request.mode === 'navigate' || e.request.destination === 'document') {
