@@ -1,5 +1,5 @@
 // Service Worker — Operaciones Forestales · Biodiverso (Verde Vivo)
-const CACHE = 'biodiverso-ops-v3';
+const CACHE = 'operaciones-forestales-v4';
 const ASSETS = ['./', './index.html', './manifest.json'];
 
 self.addEventListener('install', e => {
