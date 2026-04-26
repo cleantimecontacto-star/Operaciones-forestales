@@ -28,7 +28,7 @@
 
   <rect x="0" y="0" width="200" height="200" rx="32" fill="#f5f1e6"/>
 
-  <g transform="translate(100 100) scale(1.69)">
+  <g transform="translate(100 100) scale(1.724)">
     <circle cx="0" cy="0" r="58" fill="url(#ofWood)"/>
     <circle cx="0" cy="0" r="50" fill="url(#ofSoil)"/>
     <g stroke="#7a5a3a" stroke-width="0.4" opacity="0.35">
