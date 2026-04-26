@@ -22,7 +22,7 @@ export function VerdeVivo() {
 
   return (
     <div
-      className="w-full h-screen overflow-hidden flex flex-col"
+      className="w-full h-full overflow-hidden flex flex-col"
       style={{ background: CREAM, fontFamily: SANS, color: FOREST }}
     >
       <div className="px-5 pt-5 pb-3 flex items-center justify-between">

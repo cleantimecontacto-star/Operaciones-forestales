@@ -22,7 +22,7 @@ export function MapaVivo() {
 
   return (
     <div
-      className="w-full h-screen overflow-hidden flex flex-col relative"
+      className="w-full h-full overflow-hidden flex flex-col relative"
       style={{
         background: PAPER,
         fontFamily: SANS,

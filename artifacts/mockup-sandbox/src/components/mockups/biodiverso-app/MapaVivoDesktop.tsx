@@ -16,7 +16,7 @@ export function MapaVivoDesktop() {
   const LINE = "#bfb29a";
 
   return (
-    <div className="w-full h-screen overflow-hidden flex" style={{
+    <div className="w-full h-full overflow-hidden flex" style={{
       background: PAPER, fontFamily: SANS, color: INK,
       backgroundImage: "repeating-linear-gradient(0deg, transparent 0 24px, rgba(26,58,42,0.04) 24px 25px), repeating-linear-gradient(90deg, transparent 0 24px, rgba(26,58,42,0.04) 24px 25px)"
     }}>

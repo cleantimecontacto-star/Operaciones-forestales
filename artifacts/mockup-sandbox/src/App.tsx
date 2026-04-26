@@ -9,33 +9,49 @@ type Screen = {
   id: string;
   label: string;
   component: React.ComponentType;
+  device: "mobile" | "desktop";
 };
 
 const screens: Screen[] = [
-  { id: "bosque-mobile", label: "Bosque Profundo · Móvil", component: BosqueProfundo },
-  { id: "bosque-desktop", label: "Bosque Profundo · Desktop", component: BosqueProfundoDesktop },
-  { id: "mapa-mobile", label: "Mapa Vivo · Móvil", component: MapaVivo },
-  { id: "mapa-desktop", label: "Mapa Vivo · Desktop", component: MapaVivoDesktop },
-  { id: "verde-mobile", label: "Verde Vivo · Móvil", component: VerdeVivo },
+  { id: "bosque-mobile", label: "Bosque · Móvil", component: BosqueProfundo, device: "mobile" },
+  { id: "bosque-desktop", label: "Bosque · Desktop", component: BosqueProfundoDesktop, device: "desktop" },
+  { id: "mapa-mobile", label: "Mapa · Móvil", component: MapaVivo, device: "mobile" },
+  { id: "mapa-desktop", label: "Mapa · Desktop", component: MapaVivoDesktop, device: "desktop" },
+  { id: "verde-mobile", label: "Verde · Móvil", component: VerdeVivo, device: "mobile" },
 ];
 
 export default function App() {
   const [active, setActive] = useState("bosque-mobile");
   const current = screens.find((s) => s.id === active) ?? screens[0];
   const Component = current.component;
+  const isMobile = current.device === "mobile";
 
   return (
-    <div style={{ display: "flex", flexDirection: "column", height: "100vh", background: "#0a0a0a" }}>
+    <div
+      style={{
+        display: "flex",
+        flexDirection: "column",
+        height: "100vh",
+        minHeight: "-webkit-fill-available",
+        maxHeight: "100dvh",
+        overflow: "hidden",
+        background: "hsl(var(--background))",
+      }}
+    >
       {/* Nav bar */}
-      <div
+      <nav
+        aria-label="Pantallas"
         style={{
           display: "flex",
-          gap: 4,
-          padding: "8px 12px",
-          background: "#111",
-          borderBottom: "1px solid rgba(255,255,255,0.08)",
+          alignItems: "center",
+          gap: 3,
+          padding: "6px 10px",
+          background: "hsl(var(--card))",
+          borderBottom: "1px solid hsl(var(--border))",
           overflowX: "auto",
           flexShrink: 0,
+          scrollbarWidth: "none",
+          WebkitOverflowScrolling: "touch",
         }}
       >
         {screens.map((s) => (
@@ -43,27 +59,59 @@ export default function App() {
             key={s.id}
             onClick={() => setActive(s.id)}
             style={{
-              padding: "6px 14px",
-              borderRadius: 6,
-              border: "none",
+              padding: "5px 12px",
+              borderRadius: 8,
+              border: active === s.id ? "1px solid hsl(var(--primary) / 0.4)" : "1px solid transparent",
               cursor: "pointer",
-              fontSize: 12,
+              fontSize: 11,
               fontFamily: "'Inter', sans-serif",
               fontWeight: active === s.id ? 600 : 400,
-              background: active === s.id ? "rgba(168,230,193,0.15)" : "transparent",
-              color: active === s.id ? "#a8e6c1" : "rgba(255,255,255,0.45)",
+              background: active === s.id
+                ? "hsl(var(--primary) / 0.15)"
+                : "transparent",
+              color: active === s.id
+                ? "hsl(var(--primary))"
+                : "hsl(var(--muted-foreground))",
               whiteSpace: "nowrap",
               transition: "all 0.15s",
+              flexShrink: 0,
             }}
           >
             {s.label}
           </button>
         ))}
-      </div>
+      </nav>
 
       {/* Screen content */}
-      <div style={{ flex: 1, overflow: "hidden" }}>
-        <Component />
+      <div
+        style={{
+          flex: 1,
+          overflow: "hidden",
+          minHeight: 0,
+          display: "flex",
+          justifyContent: isMobile ? "center" : "stretch",
+          alignItems: "stretch",
+          background: isMobile ? "hsl(var(--muted))" : "hsl(var(--background))",
+        }}
+      >
+        {isMobile ? (
+          /* En desktop, centra el mockup móvil con ancho fijo */
+          <div
+            style={{
+              width: "100%",
+              maxWidth: 420,
+              height: "100%",
+              overflow: "hidden",
+              position: "relative",
+            }}
+          >
+            <Component />
+          </div>
+        ) : (
+          <div style={{ width: "100%", height: "100%", overflow: "hidden" }}>
+            <Component />
+          </div>
+        )}
       </div>
     </div>
   );

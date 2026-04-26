@@ -15,7 +15,7 @@ const SANS = "'Inter', 'DM Sans', sans-serif";
 export function BosqueProfundo() {
   return (
     <div
-      className="w-full h-screen overflow-hidden flex flex-col"
+      className="w-full h-full overflow-hidden flex flex-col"
       style={{
         background: "radial-gradient(120% 80% at 50% 0%, #0d3a2a 0%, #061d15 60%, #03100b 100%)",
         fontFamily: SANS,
