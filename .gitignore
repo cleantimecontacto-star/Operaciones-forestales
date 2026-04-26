@@ -47,3 +47,7 @@ Thumbs.db
 # Replit
 .cache/
 .local/
+
+# Convex
+convex/_generated/
+convex-deploy/
