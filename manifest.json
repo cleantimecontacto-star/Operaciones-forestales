@@ -3,8 +3,8 @@
   "short_name": "Operaciones",
   "start_url": ".",
   "display": "standalone",
-  "background_color": "#fdfaf3",
-  "theme_color": "#1f3d2a",
+  "background_color": "#f6faf7",
+  "theme_color": "#15803d",
   "description": "Sistema de cotizaciones para operaciones forestales",
   "icons": [
     {
