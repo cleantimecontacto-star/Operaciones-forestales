@@ -1,0 +1,79 @@
+<svg viewBox="0 0 200 200" xmlns="http://www.w3.org/2000/svg" width="200" height="200">
+  <defs>
+    <radialGradient id="ofSoil" cx="50%" cy="50%" r="55%">
+      <stop offset="0%" stop-color="#6b3a1a"/>
+      <stop offset="60%" stop-color="#4a2710"/>
+      <stop offset="100%" stop-color="#321806"/>
+    </radialGradient>
+    <linearGradient id="ofWood" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0%" stop-color="#a06236"/>
+      <stop offset="100%" stop-color="#5a2f15"/>
+    </linearGradient>
+    <radialGradient id="ofCanopy1" cx="35%" cy="35%" r="65%">
+      <stop offset="0%" stop-color="#8be37a"/>
+      <stop offset="60%" stop-color="#3fa055"/>
+      <stop offset="100%" stop-color="#1f6b30"/>
+    </radialGradient>
+    <radialGradient id="ofCanopy2" cx="35%" cy="35%" r="65%">
+      <stop offset="0%" stop-color="#a8e07f"/>
+      <stop offset="60%" stop-color="#5db054"/>
+      <stop offset="100%" stop-color="#2a7a36"/>
+    </radialGradient>
+    <radialGradient id="ofCanopy3" cx="35%" cy="35%" r="65%">
+      <stop offset="0%" stop-color="#bfe782"/>
+      <stop offset="60%" stop-color="#7fb84a"/>
+      <stop offset="100%" stop-color="#4a8a2a"/>
+    </radialGradient>
+  </defs>
+
+  <rect x="0" y="0" width="200" height="200" rx="32" fill="#f5f1e6"/>
+
+  <g transform="translate(100 100) scale(1.69)">
+    <circle cx="0" cy="0" r="58" fill="url(#ofWood)"/>
+    <circle cx="0" cy="0" r="50" fill="url(#ofSoil)"/>
+    <g stroke="#7a5a3a" stroke-width="0.4" opacity="0.35">
+      <line x1="-50" y1="-25" x2="50" y2="-25"/>
+      <line x1="-50" y1="-12" x2="50" y2="-12"/>
+      <line x1="-50" y1="0"   x2="50" y2="0"/>
+      <line x1="-50" y1="12"  x2="50" y2="12"/>
+      <line x1="-50" y1="25"  x2="50" y2="25"/>
+      <line x1="-25" y1="-50" x2="-25" y2="50"/>
+      <line x1="-12" y1="-50" x2="-12" y2="50"/>
+      <line x1="0"   y1="-50" x2="0"   y2="50"/>
+      <line x1="12"  y1="-50" x2="12"  y2="50"/>
+      <line x1="25"  y1="-50" x2="25"  y2="50"/>
+    </g>
+    <g fill="#3a1d0a">
+      <circle cx="0"   cy="-54" r="3.2"/>
+      <circle cx="27"  cy="-46.7" r="3.2"/>
+      <circle cx="46.7" cy="-27" r="3.2"/>
+      <circle cx="54"  cy="0" r="3.2"/>
+      <circle cx="46.7" cy="27" r="3.2"/>
+      <circle cx="27"  cy="46.7" r="3.2"/>
+      <circle cx="0"   cy="54" r="3.2"/>
+      <circle cx="-27" cy="46.7" r="3.2"/>
+      <circle cx="-46.7" cy="27" r="3.2"/>
+      <circle cx="-54" cy="0" r="3.2"/>
+      <circle cx="-46.7" cy="-27" r="3.2"/>
+      <circle cx="-27" cy="-46.7" r="3.2"/>
+    </g>
+    <circle cx="-14" cy="-12" r="20" fill="url(#ofCanopy1)"/>
+    <circle cx="16"  cy="-6"  r="22" fill="url(#ofCanopy2)"/>
+    <circle cx="-2"  cy="18"  r="18" fill="url(#ofCanopy1)"/>
+    <circle cx="22"  cy="20"  r="11" fill="url(#ofCanopy3)"/>
+    <circle cx="-22" cy="14"  r="10" fill="url(#ofCanopy3)"/>
+    <circle cx="-26" cy="-22" r="8"  fill="url(#ofCanopy2)"/>
+    <circle cx="26"  cy="-22" r="9"  fill="url(#ofCanopy3)"/>
+    <circle cx="6"   cy="-26" r="5" fill="#7fb84a"/>
+    <circle cx="-8"  cy="32"  r="5" fill="#5db054"/>
+    <circle cx="32"  cy="2"   r="5" fill="#7fb84a"/>
+    <circle cx="-32" cy="-2"  r="4" fill="#5db054"/>
+    <circle cx="10"  cy="-18" r="1.6" fill="#fff4a3"/>
+    <circle cx="-6"  cy="6"   r="1.6" fill="#ffb3d9"/>
+    <circle cx="20"  cy="10"  r="1.6" fill="#ffd27f"/>
+    <circle cx="-18" cy="22"  r="1.6" fill="#fff4a3"/>
+    <circle cx="-10" cy="-26" r="1.4" fill="#ffb3d9"/>
+    <ellipse cx="-20" cy="-20" rx="5" ry="3" fill="#ffffff" opacity="0.18"/>
+    <ellipse cx="10"  cy="-14" rx="6" ry="3.5" fill="#ffffff" opacity="0.18"/>
+  </g>
+</svg>
