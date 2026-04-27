@@ -1015,7 +1015,7 @@ function renderCotiz(){
   if(q)data=data.filter(c=>c.clienteNombre.toLowerCase().includes(q)||(c.proyecto||'').toLowerCase().includes(q));
   document.getElementById('cotiz-list').innerHTML=data.length?data.map(renderQCard).join(''):`<div class="empty"><div class="empty-icon">🌲</div><div style="font-size:14px">Sin cotizaciones</div></div>`;
 }
-function renderQCard(c){return`<div class="li" onclick="verCotiz(${c.id})"><div class="li-top"><div><div class="li-name">${c.proyecto||c.clienteNombre}</div><div class="li-sub">${c.clienteNombre} · ${c.numero}</div></div><span class="badge b-${c.status}">${statusLabel(c.status)}</span></div><div class="li-bot"><span class="li-tipo">${c.tipoLabel} · ${new Date(c.createdAt).toLocaleDateString('es-CL')}</span><span class="li-monto">${fmt(c.total)}</span></div></div>`;}
+function renderQCard(c){return`<div class="li" onclick="verCotiz(${c.id})"><div class="li-top"><div><div class="li-name">${c.proyecto||c.clienteNombre}</div><div class="li-sub">${c.clienteNombre} · ${c.numero}</div></div><span class="badge b-${c.status}">${statusLabel(c.status)}</span></div><div class="li-bot"><button onclick="event.stopPropagation();abrirPreview(${c.id})" style="background:none;border:none;cursor:pointer;padding:4px 6px;border-radius:6px;font-size:14px;color:#888" title="Ver cotización">👁️</button><span class="li-tipo">${c.tipoLabel} · ${new Date(c.createdAt).toLocaleDateString('es-CL')}</span><span class="li-monto">${fmt(c.total)}</span></div></div>`;}
 function verCotiz(id){
   const c=DB.cotizaciones.find(x=>x.id===id);if(!c)return;
   document.getElementById('mo-cotiz-body').innerHTML=`<div class="mt">${c.numero}</div><div style="margin-bottom:12px"><div style="font-weight:600;font-size:15px;color:var(--v1)">${c.clienteNombre}</div><div style="font-size:12px;color:var(--muted)">${c.proyecto||''}</div><div style="font-size:12px;color:var(--muted)">${c.rut||''} ${c.tel?'· '+c.tel:''}</div><div style="font-size:12px;color:var(--muted)">📍 ${c.ubicacion||'Sin ubicación'}</div></div><div class="div"></div><div style="display:flex;gap:6px;flex-wrap:wrap;margin-bottom:11px"><span class="tag">${c.tipoLabel}</span><span class="tag">Validez: ${c.validez} días</span><span class="tag">${new Date(c.createdAt).toLocaleDateString('es-CL')}</span></div><div class="cr"><span style="color:var(--muted)">Costo directo</span><span>${fmt(c.costoBase)}</span></div><div class="cr"><span style="color:var(--muted)">Gastos generales</span><span>${fmt(c.gg)}</span></div><div class="cr"><span style="color:var(--muted)">Margen utilidad</span><span>${fmt(c.mg)}</span></div><div class="cr"><span style="color:var(--muted)">IVA 19%</span><span>${fmt(c.iva)}</span></div><div class="tbox" style="margin-top:10px"><div class="tl">Total con IVA</div><div class="tv">${fmt(c.total)}</div></div>${c.notas?`<div style="margin-top:10px;padding:10px;background:var(--c4);border-radius:9px;font-size:12px">📝 ${c.notas}</div>`:''}<div class="fg" style="margin-top:13px"><label class="fl">Cambiar estado</label><select class="fs" onchange="cambiarStatus(${c.id},this.value)"><option value="borrador" ${c.status==='borrador'?'selected':''}>Borrador</option><option value="enviada" ${c.status==='enviada'?'selected':''}>Enviada</option><option value="aprobada" ${c.status==='aprobada'?'selected':''}>Aprobada</option><option value="rechazada" ${c.status==='rechazada'?'selected':''}>Rechazada</option></select></div><div style="display:flex;flex-direction:column;gap:8px;margin-top:4px"><button class="btn bp" onclick="generarPDFCotiz(${c.id})">📄 Descargar PDF</button><button class="btn bg" onclick="whatsappCotiz(${c.id})">📱 Enviar WhatsApp</button><button class="btn bd bsm" onclick="eliminarCotiz(${c.id})">🗑 Eliminar</button><button class="btn bs" onclick="cerrarMo('mo-cotiz')">Cerrar</button></div>`;
@@ -1964,6 +1964,69 @@ function instalarApp(){
 }
 // Ejecutar al cargar
 window.addEventListener('load', checkInstallable);
+</script>
+
+<!-- MODAL PREVIEW COTIZACIÓN -->
+<div id="preview-modal" class="fixed inset-0 z-[999] hidden bg-black/60 flex items-center justify-center p-4" onclick="if(event.target===this) cerrarPreview()">
+  <div class="bg-white dark:bg-gray-800 rounded-2xl shadow-2xl w-full max-w-lg max-h-[90vh] overflow-y-auto">
+    <div class="flex items-center justify-between p-5 border-b border-gray-200 dark:border-gray-700">
+      <h2 id="preview-titulo" class="text-base font-semibold text-gray-900 dark:text-white"></h2>
+      <button onclick="cerrarPreview()" class="text-gray-400 hover:text-gray-600 dark:hover:text-gray-300 text-lg leading-none">✕</button>
+    </div>
+    <div id="preview-cuerpo" class="p-5 space-y-4 text-sm text-gray-700 dark:text-gray-300"></div>
+    <div class="flex gap-2 justify-end p-5 border-t border-gray-200 dark:border-gray-700">
+      <button id="preview-btn-pdf" class="px-4 py-2 bg-green-700 hover:bg-green-800 text-white rounded-lg text-sm font-medium">⬇️ PDF</button>
+      <button onclick="cerrarPreview()" class="px-4 py-2 border border-gray-300 dark:border-gray-600 rounded-lg text-sm text-gray-600 dark:text-gray-300 hover:bg-gray-50 dark:hover:bg-gray-700">Cerrar</button>
+    </div>
+  </div>
+</div>
+<script>
+function abrirPreview(cotId) {
+  var cot = DB.cotizaciones.find(function(c){ return c.id === cotId; });
+  if (!cot) return;
+  var statusBg = {aprobada:'#dcfce7',enviada:'#dbeafe',rechazada:'#fee2e2',borrador:'#f1f5f9'};
+  var statusFg = {aprobada:'#166534',enviada:'#1e40af',rechazada:'#991b1b',borrador:'#475569'};
+  document.getElementById('preview-titulo').innerHTML =
+    'Cotización ' + cot.numero +
+    ' <span style="font-size:11px;padding:2px 8px;border-radius:9999px;margin-left:8px;background:'+(statusBg[cot.status]||'#f1f5f9')+';color:'+(statusFg[cot.status]||'#475569')+'">' + (statusLabel(cot.status)||cot.status) + '</span>';
+  document.getElementById('preview-cuerpo').innerHTML = construirCuerpoPreview(cot);
+  document.getElementById('preview-btn-pdf').onclick = function(){ generarPDFCotiz(cotId); };
+  document.getElementById('preview-modal').classList.remove('hidden');
+  document.body.style.overflow = 'hidden';
+}
+function cerrarPreview() {
+  document.getElementById('preview-modal').classList.add('hidden');
+  document.body.style.overflow = '';
+}
+function construirCuerpoPreview(cot) {
+  var html = '';
+  if (cot.createdAt) html += '<div style="display:flex;justify-content:space-between"><span style="color:#888">Fecha</span><span>' + new Date(cot.createdAt).toLocaleDateString('es-CL') + '</span></div>';
+  if (cot.validez) html += '<div style="display:flex;justify-content:space-between"><span style="color:#888">Validez</span><span>' + cot.validez + ' días</span></div>';
+  html += '<div style="background:#f8fafc;border-radius:10px;padding:12px;margin-top:4px">';
+  if (cot.clienteNombre) html += '<p style="font-weight:600;font-size:14px">' + cot.clienteNombre + '</p>';
+  if (cot.proyecto) html += '<p style="color:#888;font-size:12px">📁 ' + cot.proyecto + '</p>';
+  if (cot.rut) html += '<p style="color:#888;font-size:12px">RUT: ' + cot.rut + '</p>';
+  if (cot.tel) html += '<p style="color:#888;font-size:12px">Tel: ' + cot.tel + '</p>';
+  if (cot.email) html += '<p style="color:#888;font-size:12px">' + cot.email + '</p>';
+  if (cot.ubicacion) html += '<p style="color:#888;font-size:12px">📍 ' + cot.ubicacion + '</p>';
+  html += '</div>';
+  if (cot.tipoLabel) html += '<div style="display:flex;justify-content:space-between"><span style="color:#888">Tipo</span><span>' + cot.tipoLabel + '</span></div>';
+  if (cot.matRows && cot.matRows.length) {
+    html += '<div style="border:1px solid #e2e8f0;border-radius:10px;overflow:hidden"><table style="width:100%;border-collapse:collapse;font-size:12px"><thead><tr style="background:#f1f5f9;color:#888"><th style="text-align:left;padding:7px 10px">Descripción</th><th style="text-align:center;padding:7px 6px">Cant.</th><th style="text-align:right;padding:7px 10px">Subtotal</th></tr></thead><tbody>';
+    cot.matRows.forEach(function(r){ html += '<tr style="border-top:1px solid #e2e8f0"><td style="padding:6px 10px">' + r.desc + '</td><td style="padding:6px 6px;text-align:center;color:#888">' + r.qty + ' ' + (r.unit||'') + '</td><td style="padding:6px 10px;text-align:right">' + fmt(r.total) + '</td></tr>'; });
+    html += '</tbody></table></div>';
+  }
+  html += '<div style="border-top:1px solid #e2e8f0;padding-top:12px">';
+  if (cot.costoBase !== undefined) html += '<div style="display:flex;justify-content:space-between;color:#888"><span>Costo directo</span><span>' + fmt(cot.costoBase) + '</span></div>';
+  if (cot.gg !== undefined && cot.gg > 0) html += '<div style="display:flex;justify-content:space-between;color:#888"><span>Gastos generales</span><span>' + fmt(cot.gg) + '</span></div>';
+  if (cot.mg !== undefined && cot.mg > 0) html += '<div style="display:flex;justify-content:space-between;color:#888"><span>Margen utilidad</span><span>' + fmt(cot.mg) + '</span></div>';
+  if (cot.subtotal !== undefined) html += '<div style="display:flex;justify-content:space-between;color:#888"><span>Subtotal</span><span>' + fmt(cot.subtotal) + '</span></div>';
+  if (cot.iva !== undefined) html += '<div style="display:flex;justify-content:space-between;color:#888"><span>IVA 19%</span><span>' + fmt(cot.iva) + '</span></div>';
+  if (cot.total !== undefined) html += '<div style="display:flex;justify-content:space-between;font-weight:700;font-size:15px;margin-top:5px"><span>Total</span><span>' + fmt(cot.total) + '</span></div>';
+  html += '</div>';
+  if (cot.notas) html += '<p style="font-size:12px;color:#888;border-top:1px solid #e2e8f0;padding-top:10px">📝 ' + cot.notas + '</p>';
+  return html;
+}
 </script>
 </body>
 </html>
