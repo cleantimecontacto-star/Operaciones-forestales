@@ -1,8 +1,9 @@
 {
   "name": "Operaciones Forestales",
   "short_name": "Operaciones",
-  "start_url": "/",
-  "scope": "/",
+  "id": "/Operaciones-forestales/",
+  "start_url": "/Operaciones-forestales/",
+  "scope": "/Operaciones-forestales/",
   "display": "standalone",
   "background_color": "#f6faf7",
   "theme_color": "#15803d",
