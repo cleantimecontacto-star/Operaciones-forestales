@@ -2010,30 +2010,48 @@ function generarPDFCotiz(id){
 
 
 if('serviceWorker' in navigator){
+  function showUpdateBanner(waiting){
+    if(!waiting || document.getElementById('update-banner')) return;
+    var b = document.createElement('div');
+    b.id = 'update-banner';
+    b.setAttribute('role','status');
+    b.setAttribute('aria-live','polite');
+    b.style.cssText = 'position:fixed;left:50%;bottom:90px;transform:translateX(-50%);z-index:9999;background:#0a2818;color:#fff;border:1px solid #1f5132;border-radius:14px;padding:12px 14px;display:flex;align-items:center;gap:10px;box-shadow:0 10px 30px rgba(0,0,0,.35);font-family:-apple-system,BlinkMacSystemFont,Segoe UI,sans-serif;font-size:13px;width:92%;max-width:420px';
+    b.innerHTML =
+      '<div style="display:flex;flex-direction:column;flex:1;line-height:1.3;min-width:0">'
+      + '<span style="font-weight:600">✨ Nueva versión disponible</span>'
+      + '<span style="font-size:11px;color:#9ec5ad">Actualizá para cargar la última versión.</span>'
+      + '</div>'
+      + '<button id="update-btn" style="background:#15803d;color:#fff;border:none;border-radius:8px;padding:8px 14px;font-weight:600;font-size:12px;cursor:pointer;white-space:nowrap">Actualizar</button>'
+      + '<button id="update-dismiss" aria-label="Cerrar" style="background:transparent;color:#9ec5ad;border:none;font-size:18px;cursor:pointer;padding:4px 6px;line-height:1">✕</button>';
+    document.body.appendChild(b);
+    document.getElementById('update-btn').onclick = function(){
+      try{ waiting.postMessage({type:'SKIP_WAITING'}); }catch(e){}
+    };
+    document.getElementById('update-dismiss').onclick = function(){ b.remove(); };
+  }
+
   navigator.serviceWorker.register('./sw.js',{updateViaCache:'none'}).then(function(reg){
     // Buscar actualizaciones cada vez que se abre la app
     try{ reg.update(); }catch(e){}
-    if(reg.waiting){ try{ reg.waiting.postMessage({type:'SKIP_WAITING'}); }catch(e){} }
+    if(reg.waiting && navigator.serviceWorker.controller){
+      showUpdateBanner(reg.waiting);
+    }
     reg.addEventListener('updatefound', function(){
       var nw = reg.installing;
       if(nw){ nw.addEventListener('statechange', function(){
         if(nw.state==='installed' && navigator.serviceWorker.controller){
-          try{ nw.postMessage({type:'SKIP_WAITING'}); }catch(e){}
+          showUpdateBanner(reg.waiting || nw);
         }
       });}
     });
   }).catch(function(){});
-  // Cuando el SW nuevo activa, recargar la página automáticamente (1 sola vez)
+
+  // Cuando el SW nuevo se activa (tras tocar "Actualizar"), recargar 1 sola vez
   var _reloaded=false;
   navigator.serviceWorker.addEventListener('controllerchange', function(){
     if(_reloaded) return; _reloaded=true;
     window.location.reload();
-  });
-  navigator.serviceWorker.addEventListener('message', function(e){
-    if(e.data && e.data.type==='SW_UPDATED'){
-      if(_reloaded) return; _reloaded=true;
-      window.location.reload();
-    }
   });
 }
 
