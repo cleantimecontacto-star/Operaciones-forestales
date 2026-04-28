@@ -1,5 +1,5 @@
 // Service Worker — Operaciones Forestales
-const CACHE = 'operaciones-forestales-v5';
+const CACHE = 'operaciones-forestales-v6';
 const ASSETS = ['./', './index.html', './manifest.json'];
 
 self.addEventListener('install', e => {

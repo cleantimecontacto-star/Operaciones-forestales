@@ -398,7 +398,7 @@ body{font-family:'Inter',ui-sans-serif,system-ui,-apple-system,Segoe UI,Roboto,s
   if(location.search.includes('reset=1')){
     localStorage.removeItem('gq_users');
     history.replaceState(null,'',location.pathname);
-    alert('✅ Credenciales reseteadas. Usuario: Admin | Contraseña: 1981');
+    alert('✅ Credenciales reseteadas a los valores por defecto.\n\nRevisa la documentación interna de tu equipo para los datos de acceso.');
   }
 })();
 </script>
@@ -987,7 +987,9 @@ function calcFinal(){
 }
 
 function guardar(){
-  const num='OF-'+String(cotizNum++).padStart(4,'0');
+  const n=nextCotizNum();
+  const num='OF-'+String(n).padStart(4,'0');
+  cotizNum=n+1;
   const c={id:Date.now(),numero:num,spData:currentTipo==='mixto'||currentTipo==='plantacion'?{...selectedSps}:null,svcData:currentTipo==='mixto'?{...selectedSvcs}:null,clienteNombre:document.getElementById('n-nombre').value,proyecto:document.getElementById('n-proyecto').value,rut:document.getElementById('n-rut').value,tel:document.getElementById('n-tel').value,email:document.getElementById('n-email').value,ubicacion:document.getElementById('n-ubic').value,notas:document.getElementById('n-notas').value,tipo:currentTipo,tipoLabel:tipoLabel(currentTipo),costoBase:_calc.costoBase||0,gg:_calc.gg||0,mg:_calc.mg||0,subtotal:_calc.subneto||0,iva:_calc.iva||0,total:_calc.total||0,status:'borrador',validez:document.getElementById('n-validez').value,createdAt:new Date().toISOString(),fotos:[...photoList],matRows:[..._matRows]};
   DB.cotizaciones.push(c);
   saveDB();
@@ -996,7 +998,7 @@ function guardar(){
 }
 
 function whatsappNueva(){
-  const nombre=document.getElementById('n-nombre').value||'Cliente',tel=(document.getElementById('n-tel').value||'').replace(/\D/g,''),num='OF-'+String(cotizNum).padStart(4,'0'),total=document.getElementById('tot-final').textContent,validez=document.getElementById('n-validez').value;
+  const nombre=document.getElementById('n-nombre').value||'Cliente',tel=(document.getElementById('n-tel').value||'').replace(/\D/g,''),num='OF-'+String(nextCotizNum()).padStart(4,'0'),total=document.getElementById('tot-final').textContent,validez=document.getElementById('n-validez').value;
   const msg=(DB.empresa.wa||'Cotización {total}').replace('{cliente}',nombre).replace('{numero}',num).replace('{tipo}',tipoLabel(currentTipo)).replace('{total}',total).replace('{validez}',validez+' días').replace('{empresa}',DB.empresa.nombre||'Operaciones Forestales');
   window.open('https://api.whatsapp.com/send?phone='+(tel||'56912345678')+'&text='+encodeURIComponent(msg),'_blank');
 }
@@ -1021,8 +1023,13 @@ function verCotiz(id){
   document.getElementById('mo-cotiz-body').innerHTML=`<div class="mt">${c.numero}</div><div style="margin-bottom:12px"><div style="font-weight:600;font-size:15px;color:var(--v1)">${c.clienteNombre}</div><div style="font-size:12px;color:var(--muted)">${c.proyecto||''}</div><div style="font-size:12px;color:var(--muted)">${c.rut||''} ${c.tel?'· '+c.tel:''}</div><div style="font-size:12px;color:var(--muted)">📍 ${c.ubicacion||'Sin ubicación'}</div></div><div class="div"></div><div style="display:flex;gap:6px;flex-wrap:wrap;margin-bottom:11px"><span class="tag">${c.tipoLabel}</span><span class="tag">Validez: ${c.validez} días</span><span class="tag">${new Date(c.createdAt).toLocaleDateString('es-CL')}</span></div><div class="cr"><span style="color:var(--muted)">Costo directo</span><span>${fmt(c.costoBase)}</span></div><div class="cr"><span style="color:var(--muted)">Gastos generales</span><span>${fmt(c.gg)}</span></div><div class="cr"><span style="color:var(--muted)">Margen utilidad</span><span>${fmt(c.mg)}</span></div><div class="cr"><span style="color:var(--muted)">IVA 19%</span><span>${fmt(c.iva)}</span></div><div class="tbox" style="margin-top:10px"><div class="tl">Total con IVA</div><div class="tv">${fmt(c.total)}</div></div>${c.notas?`<div style="margin-top:10px;padding:10px;background:var(--c4);border-radius:9px;font-size:12px">📝 ${c.notas}</div>`:''}<div class="fg" style="margin-top:13px"><label class="fl">Cambiar estado</label><select class="fs" onchange="cambiarStatus(${c.id},this.value)"><option value="borrador" ${c.status==='borrador'?'selected':''}>Borrador</option><option value="enviada" ${c.status==='enviada'?'selected':''}>Enviada</option><option value="aprobada" ${c.status==='aprobada'?'selected':''}>Aprobada</option><option value="rechazada" ${c.status==='rechazada'?'selected':''}>Rechazada</option></select></div><div style="display:flex;flex-direction:column;gap:8px;margin-top:4px"><button class="btn bp" onclick="generarPDFCotiz(${c.id})">📄 Descargar PDF</button><button class="btn bg" onclick="whatsappCotiz(${c.id})">📱 Enviar WhatsApp</button><button class="btn bd bsm" onclick="eliminarCotiz(${c.id})">🗑 Eliminar</button><button class="btn bs" onclick="cerrarMo('mo-cotiz')">Cerrar</button></div>`;
   document.getElementById('mo-cotiz').classList.add('open');
 }
-function cambiarStatus(id,st){const c=DB.cotizaciones.find(x=>x.id===id);if(c){c.status=st;cerrarMo('mo-cotiz');renderCotiz();toast('Estado actualizado: '+statusLabel(st),'ok');}}
-function eliminarCotiz(id){DB.cotizaciones=DB.cotizaciones.filter(c=>c.id!==id);saveDB();cerrarMo('mo-cotiz');renderCotiz();renderDash();toast('Cotización eliminada','ok');}
+function cambiarStatus(id,st){const c=DB.cotizaciones.find(x=>x.id===id);if(c){c.status=st;saveDB();cerrarMo('mo-cotiz');renderCotiz();renderDash();toast('Estado actualizado: '+statusLabel(st),'ok');}}
+function eliminarCotiz(id){
+  const c=DB.cotizaciones.find(x=>x.id===id);
+  const nom=c?(' "'+(c.numero||'')+' — '+(c.clienteNombre||'')+'"'):'';
+  if(!confirm('¿Eliminar la cotización'+nom+'?\n\nEsta acción no se puede deshacer.'))return;
+  DB.cotizaciones=DB.cotizaciones.filter(c=>c.id!==id);saveDB();cerrarMo('mo-cotiz');renderCotiz();renderDash();toast('Cotización eliminada','ok');
+}
 
 function renderClientes(){
   const q=(document.getElementById('cli-search')?.value||'').toLowerCase();
@@ -1035,7 +1042,9 @@ function saveCliente(){
   const n=document.getElementById('mc-nombre').value.trim();if(!n){toast('Ingresa el nombre','err');return;}
   const obj={nombre:n,rut:document.getElementById('mc-rut').value,tel:document.getElementById('mc-tel').value,email:document.getElementById('mc-email').value,dir:document.getElementById('mc-dir').value,notas:document.getElementById('mc-notas').value};
   if(editCliId){const c=DB.clientes.find(x=>x.id===editCliId);Object.assign(c,obj);}else{obj.id=Date.now();DB.clientes.push(obj);}
+  saveDB();
   cerrarMo('mo-cliente');renderClientes();
+  toast(editCliId?'Cliente actualizado':'Cliente agregado','ok');
 }
 
 function showTab(t){
@@ -1073,7 +1082,7 @@ function renderEspecies(){
   document.getElementById('esp-list').innerHTML=data.map(e=>`<div class="spi" style="cursor:default"><div style="flex:1"><div class="sp-name">${e.nombre}</div><div class="sp-sci">${e.sci}</div><span class="tag">${e.cat}</span></div><div style="display:flex;flex-direction:column;align-items:flex-end;gap:5px"><span class="sp-price">${fmt(e.precio)}</span><div style="display:flex;gap:5px"><button class="btn bs bsm" style="padding:4px 8px;font-size:11px" onclick="abrirEspecie(${e.id})">✏️</button><button class="btn bd bsm" style="padding:4px 8px;font-size:11px" onclick="elimEspecie(${e.id})">🗑</button></div></div></div>`).join('');
 }
 function abrirEspecie(id=null){editEspId=id;if(id){const e=DB.especies.find(x=>x.id===id);document.getElementById('me-nombre').value=e.nombre;document.getElementById('me-sci').value=e.sci;document.getElementById('me-precio').value=e.precio;document.getElementById('me-cat').value=e.cat;document.getElementById('me-desc').value=e.desc||'';document.getElementById('mo-esp-title').textContent='Editar Especie';}else{['me-nombre','me-sci','me-precio','me-desc'].forEach(i=>document.getElementById(i).value='');document.getElementById('mo-esp-title').textContent='Nueva Especie';}document.getElementById('mo-especie').classList.add('open');}
-function saveEspecie(){const n=document.getElementById('me-nombre').value.trim(),p=parseInt(document.getElementById('me-precio').value);if(!n||!p){toast('Completa nombre y precio','err');return;}const obj={nombre:n,sci:document.getElementById('me-sci').value,precio:p,cat:document.getElementById('me-cat').value,desc:document.getElementById('me-desc').value};if(editEspId){Object.assign(DB.especies.find(x=>x.id===editEspId),obj);}else{obj.id=Date.now();DB.especies.push(obj);}cerrarMo('mo-especie');renderEspecies();}
+function saveEspecie(){const n=document.getElementById('me-nombre').value.trim(),p=parseInt(document.getElementById('me-precio').value);if(!n||!p){toast('Completa nombre y precio','err');return;}const obj={nombre:n,sci:document.getElementById('me-sci').value,precio:p,cat:document.getElementById('me-cat').value,desc:document.getElementById('me-desc').value};if(editEspId){Object.assign(DB.especies.find(x=>x.id===editEspId),obj);}else{obj.id=Date.now();DB.especies.push(obj);}saveDB();cerrarMo('mo-especie');renderEspecies();toast(editEspId?'Especie actualizada':'Especie agregada','ok');}
 function elimEspecie(id){if(!confirm('¿Eliminar esta especie?'))return;DB.especies=DB.especies.filter(x=>x.id!==id);saveDB();renderEspecies();toast('Especie eliminada','ok');}
 
 function renderServicios(){
@@ -1081,7 +1090,7 @@ function renderServicios(){
   document.getElementById('svc-list').innerHTML=DB.servicios.map(s=>`<div class="spi" style="cursor:default"><div style="flex:1"><div class="sp-name">${s.nombre}</div><span class="tag">${s.cat}</span><span class="tag">${s.unidad}</span></div><div style="display:flex;flex-direction:column;align-items:flex-end;gap:5px"><span class="sp-price">${fmt(s.precio)}</span><div style="display:flex;gap:5px"><button class="btn bs bsm" style="padding:4px 8px;font-size:11px" onclick="abrirServicio(${s.id})">✏️</button><button class="btn bd bsm" style="padding:4px 8px;font-size:11px" onclick="elimServicio(${s.id})">🗑</button></div></div></div>`).join('');
 }
 function abrirServicio(id=null){editSvcId=id;if(id){const s=DB.servicios.find(x=>x.id===id);document.getElementById('ms-nombre').value=s.nombre;document.getElementById('ms-cat').value=s.cat;document.getElementById('ms-unidad').value=s.unidad;document.getElementById('ms-precio').value=s.precio;document.getElementById('mo-svc-title').textContent='Editar Servicio';}else{['ms-nombre','ms-unidad','ms-precio'].forEach(i=>document.getElementById(i).value='');document.getElementById('mo-svc-title').textContent='Nuevo Servicio';}document.getElementById('mo-servicio').classList.add('open');}
-function saveServicio(){const n=document.getElementById('ms-nombre').value.trim(),p=parseInt(document.getElementById('ms-precio').value);if(!n||!p){toast('Completa los campos','err');return;}const obj={nombre:n,cat:document.getElementById('ms-cat').value,unidad:document.getElementById('ms-unidad').value||'ud',precio:p};if(editSvcId){Object.assign(DB.servicios.find(x=>x.id===editSvcId),obj);}else{obj.id=Date.now();DB.servicios.push(obj);}cerrarMo('mo-servicio');renderServicios();}
+function saveServicio(){const n=document.getElementById('ms-nombre').value.trim(),p=parseInt(document.getElementById('ms-precio').value);if(!n||!p){toast('Completa los campos','err');return;}const obj={nombre:n,cat:document.getElementById('ms-cat').value,unidad:document.getElementById('ms-unidad').value||'ud',precio:p};if(editSvcId){Object.assign(DB.servicios.find(x=>x.id===editSvcId),obj);}else{obj.id=Date.now();DB.servicios.push(obj);}saveDB();cerrarMo('mo-servicio');renderServicios();toast(editSvcId?'Servicio actualizado':'Servicio agregado','ok');}
 function elimServicio(id){if(!confirm('¿Eliminar este servicio?'))return;DB.servicios=DB.servicios.filter(x=>x.id!==id);saveDB();renderServicios();toast('Servicio eliminado','ok');}
 
 function renderRiegoComps(){
@@ -1089,25 +1098,30 @@ function renderRiegoComps(){
   document.getElementById('ri-list').innerHTML=DB.riegoComps.map(r=>`<div class="spi" style="cursor:default"><div style="flex:1"><div class="sp-name">${r.nombre}</div><span class="tag">${r.cat}</span><span class="tag">${r.unidad}</span></div><div style="display:flex;flex-direction:column;align-items:flex-end;gap:5px"><span class="sp-price">${fmt(r.precio)}</span><div style="display:flex;gap:5px"><button class="btn bs bsm" style="padding:4px 8px;font-size:11px" onclick="abrirRiegoComp(${r.id})">✏️</button><button class="btn bd bsm" style="padding:4px 8px;font-size:11px" onclick="elimRiegoComp(${r.id})">🗑</button></div></div></div>`).join('');
 }
 function abrirRiegoComp(id=null){editRiId=id;if(id){const r=DB.riegoComps.find(x=>x.id===id);document.getElementById('mr-nombre').value=r.nombre;document.getElementById('mr-unidad').value=r.unidad;document.getElementById('mr-precio').value=r.precio;document.getElementById('mr-cat').value=r.cat;document.getElementById('mo-ri-title').textContent='Editar Componente';}else{['mr-nombre','mr-unidad','mr-precio','mr-cat'].forEach(i=>document.getElementById(i).value='');document.getElementById('mo-ri-title').textContent='Nuevo Componente';}document.getElementById('mo-riego').classList.add('open');}
-function saveRiegoComp(){const n=document.getElementById('mr-nombre').value.trim(),p=parseInt(document.getElementById('mr-precio').value);if(!n||!p){toast('Completa los campos','err');return;}const obj={nombre:n,unidad:document.getElementById('mr-unidad').value||'ud',precio:p,cat:document.getElementById('mr-cat').value||'otro'};if(editRiId){Object.assign(DB.riegoComps.find(x=>x.id===editRiId),obj);}else{obj.id=Date.now();DB.riegoComps.push(obj);}cerrarMo('mo-riego');renderRiegoComps();}
+function saveRiegoComp(){const n=document.getElementById('mr-nombre').value.trim(),p=parseInt(document.getElementById('mr-precio').value);if(!n||!p){toast('Completa los campos','err');return;}const obj={nombre:n,unidad:document.getElementById('mr-unidad').value||'ud',precio:p,cat:document.getElementById('mr-cat').value||'otro'};if(editRiId){Object.assign(DB.riegoComps.find(x=>x.id===editRiId),obj);}else{obj.id=Date.now();DB.riegoComps.push(obj);}saveDB();cerrarMo('mo-riego');renderRiegoComps();toast(editRiId?'Componente actualizado':'Componente agregado','ok');}
 function elimRiegoComp(id){if(!confirm('¿Eliminar este componente?'))return;DB.riegoComps=DB.riegoComps.filter(x=>x.id!==id);saveDB();renderRiegoComps();toast('Componente eliminado','ok');}
 
+function csvEsc(v){
+  if(v===null||v===undefined)return'""';
+  const s=String(v).replace(/"/g,'""');
+  return'"'+s+'"';
+}
 function exportCSV(tipo){
   let csv='',fn='';
   if(tipo==='financiero'){
     csv='Número,Cliente,Proyecto,Tipo,Estado,Fecha,Costo Dir.,GG,Margen,Subtotal,IVA,Total\n';
-    DB.cotizaciones.forEach(c=>{csv+=`"${c.numero}","${c.clienteNombre}","${c.proyecto}","${c.tipoLabel}","${statusLabel(c.status)}","${new Date(c.createdAt).toLocaleDateString('es-CL')}",${c.costoBase},${c.gg},${c.mg},${c.subtotal},${c.iva},${c.total}\n`;});
+    DB.cotizaciones.forEach(c=>{csv+=[csvEsc(c.numero),csvEsc(c.clienteNombre),csvEsc(c.proyecto),csvEsc(c.tipoLabel),csvEsc(statusLabel(c.status)),csvEsc(new Date(c.createdAt).toLocaleDateString('es-CL')),c.costoBase,c.gg,c.mg,c.subtotal,c.iva,c.total].join(',')+'\n';});
     fn='reporte-financiero.csv';
   }else{
     csv='Cotización,Cliente,Item,Cantidad,Unidad,Costo Unit.,Total\n';
-    DB.cotizaciones.forEach(c=>{(c.matRows||[]).forEach(r=>{csv+=`"${c.numero}","${c.clienteNombre}","${r.desc}",${r.qty},"${r.unit}",${r.costo},${r.total}\n`;});});
+    DB.cotizaciones.forEach(c=>{(c.matRows||[]).forEach(r=>{csv+=[csvEsc(c.numero),csvEsc(c.clienteNombre),csvEsc(r.desc),r.qty,csvEsc(r.unit),r.costo,r.total].join(',')+'\n';});});
     fn='lista-materiales.csv';
   }
   dlCSV(csv,fn);
 }
 function exportCSVCotiz(){
   const cfg=DB.cfg;let csv='Item,Cantidad,Unidad,Costo Unit.,Total Costo,Total Venta\n';
-  _matRows.forEach(r=>{const v=r.total*(1+cfg.mg/100+cfg.gg/100);csv+=`"${r.desc}",${r.qty},"${r.unit}",${r.costo},${r.total},${Math.round(v)}\n`;});
+  _matRows.forEach(r=>{const v=r.total*(1+cfg.mg/100+cfg.gg/100);csv+=[csvEsc(r.desc),r.qty,csvEsc(r.unit),r.costo,r.total,Math.round(v)].join(',')+'\n';});
   dlCSV(csv,'materiales-cotizacion.csv');
 }
 function dlCSV(csv,fn){const a=document.createElement('a');a.href='data:text/csv;charset=utf-8,\uFEFF'+encodeURIComponent(csv);a.download=fn;a.click();}
@@ -1115,21 +1129,39 @@ function dlCSV(csv,fn){const a=document.createElement('a');a.href='data:text/csv
 function addPhoto(){
   const emojis=['🌲','🌿','🏔️','🌱','🌾','🍃','🌳','🌊'];
   const e=emojis[Math.floor(Math.random()*emojis.length)];
-  photoList.push(e);
+  const item={id:Date.now()+Math.random(),emoji:e};
+  photoList.push(item);
   const container=document.getElementById('ph-cont');
   const d=document.createElement('div');d.className='ph-thumb';d.textContent=e;
   const del=document.createElement('button');del.className='ph-del';del.textContent='×';
-  del.onclick=(ev)=>{ev.stopPropagation();const i=photoList.indexOf(e);if(i>-1)photoList.splice(i,1);d.remove();};
+  del.onclick=(ev)=>{ev.stopPropagation();const i=photoList.findIndex(x=>x.id===item.id);if(i>-1)photoList.splice(i,1);d.remove();};
   d.appendChild(del);container.insertBefore(d,container.lastElementChild);
 }
 
 function fmt(n){return'$'+Math.round(n||0).toLocaleString('es-CL');}
 function fmtK(n){if(n>=1000000)return'$'+(n/1000000).toFixed(1)+'M';if(n>=1000)return'$'+(n/1000).toFixed(0)+'K';return fmt(n);}
 function tipoLabel(t){return{plantacion:'Plantación',cerramiento:'Cerramiento',reforestacion:'Reforestación',riego:'Sistema de Riego',mixto:'Servicios Mixtos'}[t]||t||'';}
+function nextCotizNum(){
+  // Calcula el siguiente número siempre desde los datos guardados,
+  // evitando duplicados cuando otra pestaña/equipo agrega cotizaciones.
+  let max=0;
+  (DB.cotizaciones||[]).forEach(c=>{
+    const n=parseInt(String(c.numero||'').replace(/\D/g,''))||0;
+    if(n>max)max=n;
+  });
+  if(typeof cotizNum==='number'&&cotizNum-1>max)max=cotizNum-1;
+  return max+1;
+}
 function statusLabel(s){return{borrador:'Borrador',enviada:'Enviada',aprobada:'Aprobada',rechazada:'Rechazada'}[s]||s||'';}
 function cerrarMo(id){document.getElementById(id).classList.remove('open');}
 
 document.querySelectorAll('.mo').forEach(el=>{el.addEventListener('click',function(e){if(e.target===el)el.classList.remove('open');});});
+// Cerrar modales con tecla Escape
+document.addEventListener('keydown',function(e){
+  if(e.key!=='Escape')return;
+  const opened=document.querySelectorAll('.mo.open');
+  if(opened.length){opened[opened.length-1].classList.remove('open');}
+});
 
 // ── CLOUD SYNC (Convex backend) ──────────────────────────────────────────────
 const CONVEX_URL = 'https://polite-ocelot-652.eu-west-1.convex.cloud';
@@ -1489,12 +1521,17 @@ function saveStock(){
   };
   if(editStkId){Object.assign(DB.stock.find(x=>x.id===editStkId),obj);}
   else{obj.id=Date.now();DB.stock.push(obj);}
+  saveDB();
   cerrarMo('mo-stock');renderStock();
   toast(editStkId?'Insumo actualizado':'Insumo agregado','ok');
 }
 
 function elimStock(id){
+  const it=DB.stock.find(x=>x.id===id);
+  const nom=it?(' "'+it.nombre+'"'):'';
+  if(!confirm('¿Eliminar el insumo'+nom+'?'))return;
   DB.stock=DB.stock.filter(x=>x.id!==id);
+  saveDB();
   renderStock();toast('Insumo eliminado','ok');
 }
 
@@ -1666,7 +1703,7 @@ function saveLogoFromFile(input){
   reader.onload=e=>{localStorage.setItem('op_logo',e.target.result);initLogo();toast('Logo actualizado','ok');};
   reader.readAsDataURL(file);
 }
-function deleteLogo(){localStorage.removeItem('op_logo');initLogo();toast('Logo restablecido','ok');}
+function deleteLogo(){if(!confirm('¿Restablecer el logo al valor por defecto?'))return;localStorage.removeItem('op_logo');initLogo();toast('Logo restablecido','ok');}
 
 setTimeout(initLogo,50);
 
@@ -1688,7 +1725,7 @@ function generarPDF(){
   const nombre=document.getElementById('n-nombre')?.value||'Cliente';
   const proyecto=document.getElementById('n-proyecto')?.value||'';
   const empresa=DB.empresa.nombre||'Operaciones';
-  const numStr='OF-'+String(cotizNum).padStart(4,'0');
+  const numStr='OF-'+String(nextCotizNum()).padStart(4,'0');
   const dateStr=new Date().toLocaleDateString('es-CL');
   const validez=document.getElementById('n-validez')?.value||'30';
 
