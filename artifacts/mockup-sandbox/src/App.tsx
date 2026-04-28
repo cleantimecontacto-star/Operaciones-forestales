@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { BosqueProfundo } from "./components/mockups/biodiverso-app/BosqueProfundo";
 import { BosqueProfundoDesktop } from "./components/mockups/biodiverso-app/BosqueProfundoDesktop";
 import { MapaVivo } from "./components/mockups/biodiverso-app/MapaVivo";
@@ -23,9 +23,18 @@ const screens: Screen[] = [
 
 export default function App() {
   const [active, setActive] = useState("bosque-mobile");
+  const [isLoading, setIsLoading] = useState(false);
+  
   const current = screens.find((s) => s.id === active) ?? screens[0];
   const Component = current.component;
   const isMobile = current.device === "mobile";
+
+  // Simular carga al cambiar de pantalla para una experiencia más fluida
+  useEffect(() => {
+    setIsLoading(true);
+    const timer = setTimeout(() => setIsLoading(false), 300);
+    return () => clearTimeout(timer);
+  }, [active]);
 
   return (
     <ErrorBoundary name="App Global">
@@ -54,17 +63,19 @@ export default function App() {
             flexShrink: 0,
             scrollbarWidth: "none",
             WebkitOverflowScrolling: "touch",
+            zIndex: 50,
           }}
         >
           {screens.map((s) => (
             <button
               key={s.id}
               onClick={() => setActive(s.id)}
+              disabled={isLoading}
               style={{
                 padding: "5px 12px",
                 borderRadius: 8,
                 border: active === s.id ? "1px solid hsl(var(--primary) / 0.4)" : "1px solid transparent",
-                cursor: "pointer",
+                cursor: isLoading ? "wait" : "pointer",
                 fontSize: 11,
                 fontFamily: "'Inter', sans-serif",
                 fontWeight: active === s.id ? 600 : 400,
@@ -77,6 +88,7 @@ export default function App() {
                 whiteSpace: "nowrap",
                 transition: "all 0.15s",
                 flexShrink: 0,
+                opacity: isLoading && active !== s.id ? 0.5 : 1,
               }}
             >
               {s.label}
@@ -94,8 +106,25 @@ export default function App() {
             justifyContent: isMobile ? "center" : "stretch",
             alignItems: "stretch",
             background: isMobile ? "hsl(var(--muted))" : "hsl(var(--background))",
+            position: "relative",
           }}
         >
+          {isLoading && (
+            <div style={{
+              position: "absolute",
+              inset: 0,
+              display: "flex",
+              alignItems: "center",
+              justifyContent: "center",
+              background: "rgba(255,255,255,0.5)",
+              backdropFilter: "blur(4px)",
+              zIndex: 10,
+              transition: "opacity 0.2s",
+            }}>
+               <div className="w-6 h-6 border-2 border-primary border-t-transparent rounded-full animate-spin"></div>
+            </div>
+          )}
+          
           <ErrorBoundary key={active} name={current.label}>
             {isMobile ? (
               /* En desktop, centra el mockup móvil con ancho fijo */
@@ -106,6 +135,7 @@ export default function App() {
                   height: "100%",
                   overflow: "hidden",
                   position: "relative",
+                  boxShadow: "0 0 40px rgba(0,0,0,0.1)",
                 }}
               >
                 <Component />
