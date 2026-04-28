@@ -377,17 +377,9 @@ body{font-family:'Inter',ui-sans-serif,system-ui,-apple-system,Segoe UI,Roboto,s
 }
 </style>
 <script>
-(function(){
-  var m = {name:"Operaciones Forestales",short_name:"Operaciones",start_url:".",display:"standalone",
-    background_color:"#f6faf7",theme_color:"#15803d",
-    description:"Sistema de cotizaciones para operaciones forestales",
-    icons:[
-      {src:"icon-192.png",sizes:"192x192",type:"image/png",purpose:"any maskable"},
-      {src:"icon-512.png",sizes:"512x512",type:"image/png",purpose:"any maskable"}
-    ]};
-  var url = URL.createObjectURL(new Blob([JSON.stringify(m)],{type:'application/manifest+json'}));
-  document.querySelector('link[rel=manifest]').href = url;
-})();
+// El manifest.json se carga directamente desde el archivo físico
+// Esto permite que el navegador detecte correctamente la PWA como instalable
+// Sin conflictos entre el archivo físico y la generación dinámica
 </script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
 </head>
