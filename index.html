@@ -735,6 +735,11 @@ body{font-family:'Inter',ui-sans-serif,system-ui,-apple-system,Segoe UI,Roboto,s
     <div class="card" style="background:var(--v4);border-color:var(--v3)">
       <div style="font-size:12px;color:var(--v1);display:flex;align-items:center;gap:8px"><span style="font-size:20px">ℹ️</span><span>Los datos de acceso se guardan <b>solo en este dispositivo</b>. Si cambias de dispositivo deberás recordar tus credenciales.</span></div>
     </div>
+    <div class="card">
+      <div class="card-title">🔄 Actualizaciones</div>
+      <div style="font-size:12px;color:var(--muted);margin-bottom:10px">Buscá si hay una versión nueva de la app. Si la hay, aparecerá un cartelito para actualizar.</div>
+      <button class="btn bp" onclick="buscarActualizacion()" style="width:100%">🔄 Buscar actualización</button>
+    </div>
   </div>
 </div>
 <!-- STOCK INSUMOS -->
@@ -2052,6 +2057,35 @@ if('serviceWorker' in navigator){
   navigator.serviceWorker.addEventListener('controllerchange', function(){
     if(_reloaded) return; _reloaded=true;
     window.location.reload();
+  });
+}
+
+// Buscar actualización manualmente desde el panel de Configuración
+function buscarActualizacion(){
+  if(!('serviceWorker' in navigator)){
+    try{ toast('Tu navegador no soporta actualizaciones automáticas','err'); }catch(e){}
+    return;
+  }
+  try{ toast('Buscando actualizaciones…','info'); }catch(e){}
+  navigator.serviceWorker.getRegistration().then(function(reg){
+    if(!reg){
+      try{ toast('No hay service worker activo','err'); }catch(e){}
+      return;
+    }
+    return reg.update().then(function(){
+      setTimeout(function(){
+        if(reg.installing || reg.waiting){
+          try{ toast('¡Hay una nueva versión! Tocá "Actualizar" en el cartelito.','ok'); }catch(e){}
+          if(reg.waiting && navigator.serviceWorker.controller){
+            try{ showUpdateBanner(reg.waiting); }catch(e){}
+          }
+        } else {
+          try{ toast('Ya estás en la última versión','ok'); }catch(e){}
+        }
+      }, 1500);
+    });
+  }).catch(function(){
+    try{ toast('No se pudo buscar actualizaciones','err'); }catch(e){}
   });
 }
 
