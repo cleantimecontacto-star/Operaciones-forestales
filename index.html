@@ -813,6 +813,16 @@ body{font-family:'Inter',ui-sans-serif,system-ui,-apple-system,Segoe UI,Roboto,s
 </div></div>
 
 <!-- MODAL: renombrar categoría -->
+<div class="mo" id="mo-doc-move"><div class="md">
+  <div class="mh">Mover documento</div>
+  <div id="mo-doc-move-name" style="font-size:12px;color:var(--muted);background:var(--c4);padding:10px;border-radius:8px;margin-bottom:12px;word-break:break-all"></div>
+  <div class="fg"><label class="fl">Categoría destino</label><select class="fs" id="mo-doc-move-cat"></select></div>
+  <div class="ma">
+    <button class="btn bs" onclick="cerrarMo('mo-doc-move')">Cancelar</button>
+    <button class="btn bp" id="mo-doc-move-submit" onclick="docsConfirmMove()">Mover</button>
+  </div>
+</div></div>
+
 <div class="mo" id="mo-doc-rename"><div class="md">
   <div class="mt">✏️ Renombrar categoría</div>
   <div class="fg"><label class="fl">Nuevo nombre</label><input class="fi" id="mo-doc-rename-input" onkeydown="if(event.key==='Enter')docsConfirmRename()"></div>
@@ -2279,6 +2289,7 @@ function docsRenderDocs(){
         <div style="font-size:10px;color:var(--muted);margin-top:2px">${catName} · ${fmtBytes(d.fileSize)} · ${fmtDate(d.uploadedAt)}</div>
       </div>
       <button class="btn bs bsm" onclick="docsDownload('${d.storageId}','${(d.name||'').replace(/'/g,"\\'")}')" title="Descargar" style="padding:6px 10px;font-size:12px">⬇️</button>
+      <button class="btn bs bsm" onclick="docsMove('${d._id}','${(d.name||'').replace(/'/g,"\\'")}','${d.categoryId}')" title="Mover a otra categoría" style="padding:6px 10px;font-size:12px">📂</button>
       <button class="btn bs bsm" onclick="docsDelete('${d._id}','${(d.name||'').replace(/'/g,"\\'")}')" title="Eliminar" style="padding:6px 10px;font-size:12px;background:#fee2e2;color:#991b1b;border-color:#fca5a5">🗑️</button>
     </div>`;
   }).join('');
@@ -2414,6 +2425,35 @@ async function docsDelete(id, name){
     toast('Documento eliminado','ok');
     await docsRenderAll();
   }catch(e){ toast('Error: '+(e.message||e),'err'); }
+}
+
+let _docsMoveId = null;
+let _docsMoveCurrentCat = null;
+function docsMove(id, name, currentCatId){
+  _docsMoveId = id;
+  _docsMoveCurrentCat = currentCatId;
+  document.getElementById('mo-doc-move-name').textContent = name;
+  const sel = document.getElementById('mo-doc-move-cat');
+  sel.innerHTML = (_docsCategories||[]).map(c =>
+    `<option value="${c._id}" ${c._id===currentCatId?'selected':''}>${(c.name||'').replace(/</g,'&lt;')}</option>`
+  ).join('');
+  document.getElementById('mo-doc-move').classList.add('open');
+}
+async function docsConfirmMove(){
+  const sel = document.getElementById('mo-doc-move-cat');
+  const newCat = sel.value;
+  if(!newCat || !_docsMoveId){ toast('Selecciona una categoría','err'); return; }
+  if(newCat === _docsMoveCurrentCat){ cerrarMo('mo-doc-move'); return; }
+  const btn = document.getElementById('mo-doc-move-submit');
+  btn.disabled = true; const orig = btn.textContent; btn.textContent = 'Moviendo...';
+  try{
+    await _convexCall('mutation','documents:moveDocument',{ id: _docsMoveId, categoryId: newCat });
+    cerrarMo('mo-doc-move');
+    toast('Documento movido','ok');
+    _docsMoveId = null;
+    await docsRenderAll();
+  }catch(e){ toast('Error: '+(e.message||e),'err'); }
+  finally{ btn.disabled = false; btn.textContent = orig; }
 }
 </script>
 
