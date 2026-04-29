@@ -429,6 +429,7 @@ body{font-family:'Inter',ui-sans-serif,system-ui,-apple-system,Segoe UI,Roboto,s
   <button class="nb" id="nb-cotizaciones" onclick="showPage('cotizaciones')"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/><line x1="16" y1="13" x2="8" y2="13"/><line x1="16" y1="17" x2="8" y2="17"/></svg>Cotiz.</button>
   <button class="nb" id="nb-clientes" onclick="showPage('clientes')"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 0 0-3-3.87"/><path d="M16 3.13a4 4 0 0 1 0 7.75"/></svg>Clientes</button>
   <button class="nb" id="nb-stock" onclick="showPage('stock')"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="2" y="7" width="20" height="14" rx="2"/><path d="M16 3H8L6 7h12z"/><line x1="12" y1="11" x2="12" y2="17"/><line x1="9" y1="14" x2="15" y2="14"/></svg>Stock</button>
+  <button class="nb" id="nb-documentos" onclick="showPage('documentos')"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M22 19a2 2 0 0 1-2 2H4a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h5l2 3h9a2 2 0 0 1 2 2z"/></svg>Docum.</button>
   <button class="nb" id="nb-papelera" onclick="showPage('papelera')"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="3 6 5 6 21 6"/><path d="M19 6l-1 14a2 2 0 0 1-2 2H8a2 2 0 0 1-2-2L5 6"/><path d="M10 11v6"/><path d="M14 11v6"/><path d="M9 6V4a1 1 0 0 1 1-1h4a1 1 0 0 1 1 1v2"/></svg>Papelera</button>
   <button class="nb" id="nb-admin" onclick="showPage('admin')"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1-2.83 2.83l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-4 0v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83-2.83l.06-.06A1.65 1.65 0 0 0 4.68 15a1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1 0-4h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 2.83-2.83l.06.06A1.65 1.65 0 0 0 9 4.68a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 4 0v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 2.83l-.06.06A1.65 1.65 0 0 0 19.4 9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 0 4h-.09a1.65 1.65 0 0 0-1.51 1z"/></svg>Admin</button>
 </nav><div class="main">
@@ -763,6 +764,64 @@ body{font-family:'Inter',ui-sans-serif,system-ui,-apple-system,Segoe UI,Roboto,s
   <div id="stk-list"></div>
 </div>
 
+<!-- DOCUMENTOS -->
+<div id="page-documentos" class="page">
+  <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:13px;flex-wrap:wrap;gap:8px">
+    <div>
+      <div class="section-title" style="margin-bottom:0">📁 Documentos de empresa</div>
+      <div style="font-size:11px;color:var(--muted);margin-top:2px">Guarda contratos, certificados, presentaciones y cualquier archivo que quieras tener a mano</div>
+    </div>
+    <button class="btn bp bsm" id="docs-upload-btn" onclick="docsTriggerUpload()" disabled>⬆️ Subir archivo</button>
+  </div>
+
+  <div class="card">
+    <div class="card-title" style="display:flex;justify-content:space-between;align-items:center">
+      <span>📂 Categorías</span>
+      <button class="btn bs bsm" onclick="docsShowAddCategory()">+ Nueva</button>
+    </div>
+    <div id="docs-add-cat-row" style="display:none;margin-bottom:8px">
+      <div class="fr" style="gap:6px">
+        <input class="fi" id="docs-new-cat-name" placeholder="Nombre de categoría..." onkeydown="if(event.key==='Enter')docsAddCategory();if(event.key==='Escape')docsHideAddCategory()">
+        <button class="btn bp bsm" onclick="docsAddCategory()" style="white-space:nowrap">Crear</button>
+        <button class="btn bs bsm" onclick="docsHideAddCategory()" style="white-space:nowrap">Cancelar</button>
+      </div>
+    </div>
+    <div id="docs-cat-list" style="display:flex;flex-wrap:wrap;gap:6px"></div>
+  </div>
+
+  <div class="card">
+    <div class="card-title" style="display:flex;justify-content:space-between;align-items:center">
+      <span id="docs-current-cat-label">Todos los documentos</span>
+      <span style="font-size:11px;color:var(--muted);font-weight:400" id="docs-count">0 archivos</span>
+    </div>
+    <div id="docs-list"></div>
+  </div>
+
+  <input type="file" id="docs-file-input" style="display:none" onchange="docsHandleFileSelected(event)">
+</div>
+
+<!-- MODAL: subir documento -->
+<div class="mo" id="mo-doc-upload"><div class="md">
+  <div class="mt">⬆️ Subir archivo</div>
+  <div id="mo-doc-fileinfo" style="font-size:12px;color:var(--muted);background:var(--c4);padding:10px;border-radius:8px;margin-bottom:12px;word-break:break-all"></div>
+  <div class="fg"><label class="fl">Nombre del documento</label><input class="fi" id="mo-doc-name" placeholder="Nombre..."></div>
+  <div class="fg"><label class="fl">Categoría</label><select class="fs" id="mo-doc-cat"></select></div>
+  <div class="btn-row">
+    <button class="btn bs" onclick="cerrarMo('mo-doc-upload');docsResetUpload()">Cancelar</button>
+    <button class="btn bp" id="mo-doc-submit" onclick="docsConfirmUpload()">Subir</button>
+  </div>
+</div></div>
+
+<!-- MODAL: renombrar categoría -->
+<div class="mo" id="mo-doc-rename"><div class="md">
+  <div class="mt">✏️ Renombrar categoría</div>
+  <div class="fg"><label class="fl">Nuevo nombre</label><input class="fi" id="mo-doc-rename-input" onkeydown="if(event.key==='Enter')docsConfirmRename()"></div>
+  <div class="btn-row">
+    <button class="btn bs" onclick="cerrarMo('mo-doc-rename')">Cancelar</button>
+    <button class="btn bp" onclick="docsConfirmRename()">Guardar</button>
+  </div>
+</div></div>
+
 <!-- PAPELERA -->
 <div id="page-papelera" class="page">
   <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:13px;flex-wrap:wrap;gap:8px">
@@ -884,6 +943,7 @@ function showPage(p){
   if(p==='nueva')resetNueva();
   if(p==='stock')renderStock();
   if(p==='papelera')renderPapelera();
+  if(p==='documentos')docsRenderAll();
 }
 
 function renderDash(){
@@ -2126,6 +2186,235 @@ function instalarApp(){
 }
 // Ejecutar al cargar
 window.addEventListener('load', checkInstallable);
+
+// ── DOCUMENTOS (Convex storage) ──────────────────────────────────────────────
+let _docsCategories = [];
+let _docsAllDocs = [];
+let _docsCurrentCat = null; // null = todos
+let _docsPendingFile = null;
+let _docsRenameId = null;
+
+function fmtBytes(n){
+  if(!n||n<1024) return (n||0)+' B';
+  if(n<1024*1024) return (n/1024).toFixed(1)+' KB';
+  if(n<1024*1024*1024) return (n/1024/1024).toFixed(1)+' MB';
+  return (n/1024/1024/1024).toFixed(2)+' GB';
+}
+function docsIcon(t){
+  t=(t||'').toLowerCase();
+  if(t.includes('pdf')) return '📕';
+  if(t.includes('image')) return '🖼️';
+  if(t.includes('video')) return '🎬';
+  if(t.includes('audio')) return '🎵';
+  if(t.includes('zip')||t.includes('rar')||t.includes('7z')) return '🗜️';
+  if(t.includes('word')||t.includes('document')) return '📝';
+  if(t.includes('sheet')||t.includes('excel')||t.includes('csv')) return '📊';
+  if(t.includes('presentation')||t.includes('powerpoint')) return '📈';
+  return '📄';
+}
+function fmtDate(v){
+  if(!v) return '';
+  try{ return new Date(v).toLocaleDateString('es-CL',{day:'2-digit',month:'2-digit',year:'numeric'}); }catch(e){ return ''; }
+}
+function _docTime(d){ return d && d.uploadedAt ? new Date(d.uploadedAt).getTime() : 0; }
+
+async function docsRenderAll(){
+  const list = document.getElementById('docs-list');
+  list.innerHTML = '<div style="text-align:center;padding:20px;color:var(--muted);font-size:12px">Cargando...</div>';
+  try{
+    const [cats, docs] = await Promise.all([
+      _convexCall('query','documents:listCategories',{}),
+      _convexCall('query','documents:listDocuments',{}),
+    ]);
+    _docsCategories = Array.isArray(cats)?cats:[];
+    _docsAllDocs = Array.isArray(docs)?docs:[];
+    docsRenderCategories();
+    docsRenderDocs();
+    document.getElementById('docs-upload-btn').disabled = false;
+  }catch(e){
+    list.innerHTML = '<div style="text-align:center;padding:20px;color:#b91c1c;font-size:12px">Error al cargar: '+(e.message||e)+'</div>';
+  }
+}
+
+function docsRenderCategories(){
+  const cont = document.getElementById('docs-cat-list');
+  const all = `<button class="btn ${_docsCurrentCat===null?'bp':'bs'} bsm" onclick="docsSelectCategory(null)" style="font-size:12px">📋 Todos (${_docsAllDocs.length})</button>`;
+  const items = _docsCategories.map(c=>{
+    const count = _docsAllDocs.filter(d=>d.categoryId===c._id).length;
+    const sel = _docsCurrentCat===c._id;
+    return `<div style="display:inline-flex;align-items:center;gap:2px;background:${sel?'var(--v1)':'var(--c4)'};color:${sel?'#fff':'var(--c1)'};border:1px solid ${sel?'var(--v1)':'var(--border)'};border-radius:8px;padding:2px;font-size:12px">
+      <button onclick="docsSelectCategory('${c._id}')" style="background:none;border:none;color:inherit;padding:6px 10px;cursor:pointer;font-size:12px;font-family:inherit;font-weight:500">📁 ${c.name} (${count})</button>
+      <button onclick="docsRenameCategory('${c._id}','${(c.name||'').replace(/'/g,"\\'")}')" title="Renombrar" style="background:none;border:none;color:inherit;padding:4px 6px;cursor:pointer;opacity:.7;font-size:11px">✏️</button>
+      <button onclick="docsDeleteCategory('${c._id}','${(c.name||'').replace(/'/g,"\\'")}')" title="Eliminar" style="background:none;border:none;color:inherit;padding:4px 6px;cursor:pointer;opacity:.7;font-size:11px">🗑️</button>
+    </div>`;
+  }).join('');
+  cont.innerHTML = all + items;
+}
+
+function docsRenderDocs(){
+  const list = document.getElementById('docs-list');
+  const lbl = document.getElementById('docs-current-cat-label');
+  const count = document.getElementById('docs-count');
+  let docs = _docsAllDocs;
+  if(_docsCurrentCat){
+    docs = docs.filter(d=>d.categoryId===_docsCurrentCat);
+    const cat = _docsCategories.find(c=>c._id===_docsCurrentCat);
+    lbl.textContent = '📁 '+(cat?cat.name:'Categoría');
+  } else {
+    lbl.textContent = '📋 Todos los documentos';
+  }
+  count.textContent = docs.length+' archivo'+(docs.length===1?'':'s');
+  if(!docs.length){
+    list.innerHTML = '<div style="text-align:center;padding:30px 16px;color:var(--muted);font-size:13px"><div style="font-size:36px;margin-bottom:8px">📁</div>Sin documentos en esta sección<div style="font-size:11px;margin-top:6px">Toca "Subir archivo" para agregar uno</div></div>';
+    return;
+  }
+  docs.sort((a,b)=>_docTime(b)-_docTime(a));
+  list.innerHTML = docs.map(d=>{
+    const cat = _docsCategories.find(c=>c._id===d.categoryId);
+    const catName = cat?cat.name:'Sin categoría';
+    return `<div style="display:flex;align-items:center;gap:10px;padding:10px;border:1px solid var(--border);border-radius:10px;margin-bottom:6px;background:#fff">
+      <div style="font-size:24px;flex-shrink:0">${docsIcon(d.fileType)}</div>
+      <div style="flex:1;min-width:0">
+        <div style="font-size:13px;font-weight:600;color:var(--c1);overflow:hidden;text-overflow:ellipsis;white-space:nowrap">${(d.name||'').replace(/</g,'&lt;')}</div>
+        <div style="font-size:10px;color:var(--muted);margin-top:2px">${catName} · ${fmtBytes(d.fileSize)} · ${fmtDate(d.uploadedAt)}</div>
+      </div>
+      <button class="btn bs bsm" onclick="docsDownload('${d.storageId}','${(d.name||'').replace(/'/g,"\\'")}')" title="Descargar" style="padding:6px 10px;font-size:12px">⬇️</button>
+      <button class="btn bs bsm" onclick="docsDelete('${d._id}','${(d.name||'').replace(/'/g,"\\'")}')" title="Eliminar" style="padding:6px 10px;font-size:12px;background:#fee2e2;color:#991b1b;border-color:#fca5a5">🗑️</button>
+    </div>`;
+  }).join('');
+}
+
+function docsSelectCategory(id){ _docsCurrentCat = id; docsRenderCategories(); docsRenderDocs(); }
+
+function docsShowAddCategory(){ document.getElementById('docs-add-cat-row').style.display='block'; setTimeout(()=>{const i=document.getElementById('docs-new-cat-name');i.value='';i.focus();},50); }
+function docsHideAddCategory(){ document.getElementById('docs-add-cat-row').style.display='none'; }
+
+async function docsAddCategory(){
+  const name = document.getElementById('docs-new-cat-name').value.trim();
+  if(!name){ toast('Ingresa un nombre','err'); return; }
+  try{
+    await _convexCall('mutation','documents:addCategory',{ name: name });
+    toast('Categoría creada','ok');
+    docsHideAddCategory();
+    await docsRenderAll();
+  }catch(e){ toast('Error: '+(e.message||e),'err'); }
+}
+
+function docsRenameCategory(id, currentName){
+  _docsRenameId = id;
+  document.getElementById('mo-doc-rename-input').value = currentName;
+  document.getElementById('mo-doc-rename').classList.add('open');
+  setTimeout(()=>document.getElementById('mo-doc-rename-input').focus(),100);
+}
+async function docsConfirmRename(){
+  const name = document.getElementById('mo-doc-rename-input').value.trim();
+  if(!name){ toast('Ingresa un nombre','err'); return; }
+  try{
+    await _convexCall('mutation','documents:renameCategory',{ id: _docsRenameId, name: name });
+    cerrarMo('mo-doc-rename');
+    toast('Categoría renombrada','ok');
+    await docsRenderAll();
+  }catch(e){ toast('Error: '+(e.message||e),'err'); }
+}
+
+async function docsDeleteCategory(id, name){
+  const docsInCat = _docsAllDocs.filter(d=>d.categoryId===id).length;
+  let msg = '¿Eliminar la categoría "'+name+'"?';
+  if(docsInCat>0) msg += '\n\nContiene '+docsInCat+' documento(s) que también se eliminarán.';
+  if(!confirm(msg)) return;
+  try{
+    await _convexCall('mutation','documents:deleteCategory',{ id: id });
+    if(_docsCurrentCat===id) _docsCurrentCat = null;
+    toast('Categoría eliminada','ok');
+    await docsRenderAll();
+  }catch(e){ toast('Error: '+(e.message||e),'err'); }
+}
+
+function docsResetUpload(){
+  _docsPendingFile = null;
+  document.getElementById('docs-file-input').value = '';
+  document.getElementById('mo-doc-name').value = '';
+}
+function docsTriggerUpload(){
+  if(!_docsCategories.length){
+    toast('Crea primero una categoría','err');
+    return;
+  }
+  document.getElementById('docs-file-input').click();
+}
+function docsHandleFileSelected(ev){
+  const f = ev.target.files && ev.target.files[0];
+  if(!f) return;
+  if(!_docsCategories.length){
+    toast('Crea primero una categoría','err');
+    document.getElementById('docs-file-input').value = '';
+    return;
+  }
+  _docsPendingFile = f;
+  document.getElementById('mo-doc-fileinfo').innerHTML = '<b>Archivo:</b> '+f.name+'<br><b>Tamaño:</b> '+fmtBytes(f.size);
+  const dotIdx = f.name.lastIndexOf('.');
+  document.getElementById('mo-doc-name').value = dotIdx>0 ? f.name.substring(0,dotIdx) : f.name;
+  // Llenar select de categorías (categoría requerida)
+  const sel = document.getElementById('mo-doc-cat');
+  sel.innerHTML = _docsCategories.map(c=>`<option value="${c._id}">${c.name}</option>`).join('');
+  sel.value = (_docsCurrentCat && _docsCategories.some(c=>c._id===_docsCurrentCat)) ? _docsCurrentCat : _docsCategories[0]._id;
+  document.getElementById('mo-doc-upload').classList.add('open');
+}
+async function docsConfirmUpload(){
+  if(!_docsPendingFile){ toast('Selecciona un archivo','err'); return; }
+  const name = document.getElementById('mo-doc-name').value.trim();
+  if(!name){ toast('Ingresa un nombre','err'); return; }
+  const catId = document.getElementById('mo-doc-cat').value;
+  if(!catId){ toast('Selecciona una categoría','err'); return; }
+  const submitBtn = document.getElementById('mo-doc-submit');
+  submitBtn.disabled = true; submitBtn.textContent = 'Subiendo...';
+  try{
+    const uploadUrl = await _convexCall('mutation','documents:generateUploadUrl',{});
+    const upRes = await fetch(uploadUrl, {
+      method: 'POST',
+      headers: { 'Content-Type': _docsPendingFile.type || 'application/octet-stream' },
+      body: _docsPendingFile,
+    });
+    if(!upRes.ok) throw new Error('upload_failed:'+upRes.status);
+    const upJson = await upRes.json();
+    const storageId = upJson.storageId;
+    if(!storageId) throw new Error('no_storage_id');
+    await _convexCall('mutation','documents:saveDocument',{
+      name: name,
+      categoryId: catId,
+      storageId: storageId,
+      fileType: _docsPendingFile.type || 'application/octet-stream',
+      fileSize: _docsPendingFile.size,
+    });
+    cerrarMo('mo-doc-upload');
+    docsResetUpload();
+    toast('✅ Archivo subido','ok');
+    await docsRenderAll();
+  }catch(e){
+    toast('Error al subir: '+(e.message||e),'err');
+  }finally{
+    submitBtn.disabled = false; submitBtn.textContent = 'Subir';
+  }
+}
+
+async function docsDownload(storageId, name){
+  try{
+    const url = await _convexCall('query','documents:getDownloadUrl',{ storageId: storageId });
+    if(!url) throw new Error('no_url');
+    const a = document.createElement('a');
+    a.href = url; a.download = name || 'documento'; a.target = '_blank'; a.rel = 'noopener';
+    document.body.appendChild(a); a.click(); document.body.removeChild(a);
+  }catch(e){ toast('Error al descargar: '+(e.message||e),'err'); }
+}
+
+async function docsDelete(id, name){
+  if(!confirm('¿Eliminar el documento "'+name+'"?')) return;
+  try{
+    await _convexCall('mutation','documents:deleteDocument',{ id: id });
+    toast('Documento eliminado','ok');
+    await docsRenderAll();
+  }catch(e){ toast('Error: '+(e.message||e),'err'); }
+}
 </script>
 
 <!-- MODAL PREVIEW COTIZACIÓN -->
