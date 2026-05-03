@@ -446,7 +446,7 @@ body{font-family:'Inter',ui-sans-serif,system-ui,-apple-system,Segoe UI,Roboto,s
     <div class="qb" onclick="showPage('nueva')"><div class="qb-icon">🌱</div><div class="qb-lbl">Nueva Cotización</div></div>
     <div class="qb" onclick="showPage('cotizaciones')"><div class="qb-icon">📋</div><div class="qb-lbl">Cotizaciones</div></div>
     <div class="qb" onclick="showPage('clientes')"><div class="qb-icon">👥</div><div class="qb-lbl">Clientes</div></div>
-    <div class="qb" onclick="showPage('stock')"><div class="qb-icon">📦</div><div class="qb-lbl">Stock Insumos</div></div>
+    <div class="qb" onclick="showPage('stock')"><div class="qb-icon">📋</div><div class="qb-lbl">Insumosnsumos</div></div>
     <div class="qb" onclick="showPage('admin')"><div class="qb-icon">⚙️</div><div class="qb-lbl">Administración</div></div>
     <div class="qb" onclick="showPage('papelera')"><div class="qb-icon">🗑️</div><div class="qb-lbl">Papelera</div></div>
   </div>
@@ -639,6 +639,7 @@ body{font-family:'Inter',ui-sans-serif,system-ui,-apple-system,Segoe UI,Roboto,s
     <button class="tab" onclick="showTab('especies')" id="tab-especies">Especies</button>
     <button class="tab" onclick="showTab('servicios')" id="tab-servicios">Servicios</button>
     <button class="tab" onclick="showTab('riego')" id="tab-riego">Riego</button>
+    <button class="tab" onclick="showTab('insumos')" id="tab-insumos">📋 Insumos</button>
     <button class="tab" onclick="showTab('seguridad')" id="tab-seguridad">🔐 Seguridad</button>
   </div>
   <div id="adm-empresa">
@@ -690,6 +691,12 @@ body{font-family:'Inter',ui-sans-serif,system-ui,-apple-system,Segoe UI,Roboto,s
     <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:11px"><span id="ri-count" style="font-size:12px;color:var(--muted)">0 componentes</span><button class="btn bp bsm" onclick="abrirRiegoComp()">+ Añadir</button></div>
     <div id="ri-list"></div>
   </div>
+  <!-- INSUMOS CATALOG ADMIN -->
+  <div id="adm-insumos" style="display:none">
+    <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:11px"><span id="adm-ins-count" style="font-size:12px;color:var(--muted)">0 insumos</span><button class="btn bp bsm" onclick="abrirInsumo()">+ Añadir</button></div>
+    <div class="sbox"><span>🔍</span><input type="text" placeholder="Buscar..." id="adm-ins-search" oninput="renderAdminInsumos()"></div>
+    <div id="adm-ins-list"></div>
+  </div>
   <!-- SEGURIDAD -->
   <div id="adm-seguridad" style="display:none">
     <div class="card">
@@ -736,33 +743,28 @@ body{font-family:'Inter',ui-sans-serif,system-ui,-apple-system,Segoe UI,Roboto,s
     </div>
   </div>
 </div>
-<!-- STOCK INSUMOS -->
+<!-- CATÁLOGO DE INSUMOS -->
 <div id="page-stock" class="page">
   <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:13px">
-    <div class="section-title" style="margin-bottom:0">Stock de Insumos</div>
-    <button class="btn bp bsm" onclick="abrirStock()">+ Nuevo</button>
+    <div class="section-title" style="margin-bottom:0">📋 Insumos</div>
+    <button class="btn bp bsm" onclick="abrirInsumo()">+ Nuevo</button>
   </div>
-  <div class="sg" id="stk-stats"></div>
-  <div class="sbox"><span>🔍</span><input type="text" placeholder="Buscar insumo..." id="stk-search" oninput="renderStock()"></div>
-  <div class="card" style="padding:10px;margin-bottom:9px">
-    <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:8px">
-      <span style="font-size:12px;font-weight:600;color:var(--v1)">🔽 Filtros</span>
-      <button class="btn bp bsm" style="width:auto;padding:5px 10px;font-size:11px" onclick="abrirNuevaCat()">+ Nueva Categoría</button>
-    </div>
-    <div class="stk-filters">
-      <select class="fs" id="stk-filter-cat" onchange="renderStock()" style="flex:1;min-width:120px;font-size:12px;padding:7px 9px">
-        <option value="">Todas las categorías</option>
-      </select>
-      <select class="fs" id="stk-filter-nivel" onchange="renderStock()" style="flex:1;min-width:110px;font-size:12px;padding:7px 9px">
-        <option value="">Todo el stock</option>
-        <option value="warn">Bajo stock</option>
-        <option value="low">Sin / crítico</option>
-      </select>
-      <input class="fi" type="number" id="stk-filter-min" placeholder="Precio mín" oninput="renderStock()" style="width:88px;font-size:12px;padding:7px 9px">
-      <input class="fi" type="number" id="stk-filter-max" placeholder="Precio máx" oninput="renderStock()" style="width:88px;font-size:12px;padding:7px 9px">
-    </div>
+  <div class="tabs" style="margin-bottom:11px">
+    <button class="tab active" id="ins-tab-catalogo" onclick="showInsTab('catalogo')">📦 Catálogo</button>
+    <button class="tab" id="ins-tab-checklist" onclick="showInsTab('checklist')">✅ Checklist</button>
   </div>
-  <div id="stk-list"></div>
+  <div class="sbox"><span>🔍</span><input type="text" placeholder="Buscar insumo..." id="ins-search" oninput="renderInsumos()"></div>
+  <div id="ins-catalogo-cont">
+    <div id="ins-list"></div>
+  </div>
+  <div id="ins-checklist-cont" style="display:none">
+    <div class="card" style="padding:10px;margin-bottom:9px">
+      <label class="fl" style="margin-bottom:5px">Proyecto / visita</label>
+      <input class="fi" id="ins-proyecto" placeholder="Nombre del proyecto o cliente..." style="margin-bottom:0">
+    </div>
+    <div id="ins-check-list"></div>
+    <button class="btn bs" style="margin-top:8px;width:100%" onclick="limpiarChecklist()">🔄 Limpiar checklist</button>
+  </div>
 </div>
 
 <!-- DOCUMENTOS -->
@@ -883,20 +885,19 @@ body{font-family:'Inter',ui-sans-serif,system-ui,-apple-system,Segoe UI,Roboto,s
 
 
 <div class="mo" id="mo-stock"><div class="md"><div class="mh"></div><div class="mt" id="mo-stk-title">Nuevo Insumo</div>
-  <div class="fg"><label class="fl">Nombre del Insumo</label><input class="fi" id="mst-nombre" placeholder="Fertilizante NPK"></div>
+  <div class="fg"><label class="fl">Producto / Descripción</label><input class="fi" id="mst-producto" placeholder="Fertilizante NPK 15-15-15"></div>
   <div class="fr">
-    <div class="fg"><label class="fl">Categoría</label><select class="fs" id="mst-cat"><option>Fertilizante</option><option>Herbicida</option><option>Fungicida</option><option>Herramienta</option><option>Semilla</option><option>Tubería</option><option>Otro</option></select></div>
+    <div class="fg"><label class="fl">Categoría</label><select class="fs" id="mst-cat"><option>Fertilizantes</option><option>Herbicidas</option><option>Fungicidas</option><option>Plantación</option><option>Semillas</option><option>Herramientas</option><option>Riego</option><option>Otro</option></select></div>
     <div class="fg"><label class="fl">Unidad</label><input class="fi" id="mst-unidad" placeholder="kg / L / ud / m"></div>
   </div>
+  <div class="fg"><label class="fl">Proveedor</label><input class="fi" id="mst-proveedor" placeholder="Agroquímica Sur"></div>
   <div class="fr">
-    <div class="fg"><label class="fl">Stock Actual</label><input class="fi" id="mst-actual" type="number" placeholder="50" min="0"></div>
-    <div class="fg"><label class="fl">Stock Mínimo</label><input class="fi" id="mst-minimo" type="number" placeholder="10" min="0"></div>
+    <div class="fg"><label class="fl">🔒 Precio compra ($)</label><input class="fi" id="mst-pcompra" type="number" placeholder="3500" min="0"></div>
+    <div class="fg"><label class="fl">💰 Precio venta ($)</label><input class="fi" id="mst-pventa" type="number" placeholder="5250" min="0"></div>
   </div>
-  <div class="fr">
-    <div class="fg"><label class="fl">Precio Unitario ($)</label><input class="fi" id="mst-precio" type="number" placeholder="2500" min="0"></div>
-    <div class="fg"><label class="fl">Proveedor</label><input class="fi" id="mst-proveedor" placeholder="Agroquímica Sur"></div>
-  </div>
-  <div class="btn-row"><button class="btn bs" onclick="cerrarMo('mo-stock')">Cancelar</button><button class="btn bp" onclick="saveStock()">Guardar</button></div>
+  <div style="font-size:10px;color:var(--muted);margin:-5px 0 8px;padding:0 2px">💡 Precio venta se usa en cotizaciones itemizadas al cliente.</div>
+  <div class="fg"><label class="fl">Notas internas</label><input class="fi" id="mst-notas" placeholder="Observaciones..."></div>
+  <div class="btn-row"><button class="btn bs" onclick="cerrarMo('mo-stock')">Cancelar</button><button class="btn bp" onclick="saveInsumo()">Guardar</button></div>
 </div></div>
 
 <script>
@@ -929,17 +930,17 @@ let DB={
   ],
   empresa:{nombre:'',rut:'',tel:'',dir:'',email:'',wa:'Estimado/a {cliente}, cotización N°{numero} por {tipo} por un total de {total}. Válida {validez} días. Saludos, {empresa}'},
   cfg:{gg:10,mg:25,tub:850,asp:12500,got:3200,ctrl:85000,mo:2500},
-  stock:[
-    {id:1,nombre:'Fertilizante NPK',cat:'Fertilizante',unidad:'kg',actual:80,minimo:20,precio:3500,proveedor:'AgroSur'},
-    {id:2,nombre:'Herbicida Glifosato',cat:'Herbicida',unidad:'L',actual:15,minimo:10,precio:8200,proveedor:'CampoTech'},
-    {id:3,nombre:'Fungicida Cúprico',cat:'Fungicida',unidad:'kg',actual:5,minimo:8,precio:12000,proveedor:'AgroSur'},
-    {id:4,nombre:'Semilla Pino Radiata',cat:'Semilla',unidad:'kg',actual:30,minimo:10,precio:45000,proveedor:'Forestal Chile'},
-    {id:5,nombre:'Manguera 1/2"',cat:'Tubería',unidad:'m',actual:200,minimo:50,precio:480,proveedor:'Ferreplast'},
+  insumos:[
+    {id:1,categoria:'Fertilizantes',producto:'Fertilizante NPK 15-15-15',proveedor:'AgroSur',unidad:'kg',precioCompra:3500,precioVenta:5250,notas:''},
+    {id:2,categoria:'Herbicidas',producto:'Glifosato 48%',proveedor:'CampoTech',unidad:'L',precioCompra:8200,precioVenta:12300,notas:''},
+    {id:3,categoria:'Fungicidas',producto:'Fungicida Cúprico',proveedor:'AgroSur',unidad:'kg',precioCompra:12000,precioVenta:18000,notas:''},
+    {id:4,categoria:'Semillas',producto:'Semilla Pino Radiata',proveedor:'Forestal Chile',unidad:'kg',precioCompra:45000,precioVenta:67500,notas:''},
+    {id:5,categoria:'Herramientas',producto:'Pala punta cuadrada',proveedor:'Ferreplast',unidad:'ud',precioCompra:15000,precioVenta:22500,notas:''},
   ]
 };
 let currentTipo=null,selectedSps={},selectedSvcs={},photoList=[],costoBase=0,cotizNum=1;
-let editEspId=null,editSvcId=null,editRiId=null,editCliId=null,editStkId=null;
-let filtroStk='',stkAccOpen={},stkFilterNivel='',stkFilterMin=0,stkFilterMax=Infinity;
+let editEspId=null,editSvcId=null,editRiId=null,editCliId=null,editInsId=null;
+let insTab='catalogo',insAccOpen={},insChecks={};
 let filtroQ='',_calc={},_matRows=[];
 
 function showPage(p){
@@ -952,7 +953,7 @@ function showPage(p){
   if(p==='clientes')renderClientes();
   if(p==='admin'){showTab('empresa');loadAdminEmpresa();}
   if(p==='nueva')resetNueva();
-  if(p==='stock')renderStock();
+  if(p==='stock')renderInsumos();
   if(p==='papelera')renderPapelera();
   if(p==='documentos')docsRenderAll();
 }
@@ -1130,7 +1131,7 @@ function restaurarPap(pid){
        if(e.tipo==='especies') renderEspecies();
        if(e.tipo==='servicios') renderServicios();
        if(e.tipo==='riegoComps') renderRiegoComps();
-       if(e.tipo==='stock') renderStock();
+       if(e.tipo==='insumos') renderInsumos();
        if(e.tipo==='clientes' && typeof renderClientes==='function') renderClientes();
        renderDash && renderDash(); }catch(_){}
   toast('Restaurado','ok');
@@ -1192,8 +1193,9 @@ function saveCliente(){
 }
 
 function showTab(t){
-  ['empresa','especies','servicios','riego','seguridad'].forEach(x=>{document.getElementById('adm-'+x).style.display=x===t?'block':'none';document.getElementById('tab-'+x)?.classList.toggle('active',x===t);});
+  ['empresa','especies','servicios','riego','insumos','seguridad'].forEach(x=>{document.getElementById('adm-'+x).style.display=x===t?'block':'none';document.getElementById('tab-'+x)?.classList.toggle('active',x===t);});
   if(t==='especies')renderEspecies();if(t==='servicios')renderServicios();if(t==='riego')renderRiegoComps();
+  if(t==='insumos')renderAdminInsumos();
   if(t==='seguridad')loadSeguridad();
 }
 function loadAdminEmpresa(){
@@ -1382,12 +1384,12 @@ async function loadFromCloud() {
       if (d.especies)     DB.especies     = d.especies;
       if (d.servicios)    DB.servicios    = d.servicios;
       if (d.riegoComps)   DB.riegoComps   = d.riegoComps;
-      if (d.stock)        DB.stock        = d.stock;
+      if (d.insumos)      DB.insumos      = d.insumos;
       if (Array.isArray(d.papelera)) DB.papelera = d.papelera;
       if (d.empresa)      DB.empresa      = d.empresa;
       if (d.cfg)          DB.cfg          = d.cfg;
       if (d.cotizNum)     cotizNum        = d.cotizNum;
-      if (d.cats)         localStorage.setItem('gq_cats', JSON.stringify(d.cats));
+
       if (d.users)        localStorage.setItem('gq_users', JSON.stringify(d.users));
       localStorage.setItem('gq_ts', String(cloudTs));
       try {
@@ -1396,7 +1398,7 @@ async function loadFromCloud() {
         localStorage.setItem('gq_esp',JSON.stringify(DB.especies));
         localStorage.setItem('gq_svc',JSON.stringify(DB.servicios));
         localStorage.setItem('gq_ri',JSON.stringify(DB.riegoComps));
-        localStorage.setItem('gq_stk',JSON.stringify(DB.stock));
+        localStorage.setItem('gq_ins',JSON.stringify(DB.insumos));
         localStorage.setItem('gq_empresa',JSON.stringify(DB.empresa));
         localStorage.setItem('gq_cfg',JSON.stringify(DB.cfg));
         localStorage.setItem('gq_cotnum',cotizNum);
@@ -1428,8 +1430,7 @@ async function loadFromCloud() {
 
 async function _pushLocalToCloud() {
   if (!_cloudEnabled) return;
-  const cats = JSON.parse(localStorage.getItem('gq_cats') || '[]');
-  const users = JSON.parse(localStorage.getItem('gq_users') || '[]');
+    const users = JSON.parse(localStorage.getItem('gq_users') || '[]');
   await saveToCloud({
     ts: Date.now(),
     cotizaciones: DB.cotizaciones,
@@ -1437,11 +1438,10 @@ async function _pushLocalToCloud() {
     especies:     DB.especies,
     servicios:    DB.servicios,
     riegoComps:   DB.riegoComps,
-    stock:        DB.stock,
+    insumos:      DB.insumos,
     empresa:      DB.empresa,
     cfg:          DB.cfg,
     cotizNum:     cotizNum,
-    cats:         cats,
     users:        users
   });
 }
@@ -1474,14 +1474,13 @@ function saveDB(){
     localStorage.setItem('gq_esp',JSON.stringify(DB.especies));
     localStorage.setItem('gq_svc',JSON.stringify(DB.servicios));
     localStorage.setItem('gq_ri',JSON.stringify(DB.riegoComps));
-    localStorage.setItem('gq_stk',JSON.stringify(DB.stock));
+    localStorage.setItem('gq_ins',JSON.stringify(DB.insumos));
     localStorage.setItem('gq_pap',JSON.stringify(DB.papelera||[]));
     localStorage.setItem('gq_empresa',JSON.stringify(DB.empresa));
     localStorage.setItem('gq_cfg',JSON.stringify(DB.cfg));
     localStorage.setItem('gq_cotnum',cotizNum);
     // Sync to cloud
-    const cats  = JSON.parse(localStorage.getItem('gq_cats')||'[]');
-    const users = JSON.parse(localStorage.getItem('gq_users')||'[]');
+        const users = JSON.parse(localStorage.getItem('gq_users')||'[]');
     saveToCloud({
       ts: Date.now(),
       cotizaciones: DB.cotizaciones,
@@ -1489,12 +1488,11 @@ function saveDB(){
       especies:     DB.especies,
       servicios:    DB.servicios,
       riegoComps:   DB.riegoComps,
-      stock:        DB.stock,
+      insumos:      DB.insumos,
       papelera:     DB.papelera||[],
       empresa:      DB.empresa,
       cfg:          DB.cfg,
       cotizNum:     cotizNum,
-      cats:         cats,
       users:        users
     });
   }catch(e){console.error('saveDB:',e);}
@@ -1507,7 +1505,7 @@ function loadDB(){
     DB.especies=p('gq_esp',DB.especies);
     DB.servicios=p('gq_svc',DB.servicios);
     DB.riegoComps=p('gq_ri',DB.riegoComps);
-    DB.stock=p('gq_stk',DB.stock);
+    DB.insumos=p('gq_ins',DB.insumos);
     DB.papelera=p('gq_pap',DB.papelera||[]);
     DB.empresa=p('gq_empresa',DB.empresa);
     DB.cfg=p('gq_cfg',DB.cfg);
@@ -1529,159 +1527,177 @@ function toast(msg,type=''){
   setTimeout(()=>{t.classList.remove('show');setTimeout(()=>t.remove(),300);},2600);
 }
 
-// ── STOCK ──────────────────────────────────────────────────
-function stkStatus(item){
-  if(item.actual<=0)return'low';
-  if(item.actual<item.minimo)return'low';
-  if(item.actual<item.minimo*1.5)return'warn';
-  return'ok';
+// ── INSUMOS CATÁLOGO ──────────────────────────────────────────
+function showInsTab(t){
+  insTab=t;
+  ['catalogo','checklist'].forEach(x=>{
+    document.getElementById('ins-tab-'+x)?.classList.toggle('active',x===t);
+    const cont=document.getElementById('ins-'+x+'-cont');
+    if(cont)cont.style.display=x===t?'block':'none';
+  });
+  renderInsumos();
 }
-function stkLabel(s){return{ok:'✔ OK',warn:'⚠ Bajo',low:'✖ Crítico'}[s]||s;}
 
-function getAllCats(){
-  const cats=[...new Set(DB.stock.map(x=>x.cat))];
-  const custom=JSON.parse(localStorage.getItem('gq_cats')||'[]');
-  return [...new Set([...cats,...custom])].sort();
-}
-function updateStkCatFilter(){
-  const sel=document.getElementById('stk-filter-cat');if(!sel)return;
-  const cur=sel.value;
-  const cats=getAllCats();
-  sel.innerHTML='<option value="">Todas las categorías</option>'+cats.map(c=>`<option value="${c}"${c===cur?' selected':''}>${c}</option>`).join('');
-}
-function renderStock(){
-  const q=(document.getElementById('stk-search')?.value||'').toLowerCase();
-  const fCat=document.getElementById('stk-filter-cat')?.value||'';
-  const fNivel=document.getElementById('stk-filter-nivel')?.value||'';
-  const fMin=parseFloat(document.getElementById('stk-filter-min')?.value)||0;
-  const fMax=parseFloat(document.getElementById('stk-filter-max')?.value)||Infinity;
-
-  let data=[...DB.stock];
-  if(q)data=data.filter(x=>x.nombre.toLowerCase().includes(q)||(x.cat||'').toLowerCase().includes(q));
-  if(fCat)data=data.filter(x=>x.cat===fCat);
-  if(fNivel==='warn')data=data.filter(x=>['warn','low'].includes(stkStatus(x)));
-  if(fNivel==='low')data=data.filter(x=>stkStatus(x)==='low');
-  if(fMin>0)data=data.filter(x=>x.precio>=fMin);
-  if(isFinite(fMax)&&fMax>0)data=data.filter(x=>x.precio<=fMax);
-
-  const total=DB.stock.length,lowCount=DB.stock.filter(x=>stkStatus(x)==='low').length,warnCount=DB.stock.filter(x=>stkStatus(x)==='warn').length,valTotal=DB.stock.reduce((a,x)=>a+x.actual*x.precio,0);
-  document.getElementById('stk-stats').innerHTML=
-    `<div class="sc"><div class="sl">Insumos</div><div class="sv">${total}</div><div class="ss">registrados</div></div>`+
-    `<div class="sc"><div class="sl">Crítico</div><div class="sv" style="color:var(--danger)">${lowCount}</div><div class="ss">crítico</div></div>`+
-    `<div class="sc"><div class="sl">Alerta</div><div class="sv" style="color:#f59e0b">${warnCount}</div><div class="ss">alerta</div></div>`+
-    `<div class="sc"><div class="sl">Valor</div><div class="sv" style="font-size:15px">${fmtK(valTotal)}</div><div class="ss">inventario</div></div>`;
-
-  updateStkCatFilter();
-
-  if(!data.length){document.getElementById('stk-list').innerHTML='<div class="empty"><div class="empty-icon">📦</div><div style="font-size:14px">Sin insumos</div></div>';return;}
-
-  const grouped={};
-  data.forEach(item=>{if(!grouped[item.cat])grouped[item.cat]=[];grouped[item.cat].push(item);});
-
-  let html='';
-  Object.keys(grouped).sort().forEach(cat=>{
-    const safeCat=cat.replace(/[^a-zA-Z0-9]/g,'_');
-    const isOpen=stkAccOpen[cat]!==false;
-    const items=grouped[cat];
-    html+=`<div style="margin-bottom:6px">
-      <div class="acc-hdr" onclick="toggleAcc('${cat}','${safeCat}')">
-        <span class="acc-hdr-title">📁 ${cat} <span style="font-size:11px;font-weight:400;color:var(--muted)">(${items.length})</span></span>
-        <span class="acc-arrow" id="acc-arr-${safeCat}" style="transform:${isOpen?'rotate(90deg)':'rotate(0deg)'}">▶</span>
-      </div>
-      <div class="acc-body${isOpen?' open':''}" id="acc-body-${safeCat}">
-        <div class="acc-body-inner">
-          ${items.map(item=>{
-            const st=stkStatus(item);
-            const pct=item.minimo>0?Math.min(100,Math.round(item.actual/item.minimo*100)):100;
-            return`<div style="background:var(--card);border-radius:10px;border:1px solid var(--border);padding:9px;margin-bottom:5px">
-              <div style="display:flex;justify-content:space-between;align-items:flex-start;margin-bottom:5px">
-                <div><div style="font-weight:600;font-size:13px;color:var(--v1)">${item.nombre}</div>
-                <div style="font-size:10px;color:var(--muted)">${item.proveedor||'Sin proveedor'}</div></div>
-                <span class="stk-badge ${st}">${stkLabel(st)}</span>
-              </div>
-              <div style="display:flex;align-items:center;gap:9px;margin-bottom:5px">
-                <div class="stk-bar-wrap"><div class="stk-bar stk-${st}" style="width:${pct}%"></div></div>
-                <span style="font-size:11px;font-weight:600;color:var(--v1);white-space:nowrap">${item.actual}<span style="color:var(--muted);font-weight:400">/${item.minimo} ${item.unidad}</span></span>
-              </div>
-              <div style="display:flex;justify-content:space-between;align-items:center">
-                <span style="font-size:11px;color:var(--muted)">${fmt(item.precio)}/${item.unidad} · <b style="color:var(--v2)">${fmt(item.actual*item.precio)}</b></span>
-                <div style="display:flex;gap:4px">
-                  <button class="btn bs bsm" style="padding:3px 8px;font-size:11px" onclick="abrirStock(${item.id})">✏️ Editar</button>
-                  <button class="btn bd bsm" style="padding:3px 8px;font-size:11px" onclick="elimStock(${item.id})">🗑</button>
+function renderInsumos(){
+  const q=(document.getElementById('ins-search')?.value||'').toLowerCase();
+  let data=[...DB.insumos];
+  if(q)data=data.filter(x=>x.producto.toLowerCase().includes(q)||(x.proveedor||'').toLowerCase().includes(q)||(x.categoria||'').toLowerCase().includes(q));
+  if(insTab==='catalogo'){
+    const listEl=document.getElementById('ins-list');
+    if(!listEl)return;
+    if(!data.length){listEl.innerHTML='<div class="empty"><div class="empty-icon">📦</div><div style="font-size:14px">Sin insumos en el catálogo</div><div style="font-size:12px;color:var(--muted);margin-top:4px">Presioná + Nuevo para agregar</div></div>';return;}
+    const grouped={};
+    data.forEach(x=>{if(!grouped[x.categoria])grouped[x.categoria]=[];grouped[x.categoria].push(x);});
+    let html='';
+    Object.keys(grouped).sort().forEach(cat=>{
+      const safeCat=cat.replace(/[^a-zA-Z0-9]/g,'_');
+      const isOpen=insAccOpen[cat]!==false;
+      html+=`<div style="margin-bottom:6px">
+        <div class="acc-hdr" onclick="toggleInsAcc('${cat}','${safeCat}')">
+          <span class="acc-hdr-title">📁 ${cat} <span style="font-size:11px;font-weight:400;color:var(--muted)">(${grouped[cat].length})</span></span>
+          <span class="acc-arrow" id="ins-arr-${safeCat}" style="transform:${isOpen?'rotate(90deg)':'rotate(0deg)'}">▶</span>
+        </div>
+        <div class="acc-body${isOpen?' open':''}" id="ins-body-${safeCat}">
+          <div class="acc-body-inner">
+            ${grouped[cat].map(item=>`<div style="background:var(--card);border-radius:10px;border:1px solid var(--border);padding:10px;margin-bottom:5px">
+              <div style="display:flex;justify-content:space-between;align-items:flex-start;margin-bottom:7px">
+                <div style="flex:1">
+                  <div style="font-weight:600;font-size:13px;color:var(--c1)">${item.producto}</div>
+                  <div style="font-size:10px;color:var(--muted)">${item.proveedor||'Sin proveedor'} · ${item.unidad}</div>
+                </div>
+                <div style="display:flex;gap:4px;margin-left:8px">
+                  <button class="btn bs bsm" style="padding:3px 8px;font-size:11px" onclick="abrirInsumo(${item.id})">✏️</button>
+                  <button class="btn bd bsm" style="padding:3px 8px;font-size:11px" onclick="elimInsumo(${item.id})">🗑</button>
                 </div>
               </div>
-            </div>`;
-          }).join('')}
+              <div style="display:flex;gap:14px;align-items:center;flex-wrap:wrap">
+                <span style="font-size:11px;color:var(--muted)">🔒 Compra: <b style="color:var(--c1)">${fmt(item.precioCompra)}</b></span>
+                <span style="font-size:11px;color:var(--muted)">💰 Venta: <b style="color:var(--v1)">${fmt(item.precioVenta)}</b></span>
+              </div>
+              ${item.notas?(`<div style="font-size:10px;color:var(--muted);margin-top:5px;border-top:1px solid var(--pl);padding-top:5px">📝 ${item.notas}</div>`):''}
+            </div>`).join('')}
+          </div>
         </div>
+      </div>`;
+    });
+    listEl.innerHTML=html;
+  } else {
+    // CHECKLIST
+    const checkEl=document.getElementById('ins-check-list');
+    if(!checkEl)return;
+    if(!data.length){checkEl.innerHTML='<div class="empty"><div class="empty-icon">✅</div><div style="font-size:14px">Sin insumos</div></div>';return;}
+    const total=data.length,done=data.filter(x=>insChecks[x.id]).length;
+    const pct=total>0?Math.round(done/total*100):0;
+    const progressHtml=`<div style="margin-bottom:10px;padding:10px;background:var(--card);border-radius:10px;border:1px solid var(--border)">
+      <div style="display:flex;justify-content:space-between;margin-bottom:6px">
+        <span style="font-size:12px;font-weight:600;color:var(--v1)">${done} de ${total} listos</span>
+        <span style="font-size:12px;color:var(--muted)">${pct}%</span>
       </div>
+      <div style="height:7px;background:var(--pl);border-radius:3px;overflow:hidden"><div style="height:100%;width:${pct}%;background:var(--v1);border-radius:3px;transition:width .3s"></div></div>
     </div>`;
-  });
-  document.getElementById('stk-list').innerHTML=html;
-}
-function toggleAcc(cat,safeCat){
-  stkAccOpen[cat]=stkAccOpen[cat]===false?true:(stkAccOpen[cat]===true?false:false);
-  // Default is open (true), toggle
-  const wasOpen=stkAccOpen[cat]!==false;
-  stkAccOpen[cat]=!wasOpen;
-  const body=document.getElementById('acc-body-'+safeCat);
-  const arr=document.getElementById('acc-arr-'+safeCat);
-  if(body)body.classList.toggle('open',stkAccOpen[cat]!==false);
-  if(arr)arr.style.transform=stkAccOpen[cat]!==false?'rotate(90deg)':'rotate(0deg)';
+    checkEl.innerHTML=progressHtml+data.map(item=>{
+      const checked=insChecks[item.id]||false;
+      return`<div style="background:var(--card);border-radius:10px;border:1px solid ${checked?'var(--v3)':'var(--border)'};padding:11px 12px;margin-bottom:6px;display:flex;align-items:center;gap:12px;cursor:pointer;opacity:${checked?'0.55':'1'};transition:all .18s" onclick="toggleCheck(${item.id})">
+        <div style="width:22px;height:22px;border-radius:6px;border:2px solid ${checked?'var(--v1)':'var(--border)'};background:${checked?'var(--v1)':'transparent'};display:flex;align-items:center;justify-content:center;flex-shrink:0;transition:all .18s">
+          ${checked?'<svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="3"><polyline points="20 6 9 17 4 12"/></svg>':''}
+        </div>
+        <div style="flex:1">
+          <div style="font-weight:600;font-size:13px;${checked?'text-decoration:line-through;color:var(--muted)':'color:var(--c1)'}">${item.producto}</div>
+          <div style="font-size:10px;color:var(--muted)">${item.categoria} · ${item.unidad}</div>
+        </div>
+      </div>`;
+    }).join('');
+  }
 }
 
-function abrirStock(id=null){
-  editStkId=id;
-  // Rebuild category options
-  const catSel=document.getElementById('mst-cat');
-  const allCats=getAllCats?getAllCats():[...new Set(DB.stock.map(x=>x.cat))];
-  const baseCats=['Fertilizante','Herbicida','Fungicida','Herramienta','Semilla','Tubería','Otro'];
-  const merged=[...new Set([...allCats,...baseCats])].sort();
-  catSel.innerHTML=merged.map(c=>`<option value="${c}">${c}</option>`).join('');
+function toggleInsAcc(cat,safeCat){
+  const wasOpen=insAccOpen[cat]!==false;
+  insAccOpen[cat]=!wasOpen;
+  const body=document.getElementById('ins-body-'+safeCat);
+  const arr=document.getElementById('ins-arr-'+safeCat);
+  if(body)body.classList.toggle('open',insAccOpen[cat]!==false);
+  if(arr)arr.style.transform=insAccOpen[cat]!==false?'rotate(90deg)':'rotate(0deg)';
+}
 
+function toggleCheck(id){
+  insChecks[id]=!insChecks[id];
+  renderInsumos();
+}
+
+function limpiarChecklist(){
+  if(!confirm('¿Reiniciar el checklist?'))return;
+  insChecks={};
+  renderInsumos();
+  toast('Checklist reiniciado','ok');
+}
+
+function abrirInsumo(id=null){
+  editInsId=id;
+  const cats=['Fertilizantes','Herbicidas','Fungicidas','Plantación','Semillas','Herramientas','Riego','Otro'];
+  document.getElementById('mst-cat').innerHTML=cats.map(c=>`<option value="${c}">${c}</option>`).join('');
   if(id){
-    const s=DB.stock.find(x=>x.id===id);
-    document.getElementById('mst-nombre').value=s.nombre;
-    catSel.value=s.cat;
+    const s=DB.insumos.find(x=>x.id===id);
+    document.getElementById('mst-producto').value=s.producto;
+    document.getElementById('mst-cat').value=s.categoria;
     document.getElementById('mst-unidad').value=s.unidad;
-    document.getElementById('mst-actual').value=s.actual;
-    document.getElementById('mst-minimo').value=s.minimo;
-    document.getElementById('mst-precio').value=s.precio;
     document.getElementById('mst-proveedor').value=s.proveedor||'';
+    document.getElementById('mst-pcompra').value=s.precioCompra||0;
+    document.getElementById('mst-pventa').value=s.precioVenta||0;
+    document.getElementById('mst-notas').value=s.notas||'';
     document.getElementById('mo-stk-title').textContent='Editar Insumo';
   }else{
-    ['mst-nombre','mst-unidad','mst-actual','mst-minimo','mst-precio','mst-proveedor'].forEach(i=>document.getElementById(i).value='');
+    ['mst-producto','mst-unidad','mst-proveedor','mst-pcompra','mst-pventa','mst-notas'].forEach(i=>document.getElementById(i).value='');
     document.getElementById('mo-stk-title').textContent='Nuevo Insumo';
   }
   document.getElementById('mo-stock').classList.add('open');
 }
 
-function saveStock(){
-  const n=document.getElementById('mst-nombre').value.trim();
+function saveInsumo(){
+  const n=document.getElementById('mst-producto').value.trim();
   if(!n){toast('Ingresa el nombre del insumo','err');return;}
   const obj={
-    nombre:n,
-    cat:document.getElementById('mst-cat').value,
+    producto:n,
+    categoria:document.getElementById('mst-cat').value,
     unidad:document.getElementById('mst-unidad').value||'ud',
-    actual:parseFloat(document.getElementById('mst-actual').value)||0,
-    minimo:parseFloat(document.getElementById('mst-minimo').value)||0,
-    precio:parseFloat(document.getElementById('mst-precio').value)||0,
-    proveedor:document.getElementById('mst-proveedor').value
+    proveedor:document.getElementById('mst-proveedor').value,
+    precioCompra:parseFloat(document.getElementById('mst-pcompra').value)||0,
+    precioVenta:parseFloat(document.getElementById('mst-pventa').value)||0,
+    notas:document.getElementById('mst-notas').value
   };
-  if(editStkId){Object.assign(DB.stock.find(x=>x.id===editStkId),obj);}
-  else{obj.id=Date.now();DB.stock.push(obj);}
+  if(editInsId){Object.assign(DB.insumos.find(x=>x.id===editInsId),obj);}
+  else{obj.id=Date.now();DB.insumos.push(obj);}
   saveDB();
-  cerrarMo('mo-stock');renderStock();
-  toast(editStkId?'Insumo actualizado':'Insumo agregado','ok');
+  cerrarMo('mo-stock');renderInsumos();renderAdminInsumos();
+  toast(editInsId?'Insumo actualizado':'Insumo agregado','ok');
 }
 
-function elimStock(id){
-  const it=DB.stock.find(x=>x.id===id);
-  const nom=it?(' "'+it.nombre+'"'):'';
+function elimInsumo(id){
+  const it=DB.insumos.find(x=>x.id===id);
+  const nom=it?(' "'+it.producto+'"'):'';
   if(!confirm('¿Mover el insumo'+nom+' a la papelera?'))return;
-  if(it) _papPush('stock',it);
-  DB.stock=DB.stock.filter(x=>x.id!==id);
+  if(it)_papPush('insumos',it);
+  DB.insumos=DB.insumos.filter(x=>x.id!==id);
   saveDB();
-  renderStock();toast('Movido a papelera','ok');
+  renderInsumos();renderAdminInsumos();toast('Movido a papelera','ok');
+}
+
+function renderAdminInsumos(){
+  const q=(document.getElementById('adm-ins-search')?.value||'').toLowerCase();
+  const data=DB.insumos.filter(x=>!q||x.producto.toLowerCase().includes(q)||(x.categoria||'').toLowerCase().includes(q));
+  const countEl=document.getElementById('adm-ins-count');
+  const listEl=document.getElementById('adm-ins-list');
+  if(countEl)countEl.textContent=DB.insumos.length+' insumos';
+  if(!listEl)return;
+  listEl.innerHTML=data.length?data.map(x=>`<div class="spi" style="cursor:default;flex-direction:column;align-items:stretch;gap:5px">
+    <div style="display:flex;justify-content:space-between;align-items:center">
+      <div><div class="sp-name">${x.producto}</div><div style="font-size:10px;color:var(--muted)">${x.categoria} · ${x.proveedor||'Sin proveedor'} · ${x.unidad}</div></div>
+      <div style="display:flex;gap:5px"><button class="btn bs bsm" style="padding:4px 8px;font-size:11px" onclick="abrirInsumo(${x.id})">✏️</button><button class="btn bd bsm" style="padding:4px 8px;font-size:11px" onclick="elimInsumo(${x.id})">🗑</button></div>
+    </div>
+    <div style="display:flex;gap:12px">
+      <span style="font-size:10px;color:var(--muted)">🔒 Compra: <b>${fmt(x.precioCompra)}</b></span>
+      <span style="font-size:10px;color:var(--v1)">💰 Venta: <b>${fmt(x.precioVenta)}</b></span>
+    </div>
+  </div>`).join(''):'<div style="font-size:13px;color:var(--muted);text-align:center;padding:20px">Sin insumos. Presioná + Añadir</div>';
 }
 
 
@@ -1857,14 +1873,6 @@ function deleteLogo(){if(!confirm('¿Restablecer el logo al valor por defecto?')
 setTimeout(initLogo,50);
 
 // ── CATEGORY MANAGEMENT ───────────────────────────────────────────────────────
-function abrirNuevaCat(){document.getElementById('nueva-cat-input').value='';document.getElementById('mo-nueva-cat').classList.add('open');}
-function saveNuevaCat(){
-  const name=document.getElementById('nueva-cat-input').value.trim();
-  if(!name){toast('Ingresa el nombre','err');return;}
-  const cats=JSON.parse(localStorage.getItem('gq_cats')||'[]');
-  if(!cats.includes(name)){cats.push(name);localStorage.setItem('gq_cats',JSON.stringify(cats));}
-  cerrarMo('mo-nueva-cat');renderStock();toast('Categoría "'+name+'" creada','ok');
-}
 
 // ── PDF GENERATION (jsPDF) ────────────────────────────────────────────────────
 function generarPDF(){
@@ -2549,27 +2557,27 @@ function processExcelData(data) {
     const nombre = row.Nombre || row.Item || row.Insumo;
     const precio = row.Precio || row.Costo || row.Valor;
     if (nombre && precio) {
-      const existing = DB.stock.find(s => s.nombre.toLowerCase() === nombre.toLowerCase());
+      const existing = DB.insumos.find(s => s.producto.toLowerCase() === nombre.toLowerCase());
       if (existing) {
-        existing.precio = parseFloat(precio);
-        existing.actual = row.Stock || row.Cantidad || existing.actual;
+        existing.precioCompra = parseFloat(precio);
+        existing.precioVenta = Math.round(parseFloat(precio) * 1.5);
       } else {
-        DB.stock.push({
+        DB.insumos.push({
           id: Date.now() + Math.random(),
-          nombre: nombre,
-          cat: row.Categoria || row.Tipo || "Otro",
+          producto: nombre,
+          categoria: row.Categoria || row.Tipo || "Otro",
           unidad: row.Unidad || "ud",
-          actual: row.Stock || row.Cantidad || 0,
-          minimo: row.Minimo || 0,
-          precio: parseFloat(precio),
-          proveedor: row.Proveedor || "Importado"
+          proveedor: row.Proveedor || "Importado",
+          precioCompra: parseFloat(precio),
+          precioVenta: Math.round(parseFloat(precio) * 1.5),
+          notas: ''
         });
       }
       count++;
     }
   });
   saveDB();
-  renderStock();
+  renderInsumos();
   toast(`Se importaron/actualizaron ${count} insumos`, "ok");
 }
 
@@ -2614,15 +2622,7 @@ function updateClientView() {
 }
 
 window.addEventListener("load", () => {
-  const stkHeader = document.querySelector("#page-stock .section-title");
-  if (stkHeader) {
-    const btn = document.createElement("button");
-    btn.className = "btn bp bsm";
-    btn.style.marginLeft = "10px";
-    btn.innerHTML = "📥 Importar Excel";
-    btn.onclick = triggerImportExcel;
-    stkHeader.parentElement.appendChild(btn);
-  }
+  // Excel import button removed - feature integrated in Insumos page
 });
 </script>
 
