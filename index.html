@@ -2626,5 +2626,86 @@ window.addEventListener("load", () => {
 });
 </script>
 
+<script>
+// --- MEJORA DE INSTALACIÓN PWA (PC & MÓVIL) ---
+let deferredPrompt;
+
+function checkInstallable() {
+  const btn = document.getElementById('btn-instalar');
+  if (!btn) return;
+  
+  // Detectar si ya está instalada
+  const isStandalone = window.matchMedia('(display-mode: standalone)').matches || window.navigator.standalone;
+  if (isStandalone) {
+    btn.style.display = 'none';
+    return;
+  }
+  
+  // Mostrar siempre el botón inicialmente para que el usuario sepa que existe la opción
+  btn.style.display = 'flex';
+}
+
+window.addEventListener('beforeinstallprompt', (e) => {
+  // Evitar que Chrome muestre el aviso automático
+  e.preventDefault();
+  // Guardar el evento para dispararlo luego
+  deferredPrompt = e;
+  console.log('PWA: Evento beforeinstallprompt capturado');
+  
+  const btn = document.getElementById('btn-instalar');
+  if (btn) {
+    btn.style.display = 'flex';
+    btn.classList.add('pulse-animation'); // Opcional: añadir una clase para llamar la atención
+  }
+});
+
+window.addEventListener('appinstalled', () => {
+  const btn = document.getElementById('btn-instalar');
+  if (btn) btn.style.display = 'none';
+  deferredPrompt = null;
+  if (typeof toast === 'function') toast('✅ ¡App instalada con éxito!', 'ok');
+});
+
+function instalarApp() {
+  const isIOS = /iPad|iPhone|iPod/.test(navigator.userAgent) && !window.MSStream;
+  
+  if (deferredPrompt) {
+    // Caso: Android o PC (Chrome/Edge)
+    deferredPrompt.prompt();
+    deferredPrompt.userChoice.then((choiceResult) => {
+      if (choiceResult.outcome === 'accepted') {
+        console.log('Usuario aceptó la instalación');
+      } else {
+        console.log('Usuario canceló la instalación');
+      }
+      deferredPrompt = null;
+    });
+  } else if (isIOS) {
+    // Caso: iPhone/iPad (Safari)
+    if (typeof toast === 'function') {
+      toast('En iPhone: toca el ícono compartir ⬆ y luego "Añadir a pantalla de inicio"', 'ok');
+    } else {
+      alert('En iPhone: toca el ícono compartir ⬆ y luego "Añadir a pantalla de inicio"');
+    }
+  } else {
+    // Caso: Navegador ya instalado o no compatible con prompt automático
+    if (typeof toast === 'function') {
+      toast('Busca el ícono de instalación ⊕ en la barra de direcciones o en el menú del navegador', 'ok');
+    } else {
+      alert('Busca el ícono de instalación ⊕ en la barra de direcciones o en el menú del navegador');
+    }
+  }
+}
+
+// Vincular el botón existente a la nueva función
+window.addEventListener('load', () => {
+  checkInstallable();
+  const btn = document.getElementById('btn-instalar');
+  if (btn) {
+    btn.onclick = instalarApp;
+  }
+});
+</script>
+
 </body>
 </html>
