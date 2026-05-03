@@ -28,4 +28,28 @@ export default defineSchema({
   })
     .index("by_category", ["categoryId"])
     .index("by_deletedAt", ["deletedAt"]),
+
+  // ── INSUMOS ──────────────────────────────────────────────────────────────
+  // Categorías de insumos (ej: Plantación, Herbicidas, Fertilizantes, etc.)
+  insumoCategories: defineTable({
+    name: v.string(),
+    order: v.number(),
+    deletedAt: v.optional(v.number()),
+  })
+    .index("by_order", ["order"])
+    .index("by_deletedAt", ["deletedAt"]),
+
+  // Lista de insumos internos: proveedor, producto, precio de compra.
+  // Datos PRIVADOS — solo se comparten en cotizaciones itemizadas (con margen aplicado).
+  insumos: defineTable({
+    categoriaId: v.id("insumoCategories"),
+    proveedor: v.string(),
+    producto: v.string(),
+    precioCompra: v.number(),
+    unidad: v.string(),
+    notas: v.optional(v.string()),
+    deletedAt: v.optional(v.number()),
+  })
+    .index("by_categoria", ["categoriaId"])
+    .index("by_deletedAt", ["deletedAt"]),
 });
