@@ -4,6 +4,8 @@ import { BosqueProfundoDesktop } from "./components/mockups/biodiverso-app/Bosqu
 import { MapaVivo } from "./components/mockups/biodiverso-app/MapaVivo";
 import { MapaVivoDesktop } from "./components/mockups/biodiverso-app/MapaVivoDesktop";
 import { VerdeVivo } from "./components/mockups/biodiverso-app/VerdeVivo";
+import { InsumosMockup } from "./components/mockups/biodiverso-app/InsumosMockup";
+import { InsumosMockupDesktop } from "./components/mockups/biodiverso-app/InsumosMockupDesktop";
 import { ErrorBoundary } from "./components/ErrorBoundary";
 
 type Screen = {
@@ -14,11 +16,13 @@ type Screen = {
 };
 
 const screens: Screen[] = [
-  { id: "bosque-mobile", label: "Bosque · Móvil", component: BosqueProfundo, device: "mobile" },
-  { id: "bosque-desktop", label: "Bosque · Desktop", component: BosqueProfundoDesktop, device: "desktop" },
-  { id: "mapa-mobile", label: "Mapa · Móvil", component: MapaVivo, device: "mobile" },
-  { id: "mapa-desktop", label: "Mapa · Desktop", component: MapaVivoDesktop, device: "desktop" },
-  { id: "verde-mobile", label: "Verde · Móvil", component: VerdeVivo, device: "mobile" },
+  { id: "bosque-mobile",    label: "Bosque · Móvil",    component: BosqueProfundo,        device: "mobile"  },
+  { id: "bosque-desktop",   label: "Bosque · Desktop",  component: BosqueProfundoDesktop, device: "desktop" },
+  { id: "mapa-mobile",      label: "Mapa · Móvil",      component: MapaVivo,              device: "mobile"  },
+  { id: "mapa-desktop",     label: "Mapa · Desktop",    component: MapaVivoDesktop,       device: "desktop" },
+  { id: "verde-mobile",     label: "Verde · Móvil",     component: VerdeVivo,             device: "mobile"  },
+  { id: "insumos-mobile",   label: "Insumos · Móvil",   component: InsumosMockup,         device: "mobile"  },
+  { id: "insumos-desktop",  label: "Insumos · Desktop", component: InsumosMockupDesktop,  device: "desktop" },
 ];
 
 export default function App() {
@@ -29,7 +33,6 @@ export default function App() {
   const Component = current.component;
   const isMobile = current.device === "mobile";
 
-  // Simular carga al cambiar de pantalla para una experiencia más fluida
   useEffect(() => {
     setIsLoading(true);
     const timer = setTimeout(() => setIsLoading(false), 300);
@@ -127,7 +130,6 @@ export default function App() {
           
           <ErrorBoundary key={active} name={current.label}>
             {isMobile ? (
-              /* En desktop, centra el mockup móvil con ancho fijo */
               <div
                 style={{
                   width: "100%",
