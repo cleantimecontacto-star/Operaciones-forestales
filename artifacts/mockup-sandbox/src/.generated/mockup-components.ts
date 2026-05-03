@@ -3,6 +3,8 @@ type ModuleMap = Record<string, () => Promise<Record<string, unknown>>>;
 export const modules: ModuleMap = {
   "./components/mockups/biodiverso-app/BosqueProfundo.tsx": () => import("../components/mockups/biodiverso-app/BosqueProfundo.tsx"),
   "./components/mockups/biodiverso-app/BosqueProfundoDesktop.tsx": () => import("../components/mockups/biodiverso-app/BosqueProfundoDesktop.tsx"),
+  "./components/mockups/biodiverso-app/InsumosMockup.tsx": () => import("../components/mockups/biodiverso-app/InsumosMockup.tsx"),
+  "./components/mockups/biodiverso-app/InsumosMockupDesktop.tsx": () => import("../components/mockups/biodiverso-app/InsumosMockupDesktop.tsx"),
   "./components/mockups/biodiverso-app/MapaVivo.tsx": () => import("../components/mockups/biodiverso-app/MapaVivo.tsx"),
   "./components/mockups/biodiverso-app/MapaVivoDesktop.tsx": () => import("../components/mockups/biodiverso-app/MapaVivoDesktop.tsx"),
   "./components/mockups/biodiverso-app/VerdeVivo.tsx": () => import("../components/mockups/biodiverso-app/VerdeVivo.tsx")
