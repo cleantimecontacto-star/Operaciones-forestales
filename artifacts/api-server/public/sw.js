@@ -1,4 +1,4 @@
-const CACHE = 'operaciones-forestales-v11';
+const CACHE = 'operaciones-forestales-v12';
 const ASSETS = [
   '/',
   '/index.html',
@@ -9,38 +9,13 @@ const ASSETS = [
 
 self.addEventListener('install', e => {
   self.skipWaiting();
-  e.waitUntil(
-    caches.open(CACHE).then(c => c.addAll(ASSETS))
-  );
+  e.waitUntil(caches.open(CACHE).then(c => c.addAll(ASSETS)));
 });
-
 self.addEventListener('activate', e => {
-  e.waitUntil(
-    caches.keys().then(keys => Promise.all(
-      keys.map(k => {
-        if (k !== CACHE) return caches.delete(k);
-      })
-    )).then(() => self.clients.claim())
-  );
+  e.waitUntil(caches.keys().then(ks => Promise.all(ks.filter(k=>k!==CACHE).map(k=>caches.delete(k)))));
+  self.clients.claim();
 });
-
 self.addEventListener('fetch', e => {
-  if (e.request.method !== 'GET') return;
-  
-  e.respondWith(
-    caches.match(e.request).then(response => {
-      return response || fetch(e.request).then(fetchResponse => {
-        return caches.open(CACHE).then(cache => {
-          if (e.request.url.startsWith('http')) {
-            cache.put(e.request, fetchResponse.clone());
-          }
-          return fetchResponse;
-        });
-      });
-    }).catch(() => {
-      if (e.request.mode === 'navigate') {
-        return caches.match('/');
-      }
-    })
-  );
+  if(e.request.method!=='GET')return;
+  e.respondWith(caches.match(e.request).then(r=>r||fetch(e.request)));
 });
