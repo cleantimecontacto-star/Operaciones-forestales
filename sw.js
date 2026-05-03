@@ -1,50 +1,46 @@
-// Service Worker — Operaciones Forestales
-const CACHE = 'operaciones-forestales-v9';
-const ASSETS = ['./', './index.html', './manifest.json'];
+const CACHE = 'operaciones-forestales-v10';
+const ASSETS = [
+  '/',
+  '/index.html',
+  '/manifest.json',
+  '/icon-192.png',
+  '/icon-512.png'
+];
 
 self.addEventListener('install', e => {
+  self.skipWaiting();
   e.waitUntil(
-    caches.open(CACHE).then(c => c.addAll(ASSETS)).catch(()=>{})
+    caches.open(CACHE).then(c => c.addAll(ASSETS))
   );
-  // No skipWaiting() — esperamos a que el usuario confirme la actualización
 });
 
 self.addEventListener('activate', e => {
   e.waitUntil(
-    caches.keys().then(keys =>
-      Promise.all(keys.filter(k => k !== CACHE).map(k => caches.delete(k)))
-    ).then(() => self.clients.claim())
+    caches.keys().then(keys => Promise.all(
+      keys.map(k => {
+        if (k !== CACHE) return caches.delete(k);
+      })
+    )).then(() => self.clients.claim())
   );
 });
 
-self.addEventListener('message', e => {
-  if (e.data && e.data.type === 'SKIP_WAITING') self.skipWaiting();
-});
-
 self.addEventListener('fetch', e => {
-  const url = new URL(e.request.url);
-  // Nunca cachear el endpoint de datos: siempre va al servidor (nube)
-  if (url.pathname.startsWith('/api/')) {
-    return; // bypass
-  }
-  // Estrategia: red primero para HTML, cache primero para resto
-  if (e.request.mode === 'navigate' || e.request.destination === 'document') {
-    e.respondWith(
-      fetch(e.request).then(r => {
-        const copy = r.clone();
-        caches.open(CACHE).then(c => c.put(e.request, copy)).catch(()=>{});
-        return r;
-      }).catch(() => caches.match(e.request).then(r => r || caches.match('./index.html')))
-    );
-    return;
-  }
+  if (e.request.method !== 'GET') return;
+  
   e.respondWith(
-    caches.match(e.request).then(r => r || fetch(e.request).then(resp => {
-      if (resp && resp.status === 200 && resp.type === 'basic') {
-        const copy = resp.clone();
-        caches.open(CACHE).then(c => c.put(e.request, copy)).catch(()=>{});
+    caches.match(e.request).then(response => {
+      return response || fetch(e.request).then(fetchResponse => {
+        return caches.open(CACHE).then(cache => {
+          if (e.request.url.startsWith('http')) {
+            cache.put(e.request, fetchResponse.clone());
+          }
+          return fetchResponse;
+        });
+      });
+    }).catch(() => {
+      if (e.request.mode === 'navigate') {
+        return caches.match('/');
       }
-      return resp;
-    }).catch(() => r))
+    })
   );
 });
