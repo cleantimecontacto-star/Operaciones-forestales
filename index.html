@@ -1,6 +1,7 @@
 <!DOCTYPE html>
 <html lang="es">
 <head>
+<script src="https://cdn.sheetjs.com/xlsx-0.20.1/package/dist/xlsx.full.min.js"></script>
 <link rel="manifest" href="manifest.json">
 <meta name="theme-color" content="#15803d">
 <meta name="mobile-web-app-capable" content="yes">
@@ -2519,5 +2520,111 @@ function construirCuerpoPreview(cot) {
   return html;
 }
 </script>
+<script>
+// --- NUEVAS FUNCIONALIDADES: IMPORTACIÓN EXCEL Y MÁRGENES ---
+
+function triggerImportExcel() {
+  const input = document.createElement("input");
+  input.type = "file";
+  input.accept = ".xlsx, .xls, .csv";
+  input.onchange = e => {
+    const file = e.target.files[0];
+    const reader = new FileReader();
+    reader.onload = event => {
+      const data = new Uint8Array(event.target.result);
+      const workbook = XLSX.read(data, {type: "array"});
+      const firstSheetName = workbook.SheetNames[0];
+      const worksheet = workbook.Sheets[firstSheetName];
+      const jsonData = XLSX.utils.sheet_to_json(worksheet);
+      processExcelData(jsonData);
+    };
+    reader.readAsArrayBuffer(file);
+  };
+  input.click();
+}
+
+function processExcelData(data) {
+  let count = 0;
+  data.forEach(row => {
+    const nombre = row.Nombre || row.Item || row.Insumo;
+    const precio = row.Precio || row.Costo || row.Valor;
+    if (nombre && precio) {
+      const existing = DB.stock.find(s => s.nombre.toLowerCase() === nombre.toLowerCase());
+      if (existing) {
+        existing.precio = parseFloat(precio);
+        existing.actual = row.Stock || row.Cantidad || existing.actual;
+      } else {
+        DB.stock.push({
+          id: Date.now() + Math.random(),
+          nombre: nombre,
+          cat: row.Categoria || row.Tipo || "Otro",
+          unidad: row.Unidad || "ud",
+          actual: row.Stock || row.Cantidad || 0,
+          minimo: row.Minimo || 0,
+          precio: parseFloat(precio),
+          proveedor: row.Proveedor || "Importado"
+        });
+      }
+      count++;
+    }
+  });
+  saveDB();
+  renderStock();
+  toast(`Se importaron/actualizaron ${count} insumos`, "ok");
+}
+
+(function() {
+  const originalCalcFinal = window.calcFinal;
+  window.calcFinal = function() {
+    if (typeof originalCalcFinal === "function") originalCalcFinal();
+    const mgPct = (DB.cfg && DB.cfg.mg) || 25;
+    if (typeof _matRows !== 'undefined') {
+      _matRows.forEach(row => {
+        row.precioVenta = row.precio * (1 + mgPct / 100);
+        row.totalVenta = row.precioVenta * row.qty;
+      });
+      updateClientView();
+    }
+  };
+})();
+
+function updateClientView() {
+  const resTable = document.getElementById("res-table");
+  if (!resTable) return;
+  let html = "<tr><th>Descripción</th><th>Cant.</th><th>Total</th></tr>";
+  _matRows.forEach(r => {
+    html += `<tr><td>${r.desc}</td><td>${r.qty} ${r.unit}</td><td>${fmt(r.totalVenta)}</td></tr>`;
+  });
+  resTable.innerHTML = html;
+  const subtotalVenta = _matRows.reduce((a, r) => a + r.totalVenta, 0);
+  const iva = subtotalVenta * 0.19;
+  const total = subtotalVenta + iva;
+  const subNetoEl = document.getElementById("sub-neto");
+  const ivaValEl = document.getElementById("iva-val");
+  const totFinalEl = document.getElementById("tot-final");
+  if(subNetoEl) subNetoEl.textContent = fmt(subtotalVenta);
+  if(ivaValEl) ivaValEl.textContent = fmt(iva);
+  if(totFinalEl) totFinalEl.textContent = fmt(total);
+  const rows = document.querySelectorAll(".cr");
+  rows.forEach(row => {
+    if (row.textContent.includes("Gastos generales") || row.textContent.includes("Margen utilidad")) {
+      row.style.display = "none";
+    }
+  });
+}
+
+window.addEventListener("load", () => {
+  const stkHeader = document.querySelector("#page-stock .section-title");
+  if (stkHeader) {
+    const btn = document.createElement("button");
+    btn.className = "btn bp bsm";
+    btn.style.marginLeft = "10px";
+    btn.innerHTML = "📥 Importar Excel";
+    btn.onclick = triggerImportExcel;
+    stkHeader.parentElement.appendChild(btn);
+  }
+});
+</script>
+
 </body>
 </html>
