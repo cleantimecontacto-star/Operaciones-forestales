@@ -1584,6 +1584,55 @@ function loadDB(){
   }catch(e){console.error('loadDB:',e);}
 }
 loadDB();
+// Reparación automática: restaurar precios en 0
+(function repairZeroPrices(){
+  let repaired=0;
+  // Reparar especies
+  DB.especies.forEach(e=>{
+    if((e.precioCompra===0||!e.precioCompra)&&(e.precioVenta===0||!e.precioVenta)&&e.precio>0){
+      e.precioCompra=e.precio;
+      e.precioVenta=e.precio;
+      repaired++;
+    }else if((e.precioCompra===0||!e.precioCompra)&&e.precioVenta>0){
+      e.precioCompra=e.precioVenta;
+      repaired++;
+    }else if((e.precioVenta===0||!e.precioVenta)&&e.precioCompra>0){
+      e.precioVenta=e.precioCompra;
+      repaired++;
+    }
+  });
+  // Reparar riego
+  DB.riegoComps.forEach(r=>{
+    if((r.precioCompra===0||!r.precioCompra)&&(r.precioVenta===0||!r.precioVenta)&&r.precio>0){
+      r.precioCompra=r.precio;
+      r.precioVenta=r.precio;
+      repaired++;
+    }else if((r.precioCompra===0||!r.precioCompra)&&r.precioVenta>0){
+      r.precioCompra=r.precioVenta;
+      repaired++;
+    }else if((r.precioVenta===0||!r.precioVenta)&&r.precioCompra>0){
+      r.precioVenta=r.precioCompra;
+      repaired++;
+    }
+  });
+  // Reparar insumos
+  DB.insumos.forEach(s=>{
+    if((s.precioCompra===0||!s.precioCompra)&&(s.precioVenta===0||!s.precioVenta)){
+      // Ambos en 0, no se puede reparar
+      return;
+    }else if((s.precioCompra===0||!s.precioCompra)&&s.precioVenta>0){
+      s.precioCompra=s.precioVenta;
+      repaired++;
+    }else if((s.precioVenta===0||!s.precioVenta)&&s.precioCompra>0){
+      s.precioVenta=s.precioCompra;
+      repaired++;
+    }
+  });
+  if(repaired>0){
+    saveDB();
+    console.log('Reparación automática: '+repaired+' precios restaurados');
+  }
+})();
 try{ applyEmpresaToUI(); }catch(e){}
 renderDash();
 // Sincronizar con Firebase (async)
