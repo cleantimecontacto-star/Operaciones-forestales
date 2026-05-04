@@ -1969,10 +1969,11 @@ function applyPctPrices(){
     DB.especies.forEach(e=>{
       if(campo==='compra'||campo==='ambos'){
         if(e.precioCompra>0) e.precioCompra=applyV(e.precioCompra);
+        else if(e.precio>0&&!e.precioVenta){e.precioCompra=applyV(e.precio);e.precio=0;}
       }
       if(campo==='venta'||campo==='ambos'){
         if(e.precioVenta>0) e.precioVenta=applyV(e.precioVenta);
-        else if(e.precio>0) e.precio=applyV(e.precio);
+        else if(e.precio>0&&!e.precioCompra){e.precioVenta=applyV(e.precio);e.precio=0;}
       }
       count++;
     });
@@ -1981,10 +1982,11 @@ function applyPctPrices(){
     DB.riegoComps.forEach(r=>{
       if(campo==='compra'||campo==='ambos'){
         if(r.precioCompra>0) r.precioCompra=applyV(r.precioCompra);
+        else if(r.precio>0&&!r.precioVenta){r.precioCompra=applyV(r.precio);r.precio=0;}
       }
       if(campo==='venta'||campo==='ambos'){
         if(r.precioVenta>0) r.precioVenta=applyV(r.precioVenta);
-        else if(r.precio>0) r.precio=applyV(r.precio);
+        else if(r.precio>0&&!r.precioCompra){r.precioVenta=applyV(r.precio);r.precio=0;}
       }
       count++;
     });
