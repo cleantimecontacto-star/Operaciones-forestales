@@ -1,4 +1,4 @@
-const CACHE = 'operaciones-forestales-v19';
+const CACHE = 'operaciones-forestales-v20';
 const ASSETS = [
   '/',
   '/index.html',

@@ -1965,39 +1965,28 @@ function applyPctPrices(){
   const f=1+pct/100;
   const applyV=(v)=>Math.round(v*f);
   let count=0;
-  if(!tipo||tipo==='especie'){
-    DB.especies.forEach(e=>{
-      if(campo==='compra'||campo==='ambos'){
-        if(e.precioCompra>0) e.precioCompra=applyV(e.precioCompra);
-        else if(e.precio>0&&!e.precioVenta){e.precioCompra=applyV(e.precio);e.precio=0;}
-      }
-      if(campo==='venta'||campo==='ambos'){
-        if(e.precioVenta>0) e.precioVenta=applyV(e.precioVenta);
-        else if(e.precio>0&&!e.precioCompra){e.precioVenta=applyV(e.precio);e.precio=0;}
-      }
-      count++;
-    });
-  }
-  if(!tipo||tipo==='riego'){
-    DB.riegoComps.forEach(r=>{
-      if(campo==='compra'||campo==='ambos'){
-        if(r.precioCompra>0) r.precioCompra=applyV(r.precioCompra);
-        else if(r.precio>0&&!r.precioVenta){r.precioCompra=applyV(r.precio);r.precio=0;}
-      }
-      if(campo==='venta'||campo==='ambos'){
-        if(r.precioVenta>0) r.precioVenta=applyV(r.precioVenta);
-        else if(r.precio>0&&!r.precioCompra){r.precioVenta=applyV(r.precio);r.precio=0;}
-      }
-      count++;
-    });
-  }
-  if(!tipo||tipo==='insumo'){
-    DB.insumos.forEach(s=>{
-      if(campo==='compra'||campo==='ambos') if(s.precioCompra>0) s.precioCompra=applyV(s.precioCompra);
-      if(campo==='venta'||campo==='ambos') if(s.precioVenta>0) s.precioVenta=applyV(s.precioVenta);
-      count++;
-    });
-  }
+  
+  const processItem=(item)=>{
+    // 1. Asegurar que tenga precioCompra y precioVenta definidos si tiene un precio base
+    if(item.precio>0){
+      if(!item.precioCompra) item.precioCompra=item.precio;
+      if(!item.precioVenta) item.precioVenta=item.precio;
+      item.precio=0; // Eliminar el precio base compartido para evitar confusiones
+    }
+    // 2. Aplicar el ajuste según el campo seleccionado
+    if(campo==='compra'||campo==='ambos'){
+      if(item.precioCompra>0) item.precioCompra=applyV(item.precioCompra);
+    }
+    if(campo==='venta'||campo==='ambos'){
+      if(item.precioVenta>0) item.precioVenta=applyV(item.precioVenta);
+    }
+    count++;
+  };
+
+  if(!tipo||tipo==='especie') DB.especies.forEach(processItem);
+  if(!tipo||tipo==='riego') DB.riegoComps.forEach(processItem);
+  if(!tipo||tipo==='insumo') DB.insumos.forEach(processItem);
+
   saveDB();renderCatalogo();
   document.getElementById('pct-adj-panel').style.display='none';
   toast((pct>0?'▲':'▼')+' '+Math.abs(pct)+'% aplicado a '+count+' ítems','ok');
