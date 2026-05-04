@@ -1902,22 +1902,28 @@ function saveCatalogo(){
     const pc=parseFloat(document.getElementById('cat-pcompra-esp').value)||0;
     const pv=parseFloat(document.getElementById('cat-pventa-esp').value)||0;
     if(!pc&&!pv){toast('Ingresá al menos un precio','err');return;}
-    const obj={nombre:n,sci:document.getElementById('cat-sci').value,precio:pc||pv,precioCompra:pc,precioVenta:pv,cat:document.getElementById('cat-categ-esp').value,desc:document.getElementById('cat-desc').value};
-    if(editCatId&&editCatType==='especie'){Object.assign(DB.especies.find(x=>x.id===editCatId),obj);}
-    else{obj.id=Date.now();DB.especies.push(obj);}
+    const obj={nombre:n,sci:document.getElementById('cat-sci').value,precio:0,precioCompra:pc,precioVenta:pv,cat:document.getElementById('cat-categ-esp').value,desc:document.getElementById('cat-desc').value};
+    if(editCatId&&editCatType==='especie'){
+      const item=DB.especies.find(x=>String(x.id)===String(editCatId));
+      if(item) Object.assign(item,obj);
+    }else{obj.id=Date.now();DB.especies.push(obj);}
     toast(editCatId?'Especie actualizada':'Especie agregada','ok');
   }else if(t==='riego'){
     const pc=parseFloat(document.getElementById('cat-pcompra-ri').value)||0;
     const pv=parseFloat(document.getElementById('cat-pventa-ri').value)||0;
     if(!pc&&!pv){toast('Ingresá al menos un precio','err');return;}
-    const obj={nombre:n,unidad:document.getElementById('cat-unidad-ri').value||'ud',precio:pc||pv,precioCompra:pc,precioVenta:pv,cat:document.getElementById('cat-categ-ri').value||'otro'};
-    if(editCatId&&editCatType==='riego'){Object.assign(DB.riegoComps.find(x=>x.id===editCatId),obj);}
-    else{obj.id=Date.now();DB.riegoComps.push(obj);}
+    const obj={nombre:n,unidad:document.getElementById('cat-unidad-ri').value||'ud',precio:0,precioCompra:pc,precioVenta:pv,cat:document.getElementById('cat-categ-ri').value||'otro'};
+    if(editCatId&&editCatType==='riego'){
+      const item=DB.riegoComps.find(x=>String(x.id)===String(editCatId));
+      if(item) Object.assign(item,obj);
+    }else{obj.id=Date.now();DB.riegoComps.push(obj);}
     toast(editCatId?'Componente actualizado':'Componente agregado','ok');
   }else if(t==='insumo'){
     const obj={producto:n,categoria:document.getElementById('cat-categ-ins').value,unidad:document.getElementById('cat-unidad-ins').value||'ud',proveedor:document.getElementById('cat-proveedor').value,precioCompra:parseFloat(document.getElementById('cat-pcompra').value)||0,precioVenta:parseFloat(document.getElementById('cat-pventa').value)||0,notas:document.getElementById('cat-notas').value};
-    if(editCatId&&editCatType==='insumo'){Object.assign(DB.insumos.find(x=>x.id===editCatId),obj);}
-    else{obj.id=Date.now();DB.insumos.push(obj);}
+    if(editCatId&&editCatType==='insumo'){
+      const item=DB.insumos.find(x=>String(x.id)===String(editCatId));
+      if(item) Object.assign(item,obj);
+    }else{obj.id=Date.now();DB.insumos.push(obj);}
     toast(editCatId?'Insumo actualizado':'Insumo agregado','ok');
   }
   saveDB();
