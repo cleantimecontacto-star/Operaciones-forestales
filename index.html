@@ -2022,12 +2022,14 @@ function applyPctPrices(){
   let count=0;
   
   const processItem=(item)=>{
-    // Solo aplicar el porcentaje al campo seleccionado, sin tocar la estructura de datos
+    // Si el campo esta en 0, usar el otro precio como base
     if(campo==='compra'||campo==='ambos'){
       if(item.precioCompra>0) item.precioCompra=applyV(item.precioCompra);
+      else if(item.precioVenta>0) item.precioCompra=applyV(item.precioVenta);
     }
     if(campo==='venta'||campo==='ambos'){
       if(item.precioVenta>0) item.precioVenta=applyV(item.precioVenta);
+      else if(item.precioCompra>0) item.precioVenta=applyV(item.precioCompra);
     }
     count++;
   };
