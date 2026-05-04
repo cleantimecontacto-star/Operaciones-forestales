@@ -635,9 +635,9 @@ body{font-family:'Inter',ui-sans-serif,system-ui,-apple-system,Segoe UI,Roboto,s
 <div id="page-admin" class="page">
   <div class="section-title">Administración</div>
   <div class="tabs">
-    <button class="tab active" onclick="showTab('empresa')" id="tab-empresa">Empresa</button>
+    <button class="tab active" onclick="showTab('empresa')" id="tab-empresa">🏢 Empresa</button>
     <button class="tab" onclick="showTab('catalogo')" id="tab-catalogo">📦 Catálogo</button>
-    <button class="tab" onclick="showTab('servicios')" id="tab-servicios">Servicios</button>
+    <button class="tab" onclick="showTab('servicios')" id="tab-servicios">🔧 Servicios</button>
     <button class="tab" onclick="showTab('seguridad')" id="tab-seguridad">🔐 Seguridad</button>
   </div>
   <div id="adm-empresa">
@@ -879,18 +879,22 @@ body{font-family:'Inter',ui-sans-serif,system-ui,-apple-system,Segoe UI,Roboto,s
   <div class="fg"><label class="fl" id="cat-nombre-lbl">Nombre común</label><input class="fi" id="cat-nombre" placeholder="Nombre del ítem"></div>
   <div id="cat-fields-especie">
     <div class="fg"><label class="fl">Nombre Científico</label><input class="fi" id="cat-sci" placeholder="Quillaja saponaria" style="font-style:italic"></div>
+    <div class="fg"><label class="fl">Categoría</label><select class="fs" id="cat-categ-esp"><option>Árbol</option><option>Arbusto</option><option>Herbácea</option><option>Nativa</option><option>Exótica</option><option>Ornamental</option></select></div>
     <div class="fr">
-      <div class="fg"><label class="fl">Precio unitario ($)</label><input class="fi" id="cat-precio-esp" type="number" placeholder="2500"></div>
-      <div class="fg"><label class="fl">Categoría</label><select class="fs" id="cat-categ-esp"><option>Árbol</option><option>Arbusto</option><option>Herbácea</option><option>Nativa</option><option>Exótica</option><option>Ornamental</option></select></div>
+      <div class="fg"><label class="fl">🔒 Precio compra ($)</label><input class="fi" id="cat-pcompra-esp" type="number" placeholder="1800" min="0"></div>
+      <div class="fg"><label class="fl">💰 Precio venta ($)</label><input class="fi" id="cat-pventa-esp" type="number" placeholder="2500" min="0"></div>
     </div>
     <div class="fg"><label class="fl">Descripción</label><textarea class="fta" id="cat-desc" placeholder="Opcional..."></textarea></div>
   </div>
   <div id="cat-fields-riego" style="display:none">
     <div class="fr">
       <div class="fg"><label class="fl">Unidad</label><input class="fi" id="cat-unidad-ri" placeholder="ud / ml"></div>
-      <div class="fg"><label class="fl">Precio unitario ($)</label><input class="fi" id="cat-precio-ri" type="number" placeholder="25000"></div>
+      <div class="fg"><label class="fl">Categoría</label><input class="fi" id="cat-categ-ri" placeholder="tubería / emisor / control"></div>
     </div>
-    <div class="fg"><label class="fl">Categoría</label><input class="fi" id="cat-categ-ri" placeholder="tubería / emisor / control"></div>
+    <div class="fr">
+      <div class="fg"><label class="fl">🔒 Precio compra ($)</label><input class="fi" id="cat-pcompra-ri" type="number" placeholder="18000" min="0"></div>
+      <div class="fg"><label class="fl">💰 Precio venta ($)</label><input class="fi" id="cat-pventa-ri" type="number" placeholder="25000" min="0"></div>
+    </div>
   </div>
   <div id="cat-fields-insumo" style="display:none">
     <div class="fr">
@@ -1798,13 +1802,13 @@ function abrirCatalogo(type,id){
   document.getElementById('mo-cat-title').textContent=(id?'Editar':'Nuevo')+' — '+(t==='especie'?'🌳 Especie':t==='riego'?'💧 Componente Riego':'📦 Insumo');
   setCatTipo(t);
   // Limpiar campos
-  ['cat-nombre','cat-sci','cat-precio-esp','cat-desc','cat-unidad-ri','cat-precio-ri','cat-categ-ri','cat-proveedor','cat-pcompra','cat-pventa','cat-notas'].forEach(i=>{const el=document.getElementById(i);if(el)el.value='';});
+  ['cat-nombre','cat-sci','cat-pcompra-esp','cat-pventa-esp','cat-desc','cat-unidad-ri','cat-pcompra-ri','cat-pventa-ri','cat-categ-ri','cat-proveedor','cat-pcompra','cat-pventa','cat-notas'].forEach(i=>{const el=document.getElementById(i);if(el)el.value='';});
   if(id&&t==='especie'){
     const e=DB.especies.find(x=>x.id===id);
-    if(e){document.getElementById('cat-nombre').value=e.nombre;document.getElementById('cat-sci').value=e.sci||'';document.getElementById('cat-precio-esp').value=e.precio;document.getElementById('cat-categ-esp').value=e.cat;document.getElementById('cat-desc').value=e.desc||'';}
+    if(e){document.getElementById('cat-nombre').value=e.nombre;document.getElementById('cat-sci').value=e.sci||'';document.getElementById('cat-pcompra-esp').value=e.precioCompra||e.precio||0;document.getElementById('cat-pventa-esp').value=e.precioVenta||e.precio||0;document.getElementById('cat-categ-esp').value=e.cat;document.getElementById('cat-desc').value=e.desc||'';}
   }else if(id&&t==='riego'){
     const r=DB.riegoComps.find(x=>x.id===id);
-    if(r){document.getElementById('cat-nombre').value=r.nombre;document.getElementById('cat-unidad-ri').value=r.unidad;document.getElementById('cat-precio-ri').value=r.precio;document.getElementById('cat-categ-ri').value=r.cat;}
+    if(r){document.getElementById('cat-nombre').value=r.nombre;document.getElementById('cat-unidad-ri').value=r.unidad;document.getElementById('cat-pcompra-ri').value=r.precioCompra||r.precio||0;document.getElementById('cat-pventa-ri').value=r.precioVenta||r.precio||0;document.getElementById('cat-categ-ri').value=r.cat;}
   }else if(id&&t==='insumo'){
     const s=DB.insumos.find(x=>x.id===id);
     if(s){document.getElementById('cat-nombre').value=s.producto;document.getElementById('cat-categ-ins').value=s.categoria;document.getElementById('cat-unidad-ins').value=s.unidad;document.getElementById('cat-proveedor').value=s.proveedor||'';document.getElementById('cat-pcompra').value=s.precioCompra||0;document.getElementById('cat-pventa').value=s.precioVenta||0;document.getElementById('cat-notas').value=s.notas||'';}
@@ -1817,16 +1821,18 @@ function saveCatalogo(){
   if(!n){toast('Completá el nombre','err');return;}
   const t=currentCatTipo;
   if(t==='especie'){
-    const p=parseInt(document.getElementById('cat-precio-esp').value);
-    if(!p){toast('Ingresá el precio','err');return;}
-    const obj={nombre:n,sci:document.getElementById('cat-sci').value,precio:p,cat:document.getElementById('cat-categ-esp').value,desc:document.getElementById('cat-desc').value};
+    const pc=parseFloat(document.getElementById('cat-pcompra-esp').value)||0;
+    const pv=parseFloat(document.getElementById('cat-pventa-esp').value)||0;
+    if(!pc&&!pv){toast('Ingresá al menos un precio','err');return;}
+    const obj={nombre:n,sci:document.getElementById('cat-sci').value,precio:pc||pv,precioCompra:pc,precioVenta:pv,cat:document.getElementById('cat-categ-esp').value,desc:document.getElementById('cat-desc').value};
     if(editCatId&&editCatType==='especie'){Object.assign(DB.especies.find(x=>x.id===editCatId),obj);}
     else{obj.id=Date.now();DB.especies.push(obj);}
     toast(editCatId?'Especie actualizada':'Especie agregada','ok');
   }else if(t==='riego'){
-    const p=parseInt(document.getElementById('cat-precio-ri').value);
-    if(!p){toast('Ingresá el precio','err');return;}
-    const obj={nombre:n,unidad:document.getElementById('cat-unidad-ri').value||'ud',precio:p,cat:document.getElementById('cat-categ-ri').value||'otro'};
+    const pc=parseFloat(document.getElementById('cat-pcompra-ri').value)||0;
+    const pv=parseFloat(document.getElementById('cat-pventa-ri').value)||0;
+    if(!pc&&!pv){toast('Ingresá al menos un precio','err');return;}
+    const obj={nombre:n,unidad:document.getElementById('cat-unidad-ri').value||'ud',precio:pc||pv,precioCompra:pc,precioVenta:pv,cat:document.getElementById('cat-categ-ri').value||'otro'};
     if(editCatId&&editCatType==='riego'){Object.assign(DB.riegoComps.find(x=>x.id===editCatId),obj);}
     else{obj.id=Date.now();DB.riegoComps.push(obj);}
     toast(editCatId?'Componente actualizado':'Componente agregado','ok');
@@ -1875,13 +1881,19 @@ function renderCatalogo(){
       return`<div class="spi" style="cursor:default;flex-direction:column;align-items:stretch;gap:4px">
         <div style="display:flex;justify-content:space-between;align-items:flex-start">
           <div><div class="sp-name">${x.nombre}</div><div style="font-size:10px;color:var(--muted);font-style:italic">${x.sci||''}</div><div style="margin-top:3px;display:flex;gap:4px">${badge}<span style="font-size:10px;color:var(--muted)">${x.cat}</span></div></div>
-          <div style="display:flex;flex-direction:column;align-items:flex-end;gap:4px"><span class="sp-price">${fmt(x.precio)}</span><div style="display:flex;gap:4px"><button class="btn bs bsm" style="padding:3px 7px;font-size:11px" onclick="abrirCatalogo('especie',${x.id})">✏️</button><button class="btn bd bsm" style="padding:3px 7px;font-size:11px" onclick="elimCatalogo('especie',${x.id})">🗑</button></div></div>
+          <div style="display:flex;flex-direction:column;align-items:flex-end;gap:4px">
+            <div style="text-align:right"><div style="font-size:10px;color:var(--muted)">🔒 ${fmt(x.precioCompra||x.precio)}</div><div style="font-size:11px;color:var(--v1);font-weight:600">💰 ${fmt(x.precioVenta||x.precio)}</div></div>
+            <div style="display:flex;gap:4px"><button class="btn bs bsm" style="padding:3px 7px;font-size:11px" onclick="abrirCatalogo('especie',${x.id})">✏️</button><button class="btn bd bsm" style="padding:3px 7px;font-size:11px" onclick="elimCatalogo('especie',${x.id})">🗑</button></div>
+          </div>
         </div></div>`;
     }else if(x._tipo==='riego'){
       return`<div class="spi" style="cursor:default;flex-direction:column;align-items:stretch;gap:4px">
         <div style="display:flex;justify-content:space-between;align-items:flex-start">
           <div><div class="sp-name">${x.nombre}</div><div style="margin-top:3px;display:flex;gap:4px">${badge}<span style="font-size:10px;color:var(--muted)">${x.cat||''} · ${x.unidad}</span></div></div>
-          <div style="display:flex;flex-direction:column;align-items:flex-end;gap:4px"><span class="sp-price">${fmt(x.precio)}</span><div style="display:flex;gap:4px"><button class="btn bs bsm" style="padding:3px 7px;font-size:11px" onclick="abrirCatalogo('riego',${x.id})">✏️</button><button class="btn bd bsm" style="padding:3px 7px;font-size:11px" onclick="elimCatalogo('riego',${x.id})">🗑</button></div></div>
+          <div style="display:flex;flex-direction:column;align-items:flex-end;gap:4px">
+            <div style="text-align:right"><div style="font-size:10px;color:var(--muted)">🔒 ${fmt(x.precioCompra||x.precio)}</div><div style="font-size:11px;color:var(--v1);font-weight:600">💰 ${fmt(x.precioVenta||x.precio)}</div></div>
+            <div style="display:flex;gap:4px"><button class="btn bs bsm" style="padding:3px 7px;font-size:11px" onclick="abrirCatalogo('riego',${x.id})">✏️</button><button class="btn bd bsm" style="padding:3px 7px;font-size:11px" onclick="elimCatalogo('riego',${x.id})">🗑</button></div>
+          </div>
         </div></div>`;
     }else{
       return`<div class="spi" style="cursor:default;flex-direction:column;align-items:stretch;gap:4px">
