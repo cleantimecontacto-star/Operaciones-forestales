@@ -636,10 +636,8 @@ body{font-family:'Inter',ui-sans-serif,system-ui,-apple-system,Segoe UI,Roboto,s
   <div class="section-title">Administración</div>
   <div class="tabs">
     <button class="tab active" onclick="showTab('empresa')" id="tab-empresa">Empresa</button>
-    <button class="tab" onclick="showTab('especies')" id="tab-especies">Especies</button>
+    <button class="tab" onclick="showTab('catalogo')" id="tab-catalogo">📦 Catálogo</button>
     <button class="tab" onclick="showTab('servicios')" id="tab-servicios">Servicios</button>
-    <button class="tab" onclick="showTab('riego')" id="tab-riego">Riego</button>
-    <button class="tab" onclick="showTab('insumos')" id="tab-insumos">📋 Insumos</button>
     <button class="tab" onclick="showTab('seguridad')" id="tab-seguridad">🔐 Seguridad</button>
   </div>
   <div id="adm-empresa">
@@ -678,24 +676,26 @@ body{font-family:'Inter',ui-sans-serif,system-ui,-apple-system,Segoe UI,Roboto,s
       <div class="ci"><div><div class="ci-lbl">M.O. instalación (/ml)</div></div><input class="mi" type="number" id="cfg-mo" value="2500" onchange="saveCfg()"></div>
     </div>
   </div>
-  <div id="adm-especies" style="display:none">
-    <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:11px"><span id="esp-count" style="font-size:12px;color:var(--muted)">0 especies</span><button class="btn bp bsm" onclick="abrirEspecie()">+ Añadir</button></div>
-    <div class="sbox"><span>🔍</span><input type="text" placeholder="Buscar..." id="esp-search" oninput="renderEspecies()"></div>
-    <div id="esp-list"></div>
-  </div>
   <div id="adm-servicios" style="display:none">
     <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:11px"><span id="svc-count" style="font-size:12px;color:var(--muted)">0 servicios</span><button class="btn bp bsm" onclick="abrirServicio()">+ Añadir</button></div>
     <div id="svc-list"></div>
   </div>
-  <div id="adm-riego" style="display:none">
-    <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:11px"><span id="ri-count" style="font-size:12px;color:var(--muted)">0 componentes</span><button class="btn bp bsm" onclick="abrirRiegoComp()">+ Añadir</button></div>
-    <div id="ri-list"></div>
-  </div>
-  <!-- INSUMOS CATALOG ADMIN -->
-  <div id="adm-insumos" style="display:none">
-    <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:11px"><span id="adm-ins-count" style="font-size:12px;color:var(--muted)">0 insumos</span><button class="btn bp bsm" onclick="abrirInsumo()">+ Añadir</button></div>
-    <div class="sbox"><span>🔍</span><input type="text" placeholder="Buscar..." id="adm-ins-search" oninput="renderAdminInsumos()"></div>
-    <div id="adm-ins-list"></div>
+  <!-- CATÁLOGO UNIFICADO (Especies + Riego + Insumos) -->
+  <div id="adm-catalogo" style="display:none">
+    <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:11px">
+      <span id="cat-count" style="font-size:12px;color:var(--muted)">0 ítems</span>
+      <button class="btn bp bsm" onclick="abrirCatalogo()">+ Añadir</button>
+    </div>
+    <div class="sbox"><span>🔍</span><input type="text" placeholder="Buscar en catálogo..." id="cat-search" oninput="renderCatalogo()"></div>
+    <div style="display:flex;gap:6px;margin-bottom:11px;flex-wrap:wrap">
+      <button onclick="setCatFiltro('')" id="catf-all" style="cursor:pointer;padding:4px 11px;font-size:11px;border-radius:20px;border:1.5px solid var(--v1);background:var(--v1);color:#fff;font-weight:600">Todos</button>
+      <button onclick="setCatFiltro('especie')" id="catf-especie" style="cursor:pointer;padding:4px 11px;font-size:11px;border-radius:20px;border:1.5px solid var(--border);background:#fff;color:var(--muted);font-weight:500">🌳 Especies</button>
+      <button onclick="setCatFiltro('riego')" id="catf-riego" style="cursor:pointer;padding:4px 11px;font-size:11px;border-radius:20px;border:1.5px solid var(--border);background:#fff;color:var(--muted);font-weight:500">💧 Riego</button>
+      <button onclick="setCatFiltro('insumo')" id="catf-insumo" style="cursor:pointer;padding:4px 11px;font-size:11px;border-radius:20px;border:1.5px solid var(--border);background:#fff;color:var(--muted);font-weight:500">📦 Insumos</button>
+    </div>
+    <div id="cat-list"></div>
+    <button class="csv-btn" style="margin-top:10px" onclick="triggerImportExcel()">📥 Importar Insumos desde Excel</button>
+    <input type="file" id="excel-import-input" accept=".xlsx,.xls,.csv" style="display:none" onchange="importExcel(this)">
   </div>
   <!-- SEGURIDAD -->
   <div id="adm-seguridad" style="display:none">
@@ -866,6 +866,47 @@ body{font-family:'Inter',ui-sans-serif,system-ui,-apple-system,Segoe UI,Roboto,s
   <div class="btn-row"><button class="btn bs" onclick="cerrarMo('mo-riego')">Cancelar</button><button class="btn bp" onclick="saveRiegoComp()">Guardar</button></div>
 </div></div>
 
+<!-- MODAL CATÁLOGO UNIFICADO -->
+<div class="mo" id="mo-catalogo"><div class="md"><div class="mh"></div><div class="mt" id="mo-cat-title">Nuevo Ítem</div>
+  <div class="fg" style="margin-bottom:10px">
+    <label class="fl">Tipo de ítem</label>
+    <div style="display:flex;gap:7px;flex-wrap:wrap" id="cat-tipo-btns">
+      <button type="button" onclick="setCatTipo('especie')" id="ctb-especie" style="padding:5px 13px;font-size:12px;border-radius:20px;border:1.5px solid var(--v1);background:var(--v1);color:#fff;font-weight:600;cursor:pointer">🌳 Especie</button>
+      <button type="button" onclick="setCatTipo('riego')" id="ctb-riego" style="padding:5px 13px;font-size:12px;border-radius:20px;border:1.5px solid var(--border);background:#fff;color:var(--muted);font-weight:500;cursor:pointer">💧 Riego</button>
+      <button type="button" onclick="setCatTipo('insumo')" id="ctb-insumo" style="padding:5px 13px;font-size:12px;border-radius:20px;border:1.5px solid var(--border);background:#fff;color:var(--muted);font-weight:500;cursor:pointer">📦 Insumo</button>
+    </div>
+  </div>
+  <div class="fg"><label class="fl" id="cat-nombre-lbl">Nombre común</label><input class="fi" id="cat-nombre" placeholder="Nombre del ítem"></div>
+  <div id="cat-fields-especie">
+    <div class="fg"><label class="fl">Nombre Científico</label><input class="fi" id="cat-sci" placeholder="Quillaja saponaria" style="font-style:italic"></div>
+    <div class="fr">
+      <div class="fg"><label class="fl">Precio unitario ($)</label><input class="fi" id="cat-precio-esp" type="number" placeholder="2500"></div>
+      <div class="fg"><label class="fl">Categoría</label><select class="fs" id="cat-categ-esp"><option>Árbol</option><option>Arbusto</option><option>Herbácea</option><option>Nativa</option><option>Exótica</option><option>Ornamental</option></select></div>
+    </div>
+    <div class="fg"><label class="fl">Descripción</label><textarea class="fta" id="cat-desc" placeholder="Opcional..."></textarea></div>
+  </div>
+  <div id="cat-fields-riego" style="display:none">
+    <div class="fr">
+      <div class="fg"><label class="fl">Unidad</label><input class="fi" id="cat-unidad-ri" placeholder="ud / ml"></div>
+      <div class="fg"><label class="fl">Precio unitario ($)</label><input class="fi" id="cat-precio-ri" type="number" placeholder="25000"></div>
+    </div>
+    <div class="fg"><label class="fl">Categoría</label><input class="fi" id="cat-categ-ri" placeholder="tubería / emisor / control"></div>
+  </div>
+  <div id="cat-fields-insumo" style="display:none">
+    <div class="fr">
+      <div class="fg"><label class="fl">Categoría</label><select class="fs" id="cat-categ-ins"><option>Fertilizantes</option><option>Herbicidas</option><option>Fungicidas</option><option>Plantación</option><option>Semillas</option><option>Herramientas</option><option>Riego</option><option>Otro</option></select></div>
+      <div class="fg"><label class="fl">Unidad</label><input class="fi" id="cat-unidad-ins" placeholder="kg / L / ud"></div>
+    </div>
+    <div class="fg"><label class="fl">Proveedor</label><input class="fi" id="cat-proveedor" placeholder="Agroquímica Sur"></div>
+    <div class="fr">
+      <div class="fg"><label class="fl">🔒 Precio compra ($)</label><input class="fi" id="cat-pcompra" type="number" placeholder="3500" min="0"></div>
+      <div class="fg"><label class="fl">💰 Precio venta ($)</label><input class="fi" id="cat-pventa" type="number" placeholder="5250" min="0"></div>
+    </div>
+    <div class="fg"><label class="fl">Notas internas</label><input class="fi" id="cat-notas" placeholder="Observaciones..."></div>
+  </div>
+  <div class="btn-row"><button class="btn bs" onclick="cerrarMo('mo-catalogo')">Cancelar</button><button class="btn bp" onclick="saveCatalogo()">Guardar</button></div>
+</div></div>
+
 <div class="mo" id="mo-cliente"><div class="md"><div class="mh"></div><div class="mt" id="mo-cli-title">Nuevo Cliente</div>
   <div class="fg"><label class="fl">Nombre / Empresa</label><input class="fi" id="mc-nombre" type="text" placeholder="Forestal del Sur"></div>
   <div class="fr"><div class="fg"><label class="fl">RUT</label><input class="fi" id="mc-rut"></div><div class="fg"><label class="fl">Teléfono</label><input class="fi" id="mc-tel" type="tel"></div></div>
@@ -936,6 +977,7 @@ let DB={
 };
 let currentTipo=null,selectedSps={},selectedSvcs={},photoList=[],costoBase=0,cotizNum=1;
 let editEspId=null,editSvcId=null,editRiId=null,editCliId=null,editInsId=null;
+let catFiltro='',editCatId=null,editCatType=null,currentCatTipo='especie';
 let insTab='catalogo',insAccOpen={},insChecks={};
 let filtroQ='',_calc={},_matRows=[];
 
@@ -1189,9 +1231,9 @@ function saveCliente(){
 }
 
 function showTab(t){
-  ['empresa','especies','servicios','riego','insumos','seguridad'].forEach(x=>{document.getElementById('adm-'+x).style.display=x===t?'block':'none';document.getElementById('tab-'+x)?.classList.toggle('active',x===t);});
-  if(t==='especies')renderEspecies();if(t==='servicios')renderServicios();if(t==='riego')renderRiegoComps();
-  if(t==='insumos')renderAdminInsumos();
+  ['empresa','catalogo','servicios','seguridad'].forEach(x=>{const el=document.getElementById('adm-'+x);if(el)el.style.display=x===t?'block':'none';document.getElementById('tab-'+x)?.classList.toggle('active',x===t);});
+  if(t==='catalogo')renderCatalogo();
+  if(t==='servicios')renderServicios();
   if(t==='seguridad')loadSeguridad();
 }
 function loadAdminEmpresa(){
@@ -1716,6 +1758,143 @@ function renderAdminInsumos(){
   </div>`).join(''):'<div style="font-size:13px;color:var(--muted);text-align:center;padding:20px">Sin insumos. Presioná + Añadir</div>';
 }
 
+
+// ── CATÁLOGO UNIFICADO ─────────────────────────────────────────────────
+function setCatFiltro(f){
+  catFiltro=f;
+  ['all','especie','riego','insumo'].forEach(k=>{
+    const btn=document.getElementById('catf-'+k);
+    if(!btn)return;
+    const activo=(k===''?f==='':f===k);
+    btn.style.background=activo?'var(--v1)':'#fff';
+    btn.style.color=activo?'#fff':'var(--muted)';
+    btn.style.borderColor=activo?'var(--v1)':'var(--border)';
+    btn.style.fontWeight=activo?'600':'500';
+  });
+  renderCatalogo();
+}
+
+function setCatTipo(t){
+  currentCatTipo=t;
+  ['especie','riego','insumo'].forEach(k=>{
+    const btn=document.getElementById('ctb-'+k);
+    if(!btn)return;
+    btn.style.background=k===t?'var(--v1)':'#fff';
+    btn.style.color=k===t?'#fff':'var(--muted)';
+    btn.style.borderColor=k===t?'var(--v1)':'var(--border)';
+    btn.style.fontWeight=k===t?'600':'500';
+  });
+  document.getElementById('cat-fields-especie').style.display=t==='especie'?'':'none';
+  document.getElementById('cat-fields-riego').style.display=t==='riego'?'':'none';
+  document.getElementById('cat-fields-insumo').style.display=t==='insumo'?'':'none';
+  const lbls={especie:'Nombre común',riego:'Nombre del componente',insumo:'Producto / Descripción'};
+  document.getElementById('cat-nombre-lbl').textContent=lbls[t]||'Nombre';
+}
+
+function abrirCatalogo(type,id){
+  editCatId=id||null;
+  editCatType=type||null;
+  const t=type||'especie';
+  document.getElementById('mo-cat-title').textContent=(id?'Editar':'Nuevo')+' — '+(t==='especie'?'🌳 Especie':t==='riego'?'💧 Componente Riego':'📦 Insumo');
+  setCatTipo(t);
+  // Limpiar campos
+  ['cat-nombre','cat-sci','cat-precio-esp','cat-desc','cat-unidad-ri','cat-precio-ri','cat-categ-ri','cat-proveedor','cat-pcompra','cat-pventa','cat-notas'].forEach(i=>{const el=document.getElementById(i);if(el)el.value='';});
+  if(id&&t==='especie'){
+    const e=DB.especies.find(x=>x.id===id);
+    if(e){document.getElementById('cat-nombre').value=e.nombre;document.getElementById('cat-sci').value=e.sci||'';document.getElementById('cat-precio-esp').value=e.precio;document.getElementById('cat-categ-esp').value=e.cat;document.getElementById('cat-desc').value=e.desc||'';}
+  }else if(id&&t==='riego'){
+    const r=DB.riegoComps.find(x=>x.id===id);
+    if(r){document.getElementById('cat-nombre').value=r.nombre;document.getElementById('cat-unidad-ri').value=r.unidad;document.getElementById('cat-precio-ri').value=r.precio;document.getElementById('cat-categ-ri').value=r.cat;}
+  }else if(id&&t==='insumo'){
+    const s=DB.insumos.find(x=>x.id===id);
+    if(s){document.getElementById('cat-nombre').value=s.producto;document.getElementById('cat-categ-ins').value=s.categoria;document.getElementById('cat-unidad-ins').value=s.unidad;document.getElementById('cat-proveedor').value=s.proveedor||'';document.getElementById('cat-pcompra').value=s.precioCompra||0;document.getElementById('cat-pventa').value=s.precioVenta||0;document.getElementById('cat-notas').value=s.notas||'';}
+  }
+  document.getElementById('mo-catalogo').classList.add('open');
+}
+
+function saveCatalogo(){
+  const n=document.getElementById('cat-nombre').value.trim();
+  if(!n){toast('Completá el nombre','err');return;}
+  const t=currentCatTipo;
+  if(t==='especie'){
+    const p=parseInt(document.getElementById('cat-precio-esp').value);
+    if(!p){toast('Ingresá el precio','err');return;}
+    const obj={nombre:n,sci:document.getElementById('cat-sci').value,precio:p,cat:document.getElementById('cat-categ-esp').value,desc:document.getElementById('cat-desc').value};
+    if(editCatId&&editCatType==='especie'){Object.assign(DB.especies.find(x=>x.id===editCatId),obj);}
+    else{obj.id=Date.now();DB.especies.push(obj);}
+    toast(editCatId?'Especie actualizada':'Especie agregada','ok');
+  }else if(t==='riego'){
+    const p=parseInt(document.getElementById('cat-precio-ri').value);
+    if(!p){toast('Ingresá el precio','err');return;}
+    const obj={nombre:n,unidad:document.getElementById('cat-unidad-ri').value||'ud',precio:p,cat:document.getElementById('cat-categ-ri').value||'otro'};
+    if(editCatId&&editCatType==='riego'){Object.assign(DB.riegoComps.find(x=>x.id===editCatId),obj);}
+    else{obj.id=Date.now();DB.riegoComps.push(obj);}
+    toast(editCatId?'Componente actualizado':'Componente agregado','ok');
+  }else if(t==='insumo'){
+    const obj={producto:n,categoria:document.getElementById('cat-categ-ins').value,unidad:document.getElementById('cat-unidad-ins').value||'ud',proveedor:document.getElementById('cat-proveedor').value,precioCompra:parseFloat(document.getElementById('cat-pcompra').value)||0,precioVenta:parseFloat(document.getElementById('cat-pventa').value)||0,notas:document.getElementById('cat-notas').value};
+    if(editCatId&&editCatType==='insumo'){Object.assign(DB.insumos.find(x=>x.id===editCatId),obj);}
+    else{obj.id=Date.now();DB.insumos.push(obj);}
+    toast(editCatId?'Insumo actualizado':'Insumo agregado','ok');
+  }
+  saveDB();
+  cerrarMo('mo-catalogo');
+  renderCatalogo();
+  renderMateriales();
+}
+
+function elimCatalogo(type,id){
+  const labels={especie:'especie',riego:'componente',insumo:'insumo'};
+  if(!confirm('¿Mover este '+labels[type]+' a la papelera?'))return;
+  if(type==='especie'){const it=DB.especies.find(x=>x.id===id);if(it)_papPush('especies',it);DB.especies=DB.especies.filter(x=>x.id!==id);}
+  else if(type==='riego'){const it=DB.riegoComps.find(x=>x.id===id);if(it)_papPush('riegoComps',it);DB.riegoComps=DB.riegoComps.filter(x=>x.id!==id);}
+  else if(type==='insumo'){const it=DB.insumos.find(x=>x.id===id);if(it)_papPush('insumos',it);DB.insumos=DB.insumos.filter(x=>x.id!==id);}
+  saveDB();renderCatalogo();renderMateriales();toast('Movido a papelera','ok');
+}
+
+function renderCatalogo(){
+  const q=(document.getElementById('cat-search')?.value||'').toLowerCase();
+  let items=[];
+  if(!catFiltro||catFiltro==='especie'){
+    DB.especies.forEach(e=>{if(!q||e.nombre.toLowerCase().includes(q)||(e.sci||'').toLowerCase().includes(q))items.push({...e,_tipo:'especie'});});
+  }
+  if(!catFiltro||catFiltro==='riego'){
+    DB.riegoComps.forEach(r=>{if(!q||r.nombre.toLowerCase().includes(q)||(r.cat||'').toLowerCase().includes(q))items.push({...r,_tipo:'riego'});});
+  }
+  if(!catFiltro||catFiltro==='insumo'){
+    DB.insumos.forEach(s=>{if(!q||s.producto.toLowerCase().includes(q)||(s.categoria||'').toLowerCase().includes(q)||(s.proveedor||'').toLowerCase().includes(q))items.push({...s,_tipo:'insumo'});});
+  }
+  const total=DB.especies.length+DB.riegoComps.length+DB.insumos.length;
+  const countEl=document.getElementById('cat-count');
+  if(countEl)countEl.textContent=items.length+' de '+total+' ítems';
+  const listEl=document.getElementById('cat-list');
+  if(!listEl)return;
+  const tipoBadge={especie:'<span style="font-size:10px;background:#dcfce7;color:#15803d;border-radius:10px;padding:2px 7px;font-weight:600">🌳 Especie</span>',riego:'<span style="font-size:10px;background:#e0f2fe;color:#0369a1;border-radius:10px;padding:2px 7px;font-weight:600">💧 Riego</span>',insumo:'<span style="font-size:10px;background:#fef3c7;color:#92400e;border-radius:10px;padding:2px 7px;font-weight:600">📦 Insumo</span>'};
+  listEl.innerHTML=items.length?items.map(x=>{
+    const badge=tipoBadge[x._tipo]||'';
+    if(x._tipo==='especie'){
+      return`<div class="spi" style="cursor:default;flex-direction:column;align-items:stretch;gap:4px">
+        <div style="display:flex;justify-content:space-between;align-items:flex-start">
+          <div><div class="sp-name">${x.nombre}</div><div style="font-size:10px;color:var(--muted);font-style:italic">${x.sci||''}</div><div style="margin-top:3px;display:flex;gap:4px">${badge}<span style="font-size:10px;color:var(--muted)">${x.cat}</span></div></div>
+          <div style="display:flex;flex-direction:column;align-items:flex-end;gap:4px"><span class="sp-price">${fmt(x.precio)}</span><div style="display:flex;gap:4px"><button class="btn bs bsm" style="padding:3px 7px;font-size:11px" onclick="abrirCatalogo('especie',${x.id})">✏️</button><button class="btn bd bsm" style="padding:3px 7px;font-size:11px" onclick="elimCatalogo('especie',${x.id})">🗑</button></div></div>
+        </div></div>`;
+    }else if(x._tipo==='riego'){
+      return`<div class="spi" style="cursor:default;flex-direction:column;align-items:stretch;gap:4px">
+        <div style="display:flex;justify-content:space-between;align-items:flex-start">
+          <div><div class="sp-name">${x.nombre}</div><div style="margin-top:3px;display:flex;gap:4px">${badge}<span style="font-size:10px;color:var(--muted)">${x.cat||''} · ${x.unidad}</span></div></div>
+          <div style="display:flex;flex-direction:column;align-items:flex-end;gap:4px"><span class="sp-price">${fmt(x.precio)}</span><div style="display:flex;gap:4px"><button class="btn bs bsm" style="padding:3px 7px;font-size:11px" onclick="abrirCatalogo('riego',${x.id})">✏️</button><button class="btn bd bsm" style="padding:3px 7px;font-size:11px" onclick="elimCatalogo('riego',${x.id})">🗑</button></div></div>
+        </div></div>`;
+    }else{
+      return`<div class="spi" style="cursor:default;flex-direction:column;align-items:stretch;gap:4px">
+        <div style="display:flex;justify-content:space-between;align-items:flex-start">
+          <div><div class="sp-name">${x.producto}</div><div style="margin-top:3px;display:flex;gap:4px;flex-wrap:wrap">${badge}<span style="font-size:10px;color:var(--muted)">${x.categoria} · ${x.proveedor||'Sin proveedor'} · ${x.unidad}</span></div></div>
+          <div style="display:flex;flex-direction:column;align-items:flex-end;gap:4px">
+            <div style="text-align:right"><div style="font-size:10px;color:var(--muted)">🔒 ${fmt(x.precioCompra)}</div><div style="font-size:11px;color:var(--v1);font-weight:600">💰 ${fmt(x.precioVenta)}</div></div>
+            <div style="display:flex;gap:4px"><button class="btn bs bsm" style="padding:3px 7px;font-size:11px" onclick="abrirCatalogo('insumo',${x.id})">✏️</button><button class="btn bd bsm" style="padding:3px 7px;font-size:11px" onclick="elimCatalogo('insumo',${x.id})">🗑</button></div>
+          </div>
+        </div></div>`;
+    }
+  }).join(''):'<div style="font-size:13px;color:var(--muted);text-align:center;padding:24px">Sin ítems en el catálogo. Presioná + Añadir</div>';
+}
 
 // ── LOGIN ──────────────────────────────────────────────────────────────
 (function(){
