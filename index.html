@@ -1967,13 +1967,7 @@ function applyPctPrices(){
   let count=0;
   
   const processItem=(item)=>{
-    // 1. Asegurar que tenga precioCompra y precioVenta definidos si tiene un precio base
-    if(item.precio>0){
-      if(!item.precioCompra) item.precioCompra=item.precio;
-      if(!item.precioVenta) item.precioVenta=item.precio;
-      item.precio=0; // Eliminar el precio base compartido para evitar confusiones
-    }
-    // 2. Aplicar el ajuste según el campo seleccionado
+    // Solo aplicar el porcentaje al campo seleccionado, sin tocar la estructura de datos
     if(campo==='compra'||campo==='ambos'){
       if(item.precioCompra>0) item.precioCompra=applyV(item.precioCompra);
     }
