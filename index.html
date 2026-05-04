@@ -684,7 +684,36 @@ body{font-family:'Inter',ui-sans-serif,system-ui,-apple-system,Segoe UI,Roboto,s
   <div id="adm-catalogo" style="display:none">
     <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:11px">
       <span id="cat-count" style="font-size:12px;color:var(--muted)">0 ítems</span>
-      <button class="btn bp bsm" onclick="abrirCatalogo()">+ Añadir</button>
+      <div style="display:flex;gap:6px">
+        <button class="btn bs bsm" onclick="togglePctPanel()" title="Ajustar precios por porcentaje">📊 %</button>
+        <button class="btn bp bsm" onclick="abrirCatalogo()">+ Añadir</button>
+      </div>
+    </div>
+    <div id="pct-adj-panel" style="display:none;background:#f0fdf4;border:1.5px solid #bbf7d0;border-radius:10px;padding:12px;margin-bottom:11px">
+      <div style="font-size:12px;font-weight:700;color:#15803d;margin-bottom:9px">📊 Ajuste masivo de precios</div>
+      <div style="display:flex;gap:8px;align-items:center;flex-wrap:wrap;margin-bottom:9px">
+        <div style="display:flex;align-items:center;gap:5px">
+          <label style="font-size:11px;color:#555;white-space:nowrap">Porcentaje:</label>
+          <input id="pct-val" type="number" value="10" min="-99" max="500" step="1" oninput="updatePctPreview()" style="width:58px;padding:4px 6px;border:1.5px solid #86efac;border-radius:6px;font-size:14px;text-align:center;font-weight:700;color:#15803d">
+          <span style="font-size:12px;font-weight:600;color:#15803d">%</span>
+        </div>
+        <select id="pct-campo" onchange="updatePctPreview()" style="padding:5px 8px;border:1.5px solid #86efac;border-radius:6px;font-size:11px;background:#fff">
+          <option value="ambos">🔒💰 Compra y venta</option>
+          <option value="venta">💰 Solo precio venta</option>
+          <option value="compra">🔒 Solo precio compra</option>
+        </select>
+        <select id="pct-tipo" onchange="updatePctPreview()" style="padding:5px 8px;border:1.5px solid #86efac;border-radius:6px;font-size:11px;background:#fff">
+          <option value="">Todos los ítems</option>
+          <option value="especie">🌳 Solo Especies</option>
+          <option value="riego">💧 Solo Riego</option>
+          <option value="insumo">📦 Solo Insumos</option>
+        </select>
+      </div>
+      <div style="display:flex;gap:8px;align-items:center;flex-wrap:wrap">
+        <span id="pct-preview" style="font-size:11px;color:#15803d;flex:1;font-style:italic"></span>
+        <button class="btn bs bsm" onclick="document.getElementById('pct-adj-panel').style.display='none'">Cancelar</button>
+        <button class="btn bp bsm" onclick="applyPctPrices()">✅ Aplicar</button>
+      </div>
     </div>
     <div class="sbox"><span>🔍</span><input type="text" placeholder="Buscar en catálogo..." id="cat-search" oninput="renderCatalogo()"></div>
     <div style="display:flex;gap:6px;margin-bottom:11px;flex-wrap:wrap">
@@ -1908,6 +1937,72 @@ function renderCatalogo(){
   }).join(''):'<div style="font-size:13px;color:var(--muted);text-align:center;padding:24px">Sin ítems en el catálogo. Presioná + Añadir</div>';
 }
 
+// ── AJUSTE PORCENTUAL DE PRECIOS ──────────────────────────────────────
+function togglePctPanel(){
+  const p=document.getElementById('pct-adj-panel');
+  const open=p.style.display==='none';
+  p.style.display=open?'block':'none';
+  if(open)updatePctPreview();
+}
+function updatePctPreview(){
+  const tipo=document.getElementById('pct-tipo')?.value||'';
+  const campo=document.getElementById('pct-campo')?.value||'ambos';
+  const pct=parseFloat(document.getElementById('pct-val')?.value)||0;
+  let count=0;
+  if(!tipo||tipo==='especie') count+=DB.especies.length;
+  if(!tipo||tipo==='riego') count+=DB.riegoComps.length;
+  if(!tipo||tipo==='insumo') count+=DB.insumos.length;
+  const dir=pct>=0?'▲ sube':'▼ baja';
+  const campoLabel={ambos:'compra y venta',venta:'precio venta',compra:'precio compra'}[campo];
+  const el=document.getElementById('pct-preview');
+  if(el) el.textContent=count+' ítems · '+campoLabel+' '+dir+' '+Math.abs(pct)+'%';
+}
+function applyPctPrices(){
+  const pct=parseFloat(document.getElementById('pct-val')?.value);
+  if(isNaN(pct)||pct===0){toast('Ingresá un porcentaje válido','err');return;}
+  const campo=document.getElementById('pct-campo').value;
+  const tipo=document.getElementById('pct-tipo').value;
+  const f=1+pct/100;
+  const applyV=(v)=>Math.round(v*f);
+  let count=0;
+  if(!tipo||tipo==='especie'){
+    DB.especies.forEach(e=>{
+      if(campo==='compra'||campo==='ambos'){
+        if(e.precioCompra>0){e.precioCompra=applyV(e.precioCompra);}
+        else if(e.precio>0&&campo==='compra'){e.precio=applyV(e.precio);}
+      }
+      if(campo==='venta'||campo==='ambos'){
+        if(e.precioVenta>0){e.precioVenta=applyV(e.precioVenta);}
+        else if(e.precio>0&&campo==='venta'){e.precio=applyV(e.precio);}
+        else if(e.precio>0&&campo==='ambos'){e.precio=applyV(e.precio);}
+      }
+      count++;
+    });
+  }
+  if(!tipo||tipo==='riego'){
+    DB.riegoComps.forEach(r=>{
+      if(campo==='compra'||campo==='ambos'){
+        if(r.precioCompra>0){r.precioCompra=applyV(r.precioCompra);}
+        else if(r.precio>0){r.precio=applyV(r.precio);}
+      }
+      if(campo==='venta'||campo==='ambos'){
+        if(r.precioVenta>0){r.precioVenta=applyV(r.precioVenta);}
+        else if(r.precio>0&&campo!=='compra'){r.precio=applyV(r.precio);}
+      }
+      count++;
+    });
+  }
+  if(!tipo||tipo==='insumo'){
+    DB.insumos.forEach(s=>{
+      if(campo==='compra'||campo==='ambos') if(s.precioCompra>0) s.precioCompra=applyV(s.precioCompra);
+      if(campo==='venta'||campo==='ambos') if(s.precioVenta>0) s.precioVenta=applyV(s.precioVenta);
+      count++;
+    });
+  }
+  saveDB();renderCatalogo();
+  document.getElementById('pct-adj-panel').style.display='none';
+  toast((pct>0?'▲':'▼')+' '+Math.abs(pct)+'% aplicado a '+count+' ítems','ok');
+}
 // ── LOGIN ──────────────────────────────────────────────────────────────
 (function(){
   if(localStorage.getItem('gq_auth')==='1'){
