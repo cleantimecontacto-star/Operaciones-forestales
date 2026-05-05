@@ -1,27 +1,7 @@
 <!DOCTYPE html>
 <html lang="es">
 <head>
-<script src="https://cdn.sheetjs.com/xlsx-0.20.1/package/dist/xlsx.full.min.js">
- else {
-    inp.type = 'password';
-    icon.innerHTML = '<path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"/><circle cx="12" cy="12" r="3"/>';
-  }
-}
-
-]');
-  
-  if (users.some(x => x.u.toLowerCase() === u && x.p === p)) {
-    localStorage.setItem('gq_auth', '1');
-    document.getElementById('login-screen').style.display = 'none';
-    err.style.display = 'none';
-  } else {
-    err.style.display = 'block';
-    document.getElementById('login-pass').value = '';
-    document.getElementById('login-pass').focus();
-  }
-}
-
-</script>
+<script src="https://cdn.sheetjs.com/xlsx-0.20.1/package/dist/xlsx.full.min.js"></script>
 <link rel="manifest" href="manifest.json">
 <meta name="theme-color" content="#15803d">
 <meta name="mobile-web-app-capable" content="yes">
@@ -471,27 +451,7 @@ function doLogin() {
 }
 
 </script>
-<script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js">
- else {
-    inp.type = 'password';
-    icon.innerHTML = '<path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"/><circle cx="12" cy="12" r="3"/>';
-  }
-}
-
-]');
-  
-  if (users.some(x => x.u.toLowerCase() === u && x.p === p)) {
-    localStorage.setItem('gq_auth', '1');
-    document.getElementById('login-screen').style.display = 'none';
-    err.style.display = 'none';
-  } else {
-    err.style.display = 'block';
-    document.getElementById('login-pass').value = '';
-    document.getElementById('login-pass').focus();
-  }
-}
-
-</script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
 </head>
 <body>
 <script>
@@ -1091,23 +1051,23 @@ let DB={
     {id:7,nombre:'Ciprés',sci:'Cupressus sempervirens',precio:4500,cat:'Ornamental',desc:''},
     {id:8,nombre:'Maqui',sci:'Aristotelia chilensis',precio:1900,cat:'Nativa',desc:''},
     {id:9,nombre:'Arrayán',sci:'Luma apiculata',precio:3800,cat:'Nativa',desc:''},
-    {id:10,nombre:'Álamo',sci:'Populus nigra',precio:2200,cat:'Exótica',desc:''},
+    {id:10,nombre:'Álamo',sci:'Populus nigra',precio:2200,cat:'Exótica',desc:''}
   ],
   servicios:[
     {id:1,nombre:'Poda de formación',cat:'unidad',unidad:'ud',precio:8500},
     {id:2,nombre:'Mantención pradera',cat:'hectarea',unidad:'Ha',precio:120000},
     {id:3,nombre:'Tala dirigida',cat:'unidad',unidad:'ud',precio:35000},
-    {id:4,nombre:'Cortafuegos',cat:'lineal',unidad:'m',precio:4500},
+    {id:4,nombre:'Cortafuegos',cat:'lineal',unidad:'m',precio:4500}
   ],
   riegoComps:[],
   empresa:{nombre:'',rut:'',tel:'',dir:'',email:'',wa:'Estimado/a {cliente}, cotización N°{numero} por {tipo} por un total de {total}. Válida {validez} días. Saludos, {empresa}'},
-  cfg:{gg:10,mg:25,},
+  cfg:{gg:10,mg:25},
   insumos:[
     {id:1,categoria:'Fertilizantes',producto:'Fertilizante NPK 15-15-15',proveedor:'AgroSur',unidad:'kg',precioCompra:3500,precioVenta:5250,notas:''},
     {id:2,categoria:'Herbicidas',producto:'Glifosato 48%',proveedor:'CampoTech',unidad:'L',precioCompra:8200,precioVenta:12300,notas:''},
     {id:3,categoria:'Fungicidas',producto:'Fungicida Cúprico',proveedor:'AgroSur',unidad:'kg',precioCompra:12000,precioVenta:18000,notas:''},
     {id:4,categoria:'Semillas',producto:'Semilla Pino Radiata',proveedor:'Forestal Chile',unidad:'kg',precioCompra:45000,precioVenta:67500,notas:''},
-    {id:5,categoria:'Herramientas',producto:'Pala punta cuadrada',proveedor:'Ferreplast',unidad:'ud',precioCompra:15000,precioVenta:22500,notas:''},
+    {id:5,categoria:'Herramientas',producto:'Pala punta cuadrada',proveedor:'Ferreplast',unidad:'ud',precioCompra:15000,precioVenta:22500,notas:''}
   ]
 };
 let currentTipo=null,selectedSps={},selectedSvcs={},selectedIns={},photoList=[],costoBase=0,cotizNum=1;
@@ -2694,7 +2654,7 @@ async function docsRenderAll(){
   try{
     const [cats, docs] = await Promise.all([
       _convexCall('query','documents:listCategories',{}),
-      _convexCall('query','documents:listDocuments',{}),
+      _convexCall('query','documents:listDocuments',{})
     ]);
     _docsCategories = Array.isArray(cats)?cats:[];
     _docsAllDocs = Array.isArray(docs)?docs:[];
@@ -2844,7 +2804,7 @@ async function docsConfirmUpload(){
     const upRes = await fetch(uploadUrl, {
       method: 'POST',
       headers: { 'Content-Type': _docsPendingFile.type || 'application/octet-stream' },
-      body: _docsPendingFile,
+      body: _docsPendingFile
     });
     if(!upRes.ok) throw new Error('upload_failed:'+upRes.status);
     const upJson = await upRes.json();
@@ -2855,7 +2815,7 @@ async function docsConfirmUpload(){
       categoryId: catId,
       storageId: storageId,
       fileType: _docsPendingFile.type || 'application/octet-stream',
-      fileSize: _docsPendingFile.size,
+      fileSize: _docsPendingFile.size
     });
     cerrarMo('mo-doc-upload');
     docsResetUpload();
@@ -3135,6 +3095,19 @@ window.addEventListener("load", () => {
   }
 }
 
+
+    function togglePasswordVisibility() {
+        var input = document.getElementById('password');
+        var icon = document.querySelector('.eye-icon, #eyeIcon, [onclick*="toggle"]');
+        if (!input) return;
+        if (input.type === 'password') {
+            input.type = 'text';
+            if (icon) icon.textContent = '🙈';
+        } else {
+            input.type = 'password';
+            if (icon) icon.textContent = '👁️';
+        }
+    }
 </script>
 
 </body>
