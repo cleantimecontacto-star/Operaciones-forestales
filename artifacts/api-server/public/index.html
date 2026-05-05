@@ -428,6 +428,25 @@ function doLogin() {
   }
 }
 
+
+ else {
+    inp.type = 'password';
+    icon.innerHTML = '<path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"/><circle cx="12" cy="12" r="3"/>';
+  }
+}
+
+]');
+  if (users.some(x => x.u.toLowerCase() === u && x.p === p)) {
+    localStorage.setItem('gq_auth', '1');
+    document.getElementById('login-screen').style.display = 'none';
+    if(err) err.style.display = 'none';
+  } else {
+    if(err) err.style.display = 'block';
+    document.getElementById('login-pass').value = '';
+    document.getElementById('login-pass').focus();
+  }
+}
+
 // El manifest.json se carga directamente desde el archivo físico
 // Esto permite que el navegador detecte correctamente la PWA como instalable
 // Sin conflictos entre el archivo físico y la generación dinámica
@@ -1820,12 +1839,7 @@ function renderAdminInsumos(){
     icon.innerHTML='<path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"/><circle cx="12" cy="12" r="3"/>';
   }
 }
-function doLogin(){
-  const u=document.getElementById('login-user').value.trim().toLowerCase();
-  const p=document.getElementById('login-pass').value;
-  const err=document.getElementById('login-err');
-  // Credentials stored in localStorage (default: Admin / 1981)
-  const users=JSON.parse(localStorage.getItem('gq_users')||'[{"u":"Admin","p":"1981"}]');
+]');
   if(users.some(x=>x.u.toLowerCase()===u&&x.p===p)){
     localStorage.setItem('gq_auth','1');
     document.getElementById('login-screen').style.display='none';
