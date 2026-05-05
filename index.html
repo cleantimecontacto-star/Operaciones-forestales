@@ -408,14 +408,10 @@ function doLogin() {
   }
 }
 
-
-}
-
 // El manifest.json se carga directamente desde el archivo físico
 // Esto permite que el navegador detecte correctamente la PWA como instalable
 // Sin conflictos entre el archivo físico y la generación dinámica
 
-}
 
 </script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
@@ -431,7 +427,6 @@ function doLogin() {
   }
 })();
 
-}
 
 </script>
 
@@ -1156,7 +1151,6 @@ function calcFinal(){
   document.getElementById('res-table').innerHTML=`<thead><tr><th>Descripción</th><th style="text-align:right">Monto</th></tr></thead><tbody>${rows.join('')}</tbody>`;
   _matRows=matRows;
   document.getElementById('mat-list').innerHTML=`<p style="font-size:11px;color:var(--muted);margin-bottom:9px">Comparativo costo vs. precio de venta</p><table style="width:100%;border-collapse:collapse;font-size:11px"><thead><tr style="border-bottom:1px solid var(--border)"><th style="text-align:left;padding:4px 0;color:var(--muted)">Item</th><th style="text-align:right;padding:4px 0;color:var(--muted)">Costo</th><th style="text-align:right;padding:4px 0;color:var(--muted)">Venta</th></tr></thead><tbody>${matRows.map(r=>{const v=r.total*(1+cfg.mg/100+cfg.gg/100);return`<tr style="border-bottom:1px solid var(--pl)"><td style="padding:5px 0">${r.desc} ×${r.qty}</td><td style="text-align:right">${fmt(r.total)}</td><td style="text-align:right;color:var(--v2)">${fmt(v)}</td></tr>`;}).join('')}</tbody></table>`;
-}
 
 function guardar(){
   const n=nextCotizNum();
@@ -1327,7 +1321,6 @@ function abrirServicio(id=null){editSvcId=id;if(id){const s=DB.servicios.find(x=
 function saveServicio(){const n=document.getElementById('ms-nombre').value.trim(),p=parseInt(document.getElementById('ms-precio').value);if(!n||!p){toast('Completa los campos','err');return;}const obj={nombre:n,cat:document.getElementById('ms-cat').value,unidad:document.getElementById('ms-unidad').value||'ud',precio:p};if(editSvcId){Object.assign(DB.servicios.find(x=>x.id===editSvcId),obj);}else{obj.id=Date.now();DB.servicios.push(obj);}saveDB();cerrarMo('mo-servicio');renderServicios();toast(editSvcId?'Servicio actualizado':'Servicio agregado','ok');}
 function elimServicio(id){if(!confirm('¿Mover este servicio a la papelera?'))return;const _it=DB.servicios.find(x=>x.id===id);if(_it)_papPush('servicios',_it);DB.servicios=DB.servicios.filter(x=>x.id!==id);saveDB();renderServicios();toast('Movido a papelera','ok');}
 
-}
 
 function csvEsc(v){
   if(v===null||v===undefined)return'""';
@@ -1932,7 +1925,6 @@ function renderCatalogo(){
     DB.especies.forEach(e=>{if(!q||e.nombre.toLowerCase().includes(q)||(e.sci||'').toLowerCase().includes(q))items.push({...e,_tipo:'especie'});});
   }
   );});
-  }
   if(!catFiltro||catFiltro==='insumo'){
     DB.insumos.forEach(s=>{if(!q||s.producto.toLowerCase().includes(q)||(s.categoria||'').toLowerCase().includes(q)||(s.proveedor||'').toLowerCase().includes(q))items.push({...s,_tipo:'insumo'});});
   }
@@ -1970,7 +1962,6 @@ function renderCatalogo(){
         </div></div>`;
     }
   }).join(''):'<div style="font-size:13px;color:var(--muted);text-align:center;padding:24px">Sin ítems en el catálogo. Presioná + Añadir</div>';
-}
 
 // ── AJUSTE PORCENTUAL DE PRECIOS ──────────────────────────────────────
 function togglePctPanel(){
@@ -2031,7 +2022,6 @@ function applyPctPrices(){
   document.getElementById('login-user').addEventListener('keydown',function(e){if(e.key==='Enter')doLogin();});
 })();
 
-}
 
 function doLogout(){
   localStorage.removeItem('gq_auth');
@@ -2085,13 +2075,7 @@ function saveSecPass(){
   toast('✅ Contraseña actualizada correctamente','ok');
 }
 
-else{
-    inp.type='password';
-    icon.innerHTML='<path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"/><circle cx="12" cy="12" r="3"/>';
-  }
-}
 
-}
 
 </script>
 
@@ -2789,7 +2773,6 @@ async function docsConfirmMove(){
   finally{ btn.disabled = false; btn.textContent = orig; }
 }
 
-}
 
 </script>
 
@@ -2855,7 +2838,6 @@ function construirCuerpoPreview(cot) {
   return html;
 }
 
-}
 
 </script>
 <script>
