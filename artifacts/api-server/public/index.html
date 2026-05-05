@@ -414,7 +414,7 @@ body{font-family:'Inter',ui-sans-serif,system-ui,-apple-system,Segoe UI,Roboto,s
   </div>
 </div>
     <button class="login-btn" onclick="doLogin()">Ingresar →</button>
-    
+
   </div>
 </div>
 <header class="hdr">
@@ -470,7 +470,7 @@ body{font-family:'Inter',ui-sans-serif,system-ui,-apple-system,Segoe UI,Roboto,s
         <div class="tc" onclick="selTipo('plantacion')" id="t-plantacion"><div class="tc-icon">🌳</div><div class="tc-label">Plantación</div><div class="tc-desc">Por unidad/especie</div></div>
         <div class="tc" onclick="selTipo('cerramiento')" id="t-cerramiento"><div class="tc-icon">🌿</div><div class="tc-label">Cerramiento</div><div class="tc-desc">Metros lineales</div></div>
         <div class="tc" onclick="selTipo('reforestacion')" id="t-reforestacion"><div class="tc-icon">🏔️</div><div class="tc-label">Reforestación</div><div class="tc-desc">Por hectáreas</div></div>
-        <div class="tc" onclick="selTipo('riego')" id="t-riego"><div class="tc-icon">💧</div><div class="tc-label">Sist. Riego</div><div class="tc-desc">Componentes</div></div>
+        <div class="tc-label">Sist. Riego</div><div class="tc-desc">Componentes</div></div>
         <div class="tc" onclick="selTipo('mixto')" id="t-mixto"><div class="tc-icon">🌿</div><div class="tc-label">Mixto</div><div class="tc-desc">Combina árboles + servicios</div></div>
       </div>
       <button class="btn bp" style="margin-top:13px" onclick="goS2()" id="btn-s2" disabled>Continuar →</button>
@@ -523,16 +523,6 @@ body{font-family:'Inter',ui-sans-serif,system-ui,-apple-system,Segoe UI,Roboto,s
       </div>
       <div id="r-res" style="display:none"></div>
     </div>
-    <div id="f-riego" class="card" style="display:none">
-      <div class="card-title">💧 Sistema de Riego</div>
-      <div class="fg"><label class="fl">Metros lineales de tubería</label><input class="fi" id="ri-ml" type="number" placeholder="300" oninput="calcRi()"></div>
-      <div style="font-size:11px;font-weight:500;color:var(--muted);text-transform:uppercase;letter-spacing:.04em;margin-bottom:9px">Componentes</div>
-      <div class="rc"><span class="rc-icon">🔧</span><div class="rc-name">Tubería PVC 25mm<br><span style="font-size:10px;color:var(--muted)" id="lbl-tub">$850/ml</span></div><input class="rc-qty" id="ri-tub" type="number" min="0" placeholder="0" oninput="calcRi()"><span class="rc-price" id="p-tub">$0</span></div>
-      <div class="rc"><span class="rc-icon">💦</span><div class="rc-name">Aspersor rotativo<br><span style="font-size:10px;color:var(--muted)" id="lbl-asp">$12.500/ud</span></div><input class="rc-qty" id="ri-asp" type="number" min="0" placeholder="0" oninput="calcRi()"><span class="rc-price" id="p-asp">$0</span></div>
-      <div class="rc"><span class="rc-icon">🌊</span><div class="rc-name">Gotero autocomp.<br><span style="font-size:10px;color:var(--muted)" id="lbl-got">$3.200/ud</span></div><input class="rc-qty" id="ri-got" type="number" min="0" placeholder="0" oninput="calcRi()"><span class="rc-price" id="p-got">$0</span></div>
-      <div class="rc"><span class="rc-icon">⚡</span><div class="rc-name">Controlador elect.<br><span style="font-size:10px;color:var(--muted)" id="lbl-ctrl">$85.000/ud</span></div><input class="rc-qty" id="ri-ctrl" type="number" min="0" placeholder="0" oninput="calcRi()"><span class="rc-price" id="p-ctrl">$0</span></div>
-      <div class="rc"><span class="rc-icon">🏗️</span><div class="rc-name">M.O. instalación<br><span style="font-size:10px;color:var(--muted)" id="lbl-mo">$2.500/ml</span></div><input class="rc-qty" id="ri-mo" type="number" min="0" placeholder="0" oninput="calcRi()"><span class="rc-price" id="p-mo">$0</span></div>
-      <div id="ri-res" style="display:none"></div>
     </div>
 
     <div id="f-mixto" class="card" style="display:none">
@@ -638,7 +628,7 @@ body{font-family:'Inter',ui-sans-serif,system-ui,-apple-system,Segoe UI,Roboto,s
     <button class="tab active" onclick="showTab('empresa')" id="tab-empresa">Empresa</button>
     <button class="tab" onclick="showTab('especies')" id="tab-especies">Especies</button>
     <button class="tab" onclick="showTab('servicios')" id="tab-servicios">Servicios</button>
-    <button class="tab" onclick="showTab('riego')" id="tab-riego">Riego</button>
+
     <button class="tab" onclick="showTab('insumos')" id="tab-insumos">📋 Insumos</button>
     <button class="tab" onclick="showTab('seguridad')" id="tab-seguridad">🔐 Seguridad</button>
   </div>
@@ -669,9 +659,7 @@ body{font-family:'Inter',ui-sans-serif,system-ui,-apple-system,Segoe UI,Roboto,s
       <div class="ci"><div><div class="ci-lbl">Margen de Utilidad (%)</div><div class="ci-sub">Sobre subtotal</div></div><input class="mi" type="number" id="cfg-mg" value="25" onchange="saveCfg()"></div>
       <div class="ci"><div><div class="ci-lbl">IVA</div></div><div style="font-size:14px;font-weight:600;color:var(--v2)">19%</div></div>
     </div>
-    <div class="card">
-      <div class="card-title">💧 Precios Riego</div>
-      <div class="ci"><div><div class="ci-lbl">Tubería PVC 25mm</div></div><input class="mi" type="number" id="cfg-tub" value="850" onchange="saveCfg()"></div>
+    </div><input class="mi" type="number" id="cfg-tub" value="850" onchange="saveCfg()"></div>
       <div class="ci"><div><div class="ci-lbl">Aspersor rotativo</div></div><input class="mi" type="number" id="cfg-asp" value="12500" onchange="saveCfg()"></div>
       <div class="ci"><div><div class="ci-lbl">Gotero autocomp.</div></div><input class="mi" type="number" id="cfg-got" value="3200" onchange="saveCfg()"></div>
       <div class="ci"><div><div class="ci-lbl">Controlador elect.</div></div><input class="mi" type="number" id="cfg-ctrl" value="85000" onchange="saveCfg()"></div>
@@ -687,8 +675,7 @@ body{font-family:'Inter',ui-sans-serif,system-ui,-apple-system,Segoe UI,Roboto,s
     <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:11px"><span id="svc-count" style="font-size:12px;color:var(--muted)">0 servicios</span><button class="btn bp bsm" onclick="abrirServicio()">+ Añadir</button></div>
     <div id="svc-list"></div>
   </div>
-  <div id="adm-riego" style="display:none">
-    <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:11px"><span id="ri-count" style="font-size:12px;color:var(--muted)">0 componentes</span><button class="btn bp bsm" onclick="abrirRiegoComp()">+ Añadir</button></div>
+
     <div id="ri-list"></div>
   </div>
   <!-- INSUMOS CATALOG ADMIN -->
@@ -859,11 +846,6 @@ body{font-family:'Inter',ui-sans-serif,system-ui,-apple-system,Segoe UI,Roboto,s
   <div class="btn-row"><button class="btn bs" onclick="cerrarMo('mo-servicio')">Cancelar</button><button class="btn bp" onclick="saveServicio()">Guardar</button></div>
 </div></div>
 
-<div class="mo" id="mo-riego"><div class="md"><div class="mh"></div><div class="mt" id="mo-ri-title">Nuevo Componente</div>
-  <div class="fg"><label class="fl">Nombre</label><input class="fi" id="mr-nombre" placeholder="Válvula solenoide"></div>
-  <div class="fr"><div class="fg"><label class="fl">Unidad</label><input class="fi" id="mr-unidad" placeholder="ud / ml"></div><div class="fg"><label class="fl">Costo Unitario ($)</label><input class="fi" id="mr-precio" type="number" placeholder="25000"></div></div>
-  <div class="fg"><label class="fl">Categoría</label><input class="fi" id="mr-cat" placeholder="tubería / emisor / control"></div>
-  <div class="btn-row"><button class="btn bs" onclick="cerrarMo('mo-riego')">Cancelar</button><button class="btn bp" onclick="saveRiegoComp()">Guardar</button></div>
 </div></div>
 
 <div class="mo" id="mo-cliente"><div class="md"><div class="mh"></div><div class="mt" id="mo-cli-title">Nuevo Cliente</div>
@@ -876,7 +858,6 @@ body{font-family:'Inter',ui-sans-serif,system-ui,-apple-system,Segoe UI,Roboto,s
 </div></div>
 
 <div class="mo" id="mo-cotiz"><div class="md"><div class="mh"></div><button class="btn bs bsm" style="margin-bottom:10px;width:auto;padding:5px 14px;font-size:12px" onclick="cerrarMo('mo-cotiz')">✕ Cerrar</button><div id="mo-cotiz-body"></div></div></div>
-
 
 <div class="mo" id="mat-item-modal"><div class="md"><div class="mh"></div><div class="mt">📄 Cotización Itemizada para Cliente</div><div id="mat-item-body"></div><div class="btn-row" style="margin-top:14px"><button class="btn bs" onclick="cerrarMo('mat-item-modal')">Cerrar</button></div></div></div>
 
@@ -917,15 +898,9 @@ let DB={
     {id:3,nombre:'Tala dirigida',cat:'unidad',unidad:'ud',precio:35000},
     {id:4,nombre:'Cortafuegos',cat:'lineal',unidad:'m',precio:4500},
   ],
-  riegoComps:[
-    {id:1,nombre:'Tubería PVC 25mm',unidad:'ml',precio:850,cat:'tubería'},
-    {id:2,nombre:'Aspersor rotativo',unidad:'ud',precio:12500,cat:'emisor'},
-    {id:3,nombre:'Gotero autocomp.',unidad:'ud',precio:3200,cat:'emisor'},
-    {id:4,nombre:'Controlador elect.',unidad:'ud',precio:85000,cat:'control'},
-    {id:5,nombre:'Válvula solenoide',unidad:'ud',precio:28000,cat:'control'},
-  ],
+  riegoComps:[],
   empresa:{nombre:'',rut:'',tel:'',dir:'',email:'',wa:'Estimado/a {cliente}, cotización N°{numero} por {tipo} por un total de {total}. Válida {validez} días. Saludos, {empresa}'},
-  cfg:{gg:10,mg:25,tub:850,asp:12500,got:3200,ctrl:85000,mo:2500},
+  cfg:{gg:10,mg:25,},
   insumos:[
     {id:1,categoria:'Fertilizantes',producto:'Fertilizante NPK 15-15-15',proveedor:'AgroSur',unidad:'kg',precioCompra:3500,precioVenta:5250,notas:''},
     {id:2,categoria:'Herbicidas',producto:'Glifosato 48%',proveedor:'CampoTech',unidad:'L',precioCompra:8200,precioVenta:12300,notas:''},
@@ -978,7 +953,7 @@ function goS1(){show('s1');hide('s2');hide('s3');}
 function goS2(){
   if(!currentTipo)return;
   hide('s1');show('s2');hide('s3');
-  ['plantacion','cerramiento','reforestacion','riego','mixto'].forEach(t=>document.getElementById('f-'+t).style.display=t===currentTipo?'block':'none');
+  ['plantacion','cerramiento','reforestacion','mixto'].forEach(t=>document.getElementById('f-'+t).style.display=t===currentTipo?'block':'none');
   if(currentTipo==='plantacion')renderSps();
   if(currentTipo==='mixto'){renderMixtoSps();renderMixtoSvcs();}
 }
@@ -1049,7 +1024,7 @@ function calcFinal(){
   if(currentTipo==='plantacion'){Object.values(selectedSps).forEach(s=>{const e=DB.especies.find(x=>x.id==s.id);if(e){rows.push(`<tr><td>${e.nombre} <span class="tag">${s.qty} ud</span></td><td>${fmt(e.precio*s.qty)}</td></tr>`);matRows.push({desc:e.nombre,qty:s.qty,unit:'ud',costo:e.precio,total:e.precio*s.qty});}});}
   else if(currentTipo==='cerramiento'){const m=document.getElementById('c-ml').value,p=document.getElementById('c-esp').value,mo=document.getElementById('c-mo').value;rows.push(`<tr><td>Material cerramiento (${m} ml)</td><td>${fmt(parseFloat(m)*parseFloat(p||0))}</td></tr>`);rows.push(`<tr><td>Mano de obra</td><td>${fmt(parseFloat(m)*(parseFloat(mo)||0))}</td></tr>`);matRows.push({desc:'Cerramiento',qty:m,unit:'ml',costo:p,total:parseFloat(m)*parseFloat(p||0)});}
   else if(currentTipo==='reforestacion'){const ha=document.getElementById('r-ha').value,dens=document.getElementById('r-dens').value,pr=document.getElementById('r-esp').value,mo=document.getElementById('r-mo').value,ins=document.getElementById('r-ins').value;rows.push(`<tr><td>Plantas (${ha}Ha × ${dens}ud)</td><td>${fmt(parseFloat(ha)*parseFloat(dens)*(parseFloat(pr)||0))}</td></tr>`);rows.push(`<tr><td>Mano de obra</td><td>${fmt(parseFloat(ha)*(parseFloat(mo)||0))}</td></tr>`);rows.push(`<tr><td>Insumos/Fertilizantes</td><td>${fmt(parseFloat(ha)*(parseFloat(ins)||0))}</td></tr>`);matRows.push({desc:'Plantas',qty:parseFloat(ha)*parseFloat(dens),unit:'ud',costo:pr,total:parseFloat(ha)*parseFloat(dens)*(parseFloat(pr)||0)});}
-  else if(currentTipo==='riego'){const cfg=DB.cfg;const rI=[{id:'tub',n:'Tubería PVC',u:'ml',p:cfg.tub},{id:'asp',n:'Aspersores',u:'ud',p:cfg.asp},{id:'got',n:'Goteros',u:'ud',p:cfg.got},{id:'ctrl',n:'Controlador',u:'ud',p:cfg.ctrl},{id:'mo',n:'M.O.',u:'ml',p:cfg.mo}];rI.forEach(x=>{const q=parseFloat(document.getElementById('ri-'+x.id)?.value)||0;if(q>0){rows.push(`<tr><td>${x.n} (×${q} ${x.u})</td><td>${fmt(q*x.p)}</td></tr>`);matRows.push({desc:x.n,qty:q,unit:x.u,costo:x.p,total:q*x.p});}});}
+  ,{id:'asp',n:'Aspersores',u:'ud',p:cfg.asp},{id:'got',n:'Goteros',u:'ud',p:cfg.got},{id:'ctrl',n:'Controlador',u:'ud',p:cfg.ctrl},{id:'mo',n:'M.O.',u:'ml',p:cfg.mo}];rI.forEach(x=>{const q=parseFloat(document.getElementById('ri-'+x.id)?.value)||0;if(q>0){rows.push(`<tr><td>${x.n} (×${q} ${x.u})</td><td>${fmt(q*x.p)}</td></tr>`);matRows.push({desc:x.n,qty:q,unit:x.u,costo:x.p,total:q*x.p});}});}
   if(currentTipo==='mixto'){
     rows.push('<tr><td colspan="2" style="font-weight:600;color:var(--v2);padding-top:6px;font-size:11px;text-transform:uppercase;letter-spacing:.04em">🌳 Especies</td></tr>');
     Object.values(selectedSps).forEach(s=>{const e=DB.especies.find(x=>x.id==s.id);if(e){rows.push(`<tr><td>${e.nombre} <span class="tag">${s.qty} ud</span></td><td>${fmt(e.precio*s.qty)}</td></tr>`);matRows.push({desc:e.nombre,qty:s.qty,unit:'ud',costo:e.precio,total:e.precio*s.qty});}});
@@ -1110,7 +1085,7 @@ function _papPush(tipo, item){
   DB.papelera.unshift({pid:'p'+Date.now()+Math.random().toString(36).slice(2,7), tipo:tipo, item:JSON.parse(JSON.stringify(item)), eliminadoEn:Date.now()});
 }
 function _papLabelTipo(t){
-  return ({cotizaciones:'Cotización',especies:'Especie',servicios:'Servicio',riegoComps:'Componente de riego',stock:'Insumo',clientes:'Cliente'})[t]||t;
+  return ({cotizaciones:'Cotización',especies:'Especie',servicios:'Servicio',stock:'Insumo',clientes:'Cliente'})[t]||t;
 }
 function _papDescItem(t,it){
   if(t==='cotizaciones') return (it.numero?('N° '+it.numero):'')+(it.cliente?(' — '+it.cliente):'');
@@ -1126,7 +1101,7 @@ function restaurarPap(pid){
   try{ if(e.tipo==='cotizaciones') renderCotiz();
        if(e.tipo==='especies') renderEspecies();
        if(e.tipo==='servicios') renderServicios();
-       if(e.tipo==='riegoComps') renderRiegoComps();
+
        if(e.tipo==='insumos') renderMateriales();
        if(e.tipo==='clientes' && typeof renderClientes==='function') renderClientes();
        renderDash && renderDash(); }catch(_){}
@@ -1189,8 +1164,7 @@ function saveCliente(){
 }
 
 function showTab(t){
-  ['empresa','especies','servicios','riego','insumos','seguridad'].forEach(x=>{document.getElementById('adm-'+x).style.display=x===t?'block':'none';document.getElementById('tab-'+x)?.classList.toggle('active',x===t);});
-  if(t==='especies')renderEspecies();if(t==='servicios')renderServicios();if(t==='riego')renderRiegoComps();
+  ['empresa','especies','servicios','insumos','seguridad'].forEach(x=>{document.getElementById('adm-'+x).style.display=x===t?'block':'none';document.getElementById('tab-'+x)?.classList.toggle('active',x===t);});
   if(t==='insumos')renderAdminInsumos();
   if(t==='seguridad')loadSeguridad();
 }
@@ -1235,13 +1209,7 @@ function abrirServicio(id=null){editSvcId=id;if(id){const s=DB.servicios.find(x=
 function saveServicio(){const n=document.getElementById('ms-nombre').value.trim(),p=parseInt(document.getElementById('ms-precio').value);if(!n||!p){toast('Completa los campos','err');return;}const obj={nombre:n,cat:document.getElementById('ms-cat').value,unidad:document.getElementById('ms-unidad').value||'ud',precio:p};if(editSvcId){Object.assign(DB.servicios.find(x=>x.id===editSvcId),obj);}else{obj.id=Date.now();DB.servicios.push(obj);}saveDB();cerrarMo('mo-servicio');renderServicios();toast(editSvcId?'Servicio actualizado':'Servicio agregado','ok');}
 function elimServicio(id){if(!confirm('¿Mover este servicio a la papelera?'))return;const _it=DB.servicios.find(x=>x.id===id);if(_it)_papPush('servicios',_it);DB.servicios=DB.servicios.filter(x=>x.id!==id);saveDB();renderServicios();toast('Movido a papelera','ok');}
 
-function renderRiegoComps(){
-  document.getElementById('ri-count').textContent=DB.riegoComps.length+' componentes';
-  document.getElementById('ri-list').innerHTML=DB.riegoComps.map(r=>`<div class="spi" style="cursor:default"><div style="flex:1"><div class="sp-name">${r.nombre}</div><span class="tag">${r.cat}</span><span class="tag">${r.unidad}</span></div><div style="display:flex;flex-direction:column;align-items:flex-end;gap:5px"><span class="sp-price">${fmt(r.precio)}</span><div style="display:flex;gap:5px"><button class="btn bs bsm" style="padding:4px 8px;font-size:11px" onclick="abrirRiegoComp(${r.id})">✏️</button><button class="btn bd bsm" style="padding:4px 8px;font-size:11px" onclick="elimRiegoComp(${r.id})">🗑</button></div></div></div>`).join('');
 }
-function abrirRiegoComp(id=null){editRiId=id;if(id){const r=DB.riegoComps.find(x=>x.id===id);document.getElementById('mr-nombre').value=r.nombre;document.getElementById('mr-unidad').value=r.unidad;document.getElementById('mr-precio').value=r.precio;document.getElementById('mr-cat').value=r.cat;document.getElementById('mo-ri-title').textContent='Editar Componente';}else{['mr-nombre','mr-unidad','mr-precio','mr-cat'].forEach(i=>document.getElementById(i).value='');document.getElementById('mo-ri-title').textContent='Nuevo Componente';}document.getElementById('mo-riego').classList.add('open');}
-function saveRiegoComp(){const n=document.getElementById('mr-nombre').value.trim(),p=parseInt(document.getElementById('mr-precio').value);if(!n||!p){toast('Completa los campos','err');return;}const obj={nombre:n,unidad:document.getElementById('mr-unidad').value||'ud',precio:p,cat:document.getElementById('mr-cat').value||'otro'};if(editRiId){Object.assign(DB.riegoComps.find(x=>x.id===editRiId),obj);}else{obj.id=Date.now();DB.riegoComps.push(obj);}saveDB();cerrarMo('mo-riego');renderRiegoComps();toast(editRiId?'Componente actualizado':'Componente agregado','ok');}
-function elimRiegoComp(id){if(!confirm('¿Mover este componente a la papelera?'))return;const _it=DB.riegoComps.find(x=>x.id===id);if(_it)_papPush('riegoComps',_it);DB.riegoComps=DB.riegoComps.filter(x=>x.id!==id);saveDB();renderRiegoComps();toast('Movido a papelera','ok');}
 
 function csvEsc(v){
   if(v===null||v===undefined)return'""';
@@ -1282,7 +1250,7 @@ function addPhoto(){
 
 function fmt(n){return'$'+Math.round(n||0).toLocaleString('es-CL');}
 function fmtK(n){if(n>=1000000)return'$'+(n/1000000).toFixed(1)+'M';if(n>=1000)return'$'+(n/1000).toFixed(0)+'K';return fmt(n);}
-function tipoLabel(t){return{plantacion:'Plantación',cerramiento:'Cerramiento',reforestacion:'Reforestación',riego:'Sistema de Riego',mixto:'Servicios Mixtos'}[t]||t||'';}
+function tipoLabel(t){return{plantacion:'Plantación',cerramiento:'Cerramiento',reforestacion:'Reforestación',mixto:'Servicios Mixtos'}[t]||t||'';}
 function nextCotizNum(){
   // Calcula el siguiente número siempre desde los datos guardados,
   // evitando duplicados cuando otra pestaña/equipo agrega cotizaciones.
@@ -1379,7 +1347,7 @@ async function loadFromCloud() {
       if (d.clientes)     DB.clientes     = d.clientes;
       if (d.especies)     DB.especies     = d.especies;
       if (d.servicios)    DB.servicios    = d.servicios;
-      if (d.riegoComps)   DB.riegoComps   = d.riegoComps;
+
       if (d.insumos)      DB.insumos      = d.insumos;
       if (Array.isArray(d.papelera)) DB.papelera = d.papelera;
       if (d.empresa)      DB.empresa      = d.empresa;
@@ -1393,7 +1361,7 @@ async function loadFromCloud() {
         localStorage.setItem('gq_cli',JSON.stringify(DB.clientes));
         localStorage.setItem('gq_esp',JSON.stringify(DB.especies));
         localStorage.setItem('gq_svc',JSON.stringify(DB.servicios));
-        localStorage.setItem('gq_ri',JSON.stringify(DB.riegoComps));
+
         localStorage.setItem('gq_ins',JSON.stringify(DB.insumos));
         localStorage.setItem('gq_empresa',JSON.stringify(DB.empresa));
         localStorage.setItem('gq_cfg',JSON.stringify(DB.cfg));
@@ -1433,7 +1401,7 @@ async function _pushLocalToCloud() {
     clientes:     DB.clientes,
     especies:     DB.especies,
     servicios:    DB.servicios,
-    riegoComps:   DB.riegoComps,
+
     insumos:      DB.insumos,
     empresa:      DB.empresa,
     cfg:          DB.cfg,
@@ -1469,7 +1437,7 @@ function saveDB(){
     localStorage.setItem('gq_cli',JSON.stringify(DB.clientes));
     localStorage.setItem('gq_esp',JSON.stringify(DB.especies));
     localStorage.setItem('gq_svc',JSON.stringify(DB.servicios));
-    localStorage.setItem('gq_ri',JSON.stringify(DB.riegoComps));
+
     localStorage.setItem('gq_ins',JSON.stringify(DB.insumos));
     localStorage.setItem('gq_pap',JSON.stringify(DB.papelera||[]));
     localStorage.setItem('gq_empresa',JSON.stringify(DB.empresa));
@@ -1483,7 +1451,7 @@ function saveDB(){
       clientes:     DB.clientes,
       especies:     DB.especies,
       servicios:    DB.servicios,
-      riegoComps:   DB.riegoComps,
+
       insumos:      DB.insumos,
       papelera:     DB.papelera||[],
       empresa:      DB.empresa,
@@ -1500,7 +1468,7 @@ function loadDB(){
     DB.clientes=p('gq_cli',DB.clientes);
     DB.especies=p('gq_esp',DB.especies);
     DB.servicios=p('gq_svc',DB.servicios);
-    DB.riegoComps=p('gq_ri',DB.riegoComps);
+
     DB.insumos=p('gq_ins',DB.insumos);
     DB.papelera=p('gq_pap',DB.papelera||[]);
     DB.empresa=p('gq_empresa',DB.empresa);
@@ -1716,7 +1684,6 @@ function renderAdminInsumos(){
   </div>`).join(''):'<div style="font-size:13px;color:var(--muted);text-align:center;padding:20px">Sin insumos. Presioná + Añadir</div>';
 }
 
-
 // ── LOGIN ──────────────────────────────────────────────────────────────
 (function(){
   if(localStorage.getItem('gq_auth')==='1'){
@@ -1817,7 +1784,6 @@ function toggleSecPass(inputId,iconId){
   }
 }
 </script>
-
 
 <div class="mo" id="mo-nueva-cat"><div class="md"><div class="mh"></div><div class="mt">Nueva Categoría</div>
   <div class="fg"><label class="fl">Nombre de la Categoría</label><input class="fi" id="nueva-cat-input" placeholder="Ej: Riego, Maquinaria..."></div>
@@ -2017,7 +1983,6 @@ function generarPDF(){
   toast('✅ PDF generado','ok');
 }
 
-
 // ── PDF DESDE HISTORIAL ───────────────────────────────────────────────────────
 function generarPDFCotiz(id){
   if(!window.jspdf){toast('jsPDF no disponible','err');return;}
@@ -2099,7 +2064,6 @@ function generarPDFCotiz(id){
   toast('✅ PDF generado','ok');
   cerrarMo('mo-cotiz');
 }
-
 
 if('serviceWorker' in navigator){
   function showUpdateBanner(waiting){
@@ -2649,14 +2613,14 @@ let deferredPrompt;
 function checkInstallable() {
   const btn = document.getElementById('btn-instalar');
   if (!btn) return;
-  
+
   // Detectar si ya está instalada
   const isStandalone = window.matchMedia('(display-mode: standalone)').matches || window.navigator.standalone;
   if (isStandalone) {
     btn.style.display = 'none';
     return;
   }
-  
+
   // Mostrar siempre el botón inicialmente para que el usuario sepa que existe la opción
   btn.style.display = 'flex';
 }
@@ -2667,7 +2631,7 @@ window.addEventListener('beforeinstallprompt', (e) => {
   // Guardar el evento para dispararlo luego
   deferredPrompt = e;
   console.log('PWA: Evento beforeinstallprompt capturado');
-  
+
   const btn = document.getElementById('btn-instalar');
   if (btn) {
     btn.style.display = 'flex';
@@ -2684,7 +2648,7 @@ window.addEventListener('appinstalled', () => {
 
 function instalarApp() {
   const isIOS = /iPad|iPhone|iPod/.test(navigator.userAgent) && !window.MSStream;
-  
+
   if (deferredPrompt) {
     // Caso: Android o PC (Chrome/Edge)
     deferredPrompt.prompt();

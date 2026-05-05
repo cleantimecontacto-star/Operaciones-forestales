@@ -414,7 +414,7 @@ body{font-family:'Inter',ui-sans-serif,system-ui,-apple-system,Segoe UI,Roboto,s
   </div>
 </div>
     <button class="login-btn" onclick="doLogin()">Ingresar →</button>
-    
+
   </div>
 </div>
 <header class="hdr">
@@ -470,7 +470,7 @@ body{font-family:'Inter',ui-sans-serif,system-ui,-apple-system,Segoe UI,Roboto,s
         <div class="tc" onclick="selTipo('plantacion')" id="t-plantacion"><div class="tc-icon">🌳</div><div class="tc-label">Plantación</div><div class="tc-desc">Por unidad/especie</div></div>
         <div class="tc" onclick="selTipo('cerramiento')" id="t-cerramiento"><div class="tc-icon">🌿</div><div class="tc-label">Cerramiento</div><div class="tc-desc">Metros lineales</div></div>
         <div class="tc" onclick="selTipo('reforestacion')" id="t-reforestacion"><div class="tc-icon">🏔️</div><div class="tc-label">Reforestación</div><div class="tc-desc">Por hectáreas</div></div>
-        <div class="tc" onclick="selTipo('riego')" id="t-riego"><div class="tc-icon">💧</div><div class="tc-label">Sist. Riego</div><div class="tc-desc">Componentes</div></div>
+        <div class="tc-label">Sist. Riego</div><div class="tc-desc">Componentes</div></div>
         <div class="tc" onclick="selTipo('mixto')" id="t-mixto"><div class="tc-icon">🌿</div><div class="tc-label">Mixto</div><div class="tc-desc">Combina árboles + servicios</div></div>
       </div>
       <button class="btn bp" style="margin-top:13px" onclick="goS2()" id="btn-s2" disabled>Continuar →</button>
@@ -523,16 +523,6 @@ body{font-family:'Inter',ui-sans-serif,system-ui,-apple-system,Segoe UI,Roboto,s
       </div>
       <div id="r-res" style="display:none"></div>
     </div>
-    <div id="f-riego" class="card" style="display:none">
-      <div class="card-title">💧 Sistema de Riego</div>
-      <div class="fg"><label class="fl">Metros lineales de tubería</label><input class="fi" id="ri-ml" type="number" placeholder="300" oninput="calcRi()"></div>
-      <div style="font-size:11px;font-weight:500;color:var(--muted);text-transform:uppercase;letter-spacing:.04em;margin-bottom:9px">Componentes</div>
-      <div class="rc"><span class="rc-icon">🔧</span><div class="rc-name">Tubería PVC 25mm<br><span style="font-size:10px;color:var(--muted)" id="lbl-tub">$850/ml</span></div><input class="rc-qty" id="ri-tub" type="number" min="0" placeholder="0" oninput="calcRi()"><span class="rc-price" id="p-tub">$0</span></div>
-      <div class="rc"><span class="rc-icon">💦</span><div class="rc-name">Aspersor rotativo<br><span style="font-size:10px;color:var(--muted)" id="lbl-asp">$12.500/ud</span></div><input class="rc-qty" id="ri-asp" type="number" min="0" placeholder="0" oninput="calcRi()"><span class="rc-price" id="p-asp">$0</span></div>
-      <div class="rc"><span class="rc-icon">🌊</span><div class="rc-name">Gotero autocomp.<br><span style="font-size:10px;color:var(--muted)" id="lbl-got">$3.200/ud</span></div><input class="rc-qty" id="ri-got" type="number" min="0" placeholder="0" oninput="calcRi()"><span class="rc-price" id="p-got">$0</span></div>
-      <div class="rc"><span class="rc-icon">⚡</span><div class="rc-name">Controlador elect.<br><span style="font-size:10px;color:var(--muted)" id="lbl-ctrl">$85.000/ud</span></div><input class="rc-qty" id="ri-ctrl" type="number" min="0" placeholder="0" oninput="calcRi()"><span class="rc-price" id="p-ctrl">$0</span></div>
-      <div class="rc"><span class="rc-icon">🏗️</span><div class="rc-name">M.O. instalación<br><span style="font-size:10px;color:var(--muted)" id="lbl-mo">$2.500/ml</span></div><input class="rc-qty" id="ri-mo" type="number" min="0" placeholder="0" oninput="calcRi()"><span class="rc-price" id="p-mo">$0</span></div>
-      <div id="ri-res" style="display:none"></div>
     </div>
 
     <div id="f-mixto" class="card" style="display:none">
@@ -667,9 +657,7 @@ body{font-family:'Inter',ui-sans-serif,system-ui,-apple-system,Segoe UI,Roboto,s
       <div class="ci"><div><div class="ci-lbl">Margen de Utilidad (%)</div><div class="ci-sub">Sobre subtotal</div></div><input class="mi" type="number" id="cfg-mg" value="25" onchange="saveCfg()"></div>
       <div class="ci"><div><div class="ci-lbl">IVA</div></div><div style="font-size:14px;font-weight:600;color:var(--v2)">19%</div></div>
     </div>
-    <div class="card">
-      <div class="card-title">💧 Precios Riego</div>
-      <div class="ci"><div><div class="ci-lbl">Tubería PVC 25mm</div></div><input class="mi" type="number" id="cfg-tub" value="850" onchange="saveCfg()"></div>
+    </div><input class="mi" type="number" id="cfg-tub" value="850" onchange="saveCfg()"></div>
       <div class="ci"><div><div class="ci-lbl">Aspersor rotativo</div></div><input class="mi" type="number" id="cfg-asp" value="12500" onchange="saveCfg()"></div>
       <div class="ci"><div><div class="ci-lbl">Gotero autocomp.</div></div><input class="mi" type="number" id="cfg-got" value="3200" onchange="saveCfg()"></div>
       <div class="ci"><div><div class="ci-lbl">Controlador elect.</div></div><input class="mi" type="number" id="cfg-ctrl" value="85000" onchange="saveCfg()"></div>
@@ -705,7 +693,7 @@ body{font-family:'Inter',ui-sans-serif,system-ui,-apple-system,Segoe UI,Roboto,s
         <select id="pct-tipo" onchange="updatePctPreview()" style="padding:5px 8px;border:1.5px solid #86efac;border-radius:6px;font-size:11px;background:#fff">
           <option value="">Todos los ítems</option>
           <option value="especie">🌳 Solo Especies</option>
-          <option value="riego">💧 Solo Riego</option>
+
           <option value="insumo">📦 Solo Insumos</option>
         </select>
       </div>
@@ -719,7 +707,7 @@ body{font-family:'Inter',ui-sans-serif,system-ui,-apple-system,Segoe UI,Roboto,s
     <div style="display:flex;gap:6px;margin-bottom:11px;flex-wrap:wrap">
       <button onclick="setCatFiltro('')" id="catf-all" style="cursor:pointer;padding:4px 11px;font-size:11px;border-radius:20px;border:1.5px solid var(--v1);background:var(--v1);color:#fff;font-weight:600">Todos</button>
       <button onclick="setCatFiltro('especie')" id="catf-especie" style="cursor:pointer;padding:4px 11px;font-size:11px;border-radius:20px;border:1.5px solid var(--border);background:#fff;color:var(--muted);font-weight:500">🌳 Especies</button>
-      <button onclick="setCatFiltro('riego')" id="catf-riego" style="cursor:pointer;padding:4px 11px;font-size:11px;border-radius:20px;border:1.5px solid var(--border);background:#fff;color:var(--muted);font-weight:500">💧 Riego</button>
+
       <button onclick="setCatFiltro('insumo')" id="catf-insumo" style="cursor:pointer;padding:4px 11px;font-size:11px;border-radius:20px;border:1.5px solid var(--border);background:#fff;color:var(--muted);font-weight:500">📦 Insumos</button>
     </div>
     <div id="cat-list"></div>
@@ -888,11 +876,6 @@ body{font-family:'Inter',ui-sans-serif,system-ui,-apple-system,Segoe UI,Roboto,s
   <div class="btn-row"><button class="btn bs" onclick="cerrarMo('mo-servicio')">Cancelar</button><button class="btn bp" onclick="saveServicio()">Guardar</button></div>
 </div></div>
 
-<div class="mo" id="mo-riego"><div class="md"><div class="mh"></div><div class="mt" id="mo-ri-title">Nuevo Componente</div>
-  <div class="fg"><label class="fl">Nombre</label><input class="fi" id="mr-nombre" placeholder="Válvula solenoide"></div>
-  <div class="fr"><div class="fg"><label class="fl">Unidad</label><input class="fi" id="mr-unidad" placeholder="ud / ml"></div><div class="fg"><label class="fl">Costo Unitario ($)</label><input class="fi" id="mr-precio" type="number" placeholder="25000"></div></div>
-  <div class="fg"><label class="fl">Categoría</label><input class="fi" id="mr-cat" placeholder="tubería / emisor / control"></div>
-  <div class="btn-row"><button class="btn bs" onclick="cerrarMo('mo-riego')">Cancelar</button><button class="btn bp" onclick="saveRiegoComp()">Guardar</button></div>
 </div></div>
 
 <!-- MODAL CATÁLOGO UNIFICADO -->
@@ -901,7 +884,7 @@ body{font-family:'Inter',ui-sans-serif,system-ui,-apple-system,Segoe UI,Roboto,s
     <label class="fl">Tipo de ítem</label>
     <div style="display:flex;gap:7px;flex-wrap:wrap" id="cat-tipo-btns">
       <button type="button" onclick="setCatTipo('especie')" id="ctb-especie" style="padding:5px 13px;font-size:12px;border-radius:20px;border:1.5px solid var(--v1);background:var(--v1);color:#fff;font-weight:600;cursor:pointer">🌳 Especie</button>
-      <button type="button" onclick="setCatTipo('riego')" id="ctb-riego" style="padding:5px 13px;font-size:12px;border-radius:20px;border:1.5px solid var(--border);background:#fff;color:var(--muted);font-weight:500;cursor:pointer">💧 Riego</button>
+
       <button type="button" onclick="setCatTipo('insumo')" id="ctb-insumo" style="padding:5px 13px;font-size:12px;border-radius:20px;border:1.5px solid var(--border);background:#fff;color:var(--muted);font-weight:500;cursor:pointer">📦 Insumo</button>
     </div>
   </div>
@@ -915,9 +898,7 @@ body{font-family:'Inter',ui-sans-serif,system-ui,-apple-system,Segoe UI,Roboto,s
     </div>
     <div class="fg"><label class="fl">Descripción</label><textarea class="fta" id="cat-desc" placeholder="Opcional..."></textarea></div>
   </div>
-  <div id="cat-fields-riego" style="display:none">
-    <div class="fr">
-      <div class="fg"><label class="fl">Unidad</label><input class="fi" id="cat-unidad-ri" placeholder="ud / ml"></div>
+
       <div class="fg"><label class="fl">Categoría</label><input class="fi" id="cat-categ-ri" placeholder="tubería / emisor / control"></div>
     </div>
     <div class="fr">
@@ -950,7 +931,6 @@ body{font-family:'Inter',ui-sans-serif,system-ui,-apple-system,Segoe UI,Roboto,s
 </div></div>
 
 <div class="mo" id="mo-cotiz"><div class="md"><div class="mh"></div><button class="btn bs bsm" style="margin-bottom:10px;width:auto;padding:5px 14px;font-size:12px" onclick="cerrarMo('mo-cotiz')">✕ Cerrar</button><div id="mo-cotiz-body"></div></div></div>
-
 
 <div class="mo" id="mat-item-modal"><div class="md"><div class="mh"></div><div class="mt">📄 Cotización Itemizada para Cliente</div><div id="mat-item-body"></div><div class="btn-row" style="margin-top:14px"><button class="btn bs" onclick="cerrarMo('mat-item-modal')">Cerrar</button></div></div></div>
 
@@ -991,15 +971,9 @@ let DB={
     {id:3,nombre:'Tala dirigida',cat:'unidad',unidad:'ud',precio:35000},
     {id:4,nombre:'Cortafuegos',cat:'lineal',unidad:'m',precio:4500},
   ],
-  riegoComps:[
-    {id:1,nombre:'Tubería PVC 25mm',unidad:'ml',precio:850,cat:'tubería'},
-    {id:2,nombre:'Aspersor rotativo',unidad:'ud',precio:12500,cat:'emisor'},
-    {id:3,nombre:'Gotero autocomp.',unidad:'ud',precio:3200,cat:'emisor'},
-    {id:4,nombre:'Controlador elect.',unidad:'ud',precio:85000,cat:'control'},
-    {id:5,nombre:'Válvula solenoide',unidad:'ud',precio:28000,cat:'control'},
-  ],
+  riegoComps:[],
   empresa:{nombre:'',rut:'',tel:'',dir:'',email:'',wa:'Estimado/a {cliente}, cotización N°{numero} por {tipo} por un total de {total}. Válida {validez} días. Saludos, {empresa}'},
-  cfg:{gg:10,mg:25,tub:850,asp:12500,got:3200,ctrl:85000,mo:2500},
+  cfg:{gg:10,mg:25,},
   insumos:[
     {id:1,categoria:'Fertilizantes',producto:'Fertilizante NPK 15-15-15',proveedor:'AgroSur',unidad:'kg',precioCompra:3500,precioVenta:5250,notas:''},
     {id:2,categoria:'Herbicidas',producto:'Glifosato 48%',proveedor:'CampoTech',unidad:'L',precioCompra:8200,precioVenta:12300,notas:''},
@@ -1053,7 +1027,7 @@ function goS1(){show('s1');hide('s2');hide('s3');}
 function goS2(){
   if(!currentTipo)return;
   hide('s1');show('s2');hide('s3');
-  ['plantacion','cerramiento','reforestacion','riego','mixto'].forEach(t=>document.getElementById('f-'+t).style.display=t===currentTipo?'block':'none');
+  ['plantacion','cerramiento','reforestacion','mixto'].forEach(t=>document.getElementById('f-'+t).style.display=t===currentTipo?'block':'none');
   if(currentTipo==='plantacion')renderSps();
   if(currentTipo==='mixto'){renderMixtoSps();renderMixtoSvcs();}
 }
@@ -1124,7 +1098,7 @@ function calcFinal(){
   if(currentTipo==='plantacion'){Object.values(selectedSps).forEach(s=>{const e=DB.especies.find(x=>x.id==s.id);if(e){rows.push(`<tr><td>${e.nombre} <span class="tag">${s.qty} ud</span></td><td>${fmt(e.precio*s.qty)}</td></tr>`);matRows.push({desc:e.nombre,qty:s.qty,unit:'ud',costo:e.precio,total:e.precio*s.qty});}});}
   else if(currentTipo==='cerramiento'){const m=document.getElementById('c-ml').value,p=document.getElementById('c-esp').value,mo=document.getElementById('c-mo').value;rows.push(`<tr><td>Material cerramiento (${m} ml)</td><td>${fmt(parseFloat(m)*parseFloat(p||0))}</td></tr>`);rows.push(`<tr><td>Mano de obra</td><td>${fmt(parseFloat(m)*(parseFloat(mo)||0))}</td></tr>`);matRows.push({desc:'Cerramiento',qty:m,unit:'ml',costo:p,total:parseFloat(m)*parseFloat(p||0)});}
   else if(currentTipo==='reforestacion'){const ha=document.getElementById('r-ha').value,dens=document.getElementById('r-dens').value,pr=document.getElementById('r-esp').value,mo=document.getElementById('r-mo').value,ins=document.getElementById('r-ins').value;rows.push(`<tr><td>Plantas (${ha}Ha × ${dens}ud)</td><td>${fmt(parseFloat(ha)*parseFloat(dens)*(parseFloat(pr)||0))}</td></tr>`);rows.push(`<tr><td>Mano de obra</td><td>${fmt(parseFloat(ha)*(parseFloat(mo)||0))}</td></tr>`);rows.push(`<tr><td>Insumos/Fertilizantes</td><td>${fmt(parseFloat(ha)*(parseFloat(ins)||0))}</td></tr>`);matRows.push({desc:'Plantas',qty:parseFloat(ha)*parseFloat(dens),unit:'ud',costo:pr,total:parseFloat(ha)*parseFloat(dens)*(parseFloat(pr)||0)});}
-  else if(currentTipo==='riego'){const cfg=DB.cfg;const rI=[{id:'tub',n:'Tubería PVC',u:'ml',p:cfg.tub},{id:'asp',n:'Aspersores',u:'ud',p:cfg.asp},{id:'got',n:'Goteros',u:'ud',p:cfg.got},{id:'ctrl',n:'Controlador',u:'ud',p:cfg.ctrl},{id:'mo',n:'M.O.',u:'ml',p:cfg.mo}];rI.forEach(x=>{const q=parseFloat(document.getElementById('ri-'+x.id)?.value)||0;if(q>0){rows.push(`<tr><td>${x.n} (×${q} ${x.u})</td><td>${fmt(q*x.p)}</td></tr>`);matRows.push({desc:x.n,qty:q,unit:x.u,costo:x.p,total:q*x.p});}});}
+  ,{id:'asp',n:'Aspersores',u:'ud',p:cfg.asp},{id:'got',n:'Goteros',u:'ud',p:cfg.got},{id:'ctrl',n:'Controlador',u:'ud',p:cfg.ctrl},{id:'mo',n:'M.O.',u:'ml',p:cfg.mo}];rI.forEach(x=>{const q=parseFloat(document.getElementById('ri-'+x.id)?.value)||0;if(q>0){rows.push(`<tr><td>${x.n} (×${q} ${x.u})</td><td>${fmt(q*x.p)}</td></tr>`);matRows.push({desc:x.n,qty:q,unit:x.u,costo:x.p,total:q*x.p});}});}
   if(currentTipo==='mixto'){
     rows.push('<tr><td colspan="2" style="font-weight:600;color:var(--v2);padding-top:6px;font-size:11px;text-transform:uppercase;letter-spacing:.04em">🌳 Especies</td></tr>');
     Object.values(selectedSps).forEach(s=>{const e=DB.especies.find(x=>x.id==s.id);if(e){rows.push(`<tr><td>${e.nombre} <span class="tag">${s.qty} ud</span></td><td>${fmt(e.precio*s.qty)}</td></tr>`);matRows.push({desc:e.nombre,qty:s.qty,unit:'ud',costo:e.precio,total:e.precio*s.qty});}});
@@ -1185,7 +1159,7 @@ function _papPush(tipo, item){
   DB.papelera.unshift({pid:'p'+Date.now()+Math.random().toString(36).slice(2,7), tipo:tipo, item:JSON.parse(JSON.stringify(item)), eliminadoEn:Date.now()});
 }
 function _papLabelTipo(t){
-  return ({cotizaciones:'Cotización',especies:'Especie',servicios:'Servicio',riegoComps:'Componente de riego',stock:'Insumo',clientes:'Cliente'})[t]||t;
+  return ({cotizaciones:'Cotización',especies:'Especie',servicios:'Servicio',stock:'Insumo',clientes:'Cliente'})[t]||t;
 }
 function _papDescItem(t,it){
   if(t==='cotizaciones') return (it.numero?('N° '+it.numero):'')+(it.cliente?(' — '+it.cliente):'');
@@ -1201,7 +1175,7 @@ function restaurarPap(pid){
   try{ if(e.tipo==='cotizaciones') renderCotiz();
        if(e.tipo==='especies') renderEspecies();
        if(e.tipo==='servicios') renderServicios();
-       if(e.tipo==='riegoComps') renderRiegoComps();
+
        if(e.tipo==='insumos') renderMateriales();
        if(e.tipo==='clientes' && typeof renderClientes==='function') renderClientes();
        renderDash && renderDash(); }catch(_){}
@@ -1310,13 +1284,7 @@ function abrirServicio(id=null){editSvcId=id;if(id){const s=DB.servicios.find(x=
 function saveServicio(){const n=document.getElementById('ms-nombre').value.trim(),p=parseInt(document.getElementById('ms-precio').value);if(!n||!p){toast('Completa los campos','err');return;}const obj={nombre:n,cat:document.getElementById('ms-cat').value,unidad:document.getElementById('ms-unidad').value||'ud',precio:p};if(editSvcId){Object.assign(DB.servicios.find(x=>x.id===editSvcId),obj);}else{obj.id=Date.now();DB.servicios.push(obj);}saveDB();cerrarMo('mo-servicio');renderServicios();toast(editSvcId?'Servicio actualizado':'Servicio agregado','ok');}
 function elimServicio(id){if(!confirm('¿Mover este servicio a la papelera?'))return;const _it=DB.servicios.find(x=>x.id===id);if(_it)_papPush('servicios',_it);DB.servicios=DB.servicios.filter(x=>x.id!==id);saveDB();renderServicios();toast('Movido a papelera','ok');}
 
-function renderRiegoComps(){
-  document.getElementById('ri-count').textContent=DB.riegoComps.length+' componentes';
-  document.getElementById('ri-list').innerHTML=DB.riegoComps.map(r=>`<div class="spi" style="cursor:default"><div style="flex:1"><div class="sp-name">${r.nombre}</div><span class="tag">${r.cat}</span><span class="tag">${r.unidad}</span></div><div style="display:flex;flex-direction:column;align-items:flex-end;gap:5px"><span class="sp-price">${fmt(r.precio)}</span><div style="display:flex;gap:5px"><button class="btn bs bsm" style="padding:4px 8px;font-size:11px" onclick="abrirRiegoComp(${r.id})">✏️</button><button class="btn bd bsm" style="padding:4px 8px;font-size:11px" onclick="elimRiegoComp(${r.id})">🗑</button></div></div></div>`).join('');
 }
-function abrirRiegoComp(id=null){editRiId=id;if(id){const r=DB.riegoComps.find(x=>x.id===id);document.getElementById('mr-nombre').value=r.nombre;document.getElementById('mr-unidad').value=r.unidad;document.getElementById('mr-precio').value=r.precio;document.getElementById('mr-cat').value=r.cat;document.getElementById('mo-ri-title').textContent='Editar Componente';}else{['mr-nombre','mr-unidad','mr-precio','mr-cat'].forEach(i=>document.getElementById(i).value='');document.getElementById('mo-ri-title').textContent='Nuevo Componente';}document.getElementById('mo-riego').classList.add('open');}
-function saveRiegoComp(){const n=document.getElementById('mr-nombre').value.trim(),p=parseInt(document.getElementById('mr-precio').value);if(!n||!p){toast('Completa los campos','err');return;}const obj={nombre:n,unidad:document.getElementById('mr-unidad').value||'ud',precio:p,cat:document.getElementById('mr-cat').value||'otro'};if(editRiId){Object.assign(DB.riegoComps.find(x=>x.id===editRiId),obj);}else{obj.id=Date.now();DB.riegoComps.push(obj);}saveDB();cerrarMo('mo-riego');renderRiegoComps();toast(editRiId?'Componente actualizado':'Componente agregado','ok');}
-function elimRiegoComp(id){if(!confirm('¿Mover este componente a la papelera?'))return;const _it=DB.riegoComps.find(x=>x.id===id);if(_it)_papPush('riegoComps',_it);DB.riegoComps=DB.riegoComps.filter(x=>x.id!==id);saveDB();renderRiegoComps();toast('Movido a papelera','ok');}
 
 function csvEsc(v){
   if(v===null||v===undefined)return'""';
@@ -1357,7 +1325,7 @@ function addPhoto(){
 
 function fmt(n){return'$'+Math.round(n||0).toLocaleString('es-CL');}
 function fmtK(n){if(n>=1000000)return'$'+(n/1000000).toFixed(1)+'M';if(n>=1000)return'$'+(n/1000).toFixed(0)+'K';return fmt(n);}
-function tipoLabel(t){return{plantacion:'Plantación',cerramiento:'Cerramiento',reforestacion:'Reforestación',riego:'Sistema de Riego',mixto:'Servicios Mixtos'}[t]||t||'';}
+function tipoLabel(t){return{plantacion:'Plantación',cerramiento:'Cerramiento',reforestacion:'Reforestación',mixto:'Servicios Mixtos'}[t]||t||'';}
 function nextCotizNum(){
   // Calcula el siguiente número siempre desde los datos guardados,
   // evitando duplicados cuando otra pestaña/equipo agrega cotizaciones.
@@ -1454,7 +1422,7 @@ async function loadFromCloud() {
       if (d.clientes)     DB.clientes     = d.clientes;
       if (d.especies)     DB.especies     = d.especies;
       if (d.servicios)    DB.servicios    = d.servicios;
-      if (d.riegoComps)   DB.riegoComps   = d.riegoComps;
+
       if (d.insumos)      DB.insumos      = d.insumos;
       if (Array.isArray(d.papelera)) DB.papelera = d.papelera;
       if (d.empresa)      DB.empresa      = d.empresa;
@@ -1468,7 +1436,7 @@ async function loadFromCloud() {
         localStorage.setItem('gq_cli',JSON.stringify(DB.clientes));
         localStorage.setItem('gq_esp',JSON.stringify(DB.especies));
         localStorage.setItem('gq_svc',JSON.stringify(DB.servicios));
-        localStorage.setItem('gq_ri',JSON.stringify(DB.riegoComps));
+
         localStorage.setItem('gq_ins',JSON.stringify(DB.insumos));
         localStorage.setItem('gq_empresa',JSON.stringify(DB.empresa));
         localStorage.setItem('gq_cfg',JSON.stringify(DB.cfg));
@@ -1508,7 +1476,7 @@ async function _pushLocalToCloud() {
     clientes:     DB.clientes,
     especies:     DB.especies,
     servicios:    DB.servicios,
-    riegoComps:   DB.riegoComps,
+
     insumos:      DB.insumos,
     empresa:      DB.empresa,
     cfg:          DB.cfg,
@@ -1544,7 +1512,7 @@ function saveDB(){
     localStorage.setItem('gq_cli',JSON.stringify(DB.clientes));
     localStorage.setItem('gq_esp',JSON.stringify(DB.especies));
     localStorage.setItem('gq_svc',JSON.stringify(DB.servicios));
-    localStorage.setItem('gq_ri',JSON.stringify(DB.riegoComps));
+
     localStorage.setItem('gq_ins',JSON.stringify(DB.insumos));
     localStorage.setItem('gq_pap',JSON.stringify(DB.papelera||[]));
     localStorage.setItem('gq_empresa',JSON.stringify(DB.empresa));
@@ -1558,7 +1526,7 @@ function saveDB(){
       clientes:     DB.clientes,
       especies:     DB.especies,
       servicios:    DB.servicios,
-      riegoComps:   DB.riegoComps,
+
       insumos:      DB.insumos,
       papelera:     DB.papelera||[],
       empresa:      DB.empresa,
@@ -1575,7 +1543,7 @@ function loadDB(){
     DB.clientes=p('gq_cli',DB.clientes);
     DB.especies=p('gq_esp',DB.especies);
     DB.servicios=p('gq_svc',DB.servicios);
-    DB.riegoComps=p('gq_ri',DB.riegoComps);
+
     DB.insumos=p('gq_ins',DB.insumos);
     DB.papelera=p('gq_pap',DB.papelera||[]);
     DB.empresa=p('gq_empresa',DB.empresa);
@@ -1601,20 +1569,7 @@ loadDB();
       repaired++;
     }
   });
-  // Reparar riego
-  DB.riegoComps.forEach(r=>{
-    if((r.precioCompra===0||!r.precioCompra)&&(r.precioVenta===0||!r.precioVenta)&&r.precio>0){
-      r.precioCompra=r.precio;
-      r.precioVenta=r.precio;
-      repaired++;
-    }else if((r.precioCompra===0||!r.precioCompra)&&r.precioVenta>0){
-      r.precioCompra=r.precioVenta;
-      repaired++;
-    }else if((r.precioVenta===0||!r.precioVenta)&&r.precioCompra>0){
-      r.precioVenta=r.precioCompra;
-      repaired++;
-    }
-  });
+
   // Reparar insumos
   DB.insumos.forEach(s=>{
     if((s.precioCompra===0||!s.precioCompra)&&(s.precioVenta===0||!s.precioVenta)){
@@ -1840,11 +1795,10 @@ function renderAdminInsumos(){
   </div>`).join(''):'<div style="font-size:13px;color:var(--muted);text-align:center;padding:20px">Sin insumos. Presioná + Añadir</div>';
 }
 
-
 // ── CATÁLOGO UNIFICADO ─────────────────────────────────────────────────
 function setCatFiltro(f){
   catFiltro=f;
-  ['all','especie','riego','insumo'].forEach(k=>{
+  ['all','especie','insumo'].forEach(k=>{
     const btn=document.getElementById('catf-'+k);
     if(!btn)return;
     const activo=(k==='all'?f==='':f===k);
@@ -1858,7 +1812,7 @@ function setCatFiltro(f){
 
 function setCatTipo(t){
   currentCatTipo=t;
-  ['especie','riego','insumo'].forEach(k=>{
+  ['especie','insumo'].forEach(k=>{
     const btn=document.getElementById('ctb-'+k);
     if(!btn)return;
     btn.style.background=k===t?'var(--v1)':'#fff';
@@ -1867,9 +1821,9 @@ function setCatTipo(t){
     btn.style.fontWeight=k===t?'600':'500';
   });
   document.getElementById('cat-fields-especie').style.display=t==='especie'?'':'none';
-  document.getElementById('cat-fields-riego').style.display=t==='riego'?'':'none';
+
   document.getElementById('cat-fields-insumo').style.display=t==='insumo'?'':'none';
-  const lbls={especie:'Nombre común',riego:'Nombre del componente',insumo:'Producto / Descripción'};
+  const lbls={especie:'Nombre común',insumo:'Producto / Descripción'};
   document.getElementById('cat-nombre-lbl').textContent=lbls[t]||'Nombre';
 }
 
@@ -1877,16 +1831,13 @@ function abrirCatalogo(type,id){
   editCatId=id||null;
   editCatType=type||null;
   const t=type||'especie';
-  document.getElementById('mo-cat-title').textContent=(id?'Editar':'Nuevo')+' — '+(t==='especie'?'🌳 Especie':t==='riego'?'💧 Componente Riego':'📦 Insumo');
+  document.getElementById('mo-cat-title').textContent=(id?'Editar':'Nuevo')+' — '+(t==='especie'?'🌳 Especie':'📦 Insumo');
   setCatTipo(t);
   // Limpiar campos
   ['cat-nombre','cat-sci','cat-pcompra-esp','cat-pventa-esp','cat-desc','cat-unidad-ri','cat-pcompra-ri','cat-pventa-ri','cat-categ-ri','cat-proveedor','cat-pcompra','cat-pventa','cat-notas'].forEach(i=>{const el=document.getElementById(i);if(el)el.value='';});
   if(id&&t==='especie'){
     const e=DB.especies.find(x=>x.id===id);
     if(e){document.getElementById('cat-nombre').value=e.nombre;document.getElementById('cat-sci').value=e.sci||'';document.getElementById('cat-pcompra-esp').value=e.precioCompra||e.precio||0;document.getElementById('cat-pventa-esp').value=e.precioVenta||e.precio||0;document.getElementById('cat-categ-esp').value=e.cat;document.getElementById('cat-desc').value=e.desc||'';}
-  }else if(id&&t==='riego'){
-    const r=DB.riegoComps.find(x=>x.id===id);
-    if(r){document.getElementById('cat-nombre').value=r.nombre;document.getElementById('cat-unidad-ri').value=r.unidad;document.getElementById('cat-pcompra-ri').value=r.precioCompra||r.precio||0;document.getElementById('cat-pventa-ri').value=r.precioVenta||r.precio||0;document.getElementById('cat-categ-ri').value=r.cat;}
   }else if(id&&t==='insumo'){
     const s=DB.insumos.find(x=>x.id===id);
     if(s){document.getElementById('cat-nombre').value=s.producto;document.getElementById('cat-categ-ins').value=s.categoria;document.getElementById('cat-unidad-ins').value=s.unidad;document.getElementById('cat-proveedor').value=s.proveedor||'';document.getElementById('cat-pcompra').value=s.precioCompra||0;document.getElementById('cat-pventa').value=s.precioVenta||0;document.getElementById('cat-notas').value=s.notas||'';}
@@ -1908,16 +1859,6 @@ function saveCatalogo(){
       if(item) Object.assign(item,obj);
     }else{obj.id=Date.now();DB.especies.push(obj);}
     toast(editCatId?'Especie actualizada':'Especie agregada','ok');
-  }else if(t==='riego'){
-    const pc=parseFloat(document.getElementById('cat-pcompra-ri').value)||0;
-    const pv=parseFloat(document.getElementById('cat-pventa-ri').value)||0;
-    if(!pc&&!pv){toast('Ingresá al menos un precio','err');return;}
-    const obj={nombre:n,unidad:document.getElementById('cat-unidad-ri').value||'ud',precio:0,precioCompra:pc,precioVenta:pv,cat:document.getElementById('cat-categ-ri').value||'otro'};
-    if(editCatId&&editCatType==='riego'){
-      const item=DB.riegoComps.find(x=>String(x.id)===String(editCatId));
-      if(item) Object.assign(item,obj);
-    }else{obj.id=Date.now();DB.riegoComps.push(obj);}
-    toast(editCatId?'Componente actualizado':'Componente agregado','ok');
   }else if(t==='insumo'){
     const obj={producto:n,categoria:document.getElementById('cat-categ-ins').value,unidad:document.getElementById('cat-unidad-ins').value||'ud',proveedor:document.getElementById('cat-proveedor').value,precioCompra:parseFloat(document.getElementById('cat-pcompra').value)||0,precioVenta:parseFloat(document.getElementById('cat-pventa').value)||0,notas:document.getElementById('cat-notas').value};
     if(editCatId&&editCatType==='insumo'){
@@ -1933,10 +1874,10 @@ function saveCatalogo(){
 }
 
 function elimCatalogo(type,id){
-  const labels={especie:'especie',riego:'componente',insumo:'insumo'};
+  const labels={especie:'especie',insumo:'insumo'};
   if(!confirm('¿Mover este '+labels[type]+' a la papelera?'))return;
   if(type==='especie'){const it=DB.especies.find(x=>x.id===id);if(it)_papPush('especies',it);DB.especies=DB.especies.filter(x=>x.id!==id);}
-  else if(type==='riego'){const it=DB.riegoComps.find(x=>x.id===id);if(it)_papPush('riegoComps',it);DB.riegoComps=DB.riegoComps.filter(x=>x.id!==id);}
+
   else if(type==='insumo'){const it=DB.insumos.find(x=>x.id===id);if(it)_papPush('insumos',it);DB.insumos=DB.insumos.filter(x=>x.id!==id);}
   saveDB();renderCatalogo();renderMateriales();toast('Movido a papelera','ok');
 }
@@ -1947,18 +1888,17 @@ function renderCatalogo(){
   if(!catFiltro||catFiltro==='especie'){
     DB.especies.forEach(e=>{if(!q||e.nombre.toLowerCase().includes(q)||(e.sci||'').toLowerCase().includes(q))items.push({...e,_tipo:'especie'});});
   }
-  if(!catFiltro||catFiltro==='riego'){
-    DB.riegoComps.forEach(r=>{if(!q||r.nombre.toLowerCase().includes(q)||(r.cat||'').toLowerCase().includes(q))items.push({...r,_tipo:'riego'});});
+  );});
   }
   if(!catFiltro||catFiltro==='insumo'){
     DB.insumos.forEach(s=>{if(!q||s.producto.toLowerCase().includes(q)||(s.categoria||'').toLowerCase().includes(q)||(s.proveedor||'').toLowerCase().includes(q))items.push({...s,_tipo:'insumo'});});
   }
-  const total=DB.especies.length+DB.riegoComps.length+DB.insumos.length;
+  const total=DB.especies.length+DB.insumos.length;
   const countEl=document.getElementById('cat-count');
   if(countEl)countEl.textContent=items.length+' de '+total+' ítems';
   const listEl=document.getElementById('cat-list');
   if(!listEl)return;
-  const tipoBadge={especie:'<span style="font-size:10px;background:#dcfce7;color:#15803d;border-radius:10px;padding:2px 7px;font-weight:600">🌳 Especie</span>',riego:'<span style="font-size:10px;background:#e0f2fe;color:#0369a1;border-radius:10px;padding:2px 7px;font-weight:600">💧 Riego</span>',insumo:'<span style="font-size:10px;background:#fef3c7;color:#92400e;border-radius:10px;padding:2px 7px;font-weight:600">📦 Insumo</span>'};
+  const tipoBadge={especie:'<span style="font-size:10px;background:#dcfce7;color:#15803d;border-radius:10px;padding:2px 7px;font-weight:600">🌳 Especie</span>',insumo:'<span style="font-size:10px;background:#fef3c7;color:#92400e;border-radius:10px;padding:2px 7px;font-weight:600">📦 Insumo</span>'};
   listEl.innerHTML=items.length?items.map(x=>{
     const badge=tipoBadge[x._tipo]||'';
     if(x._tipo==='especie'){
@@ -1970,13 +1910,10 @@ function renderCatalogo(){
             <div style="display:flex;gap:4px"><button class="btn bs bsm" style="padding:3px 7px;font-size:11px" onclick="abrirCatalogo('especie',${x.id})">✏️</button><button class="btn bd bsm" style="padding:3px 7px;font-size:11px" onclick="elimCatalogo('especie',${x.id})">🗑</button></div>
           </div>
         </div></div>`;
-    }else if(x._tipo==='riego'){
-      return`<div class="spi" style="cursor:default;flex-direction:column;align-items:stretch;gap:4px">
-        <div style="display:flex;justify-content:space-between;align-items:flex-start">
-          <div><div class="sp-name">${x.nombre}</div><div style="margin-top:3px;display:flex;gap:4px">${badge}<span style="font-size:10px;color:var(--muted)">${x.cat||''} · ${x.unidad}</span></div></div>
+    </div><div style="margin-top:3px;display:flex;gap:4px">${badge}<span style="font-size:10px;color:var(--muted)">${x.cat||''} · ${x.unidad}</span></div></div>
           <div style="display:flex;flex-direction:column;align-items:flex-end;gap:4px">
             <div style="text-align:right"><div style="font-size:10px;color:var(--muted)">🔒 ${fmt(x.precioCompra||x.precio)}</div><div style="font-size:11px;color:var(--v1);font-weight:600">💰 ${fmt(x.precioVenta||x.precio)}</div></div>
-            <div style="display:flex;gap:4px"><button class="btn bs bsm" style="padding:3px 7px;font-size:11px" onclick="abrirCatalogo('riego',${x.id})">✏️</button><button class="btn bd bsm" style="padding:3px 7px;font-size:11px" onclick="elimCatalogo('riego',${x.id})">🗑</button></div>
+            <div style="display:flex;gap:4px"><button class="btn bs bsm" style="padding:3px 7px;font-size:11px" onclick="abrirCatalogo(${x.id})">✏️</button><button class="btn bd bsm" style="padding:3px 7px;font-size:11px" onclick="elimCatalogo(${x.id})">🗑</button></div>
           </div>
         </div></div>`;
     }else{
@@ -2005,7 +1942,7 @@ function updatePctPreview(){
   const pct=parseFloat(document.getElementById('pct-val')?.value)||0;
   let count=0;
   if(!tipo||tipo==='especie') count+=DB.especies.length;
-  if(!tipo||tipo==='riego') count+=DB.riegoComps.length;
+
   if(!tipo||tipo==='insumo') count+=DB.insumos.length;
   const dir=pct>=0?'▲ sube':'▼ baja';
   const campoLabel={ambos:'compra y venta',venta:'precio venta',compra:'precio compra'}[campo];
@@ -2020,7 +1957,7 @@ function applyPctPrices(){
   const f=1+pct/100;
   const applyV=(v)=>Math.round(v*f);
   let count=0;
-  
+
   const processItem=(item)=>{
     // Si el campo esta en 0, usar el otro precio como base
     if(campo==='compra'||campo==='ambos'){
@@ -2035,7 +1972,7 @@ function applyPctPrices(){
   };
 
   if(!tipo||tipo==='especie') DB.especies.forEach(processItem);
-  if(!tipo||tipo==='riego') DB.riegoComps.forEach(processItem);
+
   if(!tipo||tipo==='insumo') DB.insumos.forEach(processItem);
 
   saveDB();renderCatalogo();
@@ -2142,7 +2079,6 @@ function toggleSecPass(inputId,iconId){
   }
 }
 </script>
-
 
 <div class="mo" id="mo-nueva-cat"><div class="md"><div class="mh"></div><div class="mt">Nueva Categoría</div>
   <div class="fg"><label class="fl">Nombre de la Categoría</label><input class="fi" id="nueva-cat-input" placeholder="Ej: Riego, Maquinaria..."></div>
@@ -2342,7 +2278,6 @@ function generarPDF(){
   toast('✅ PDF generado','ok');
 }
 
-
 // ── PDF DESDE HISTORIAL ───────────────────────────────────────────────────────
 function generarPDFCotiz(id){
   if(!window.jspdf){toast('jsPDF no disponible','err');return;}
@@ -2424,7 +2359,6 @@ function generarPDFCotiz(id){
   toast('✅ PDF generado','ok');
   cerrarMo('mo-cotiz');
 }
-
 
 if('serviceWorker' in navigator){
   function showUpdateBanner(waiting){
@@ -2966,7 +2900,6 @@ window.addEventListener("load", () => {
   // Excel import button removed - feature integrated in Insumos page
 });
 </script>
-
 
 </body>
 </html>
