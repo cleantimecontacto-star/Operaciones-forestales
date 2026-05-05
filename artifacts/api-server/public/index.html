@@ -2,24 +2,13 @@
 <html lang="es">
 <head>
 <script src="https://cdn.sheetjs.com/xlsx-0.20.1/package/dist/xlsx.full.min.js">
-function toggleSecPass(inputId, iconId) {
-  const inp = document.getElementById(inputId);
-  const icon = document.getElementById(iconId);
-  if (!inp || !icon) return;
-  if (inp.type === 'password') {
-    inp.type = 'text';
-    icon.innerHTML = '<path d="M17.94 17.94A10.07 10.07 0 0 1 12 20c-7 0-11-8-11-8a18.45 18.45 0 0 1 5.06-5.94M9.9 4.24A9.12 9.12 0 0 1 12 4c7 0 11 8 11 8a18.5 18.5 0 0 1-2.16 3.19m-6.72-1.07a3 3 0 1 1-4.24-4.24"/><line x1="1" y1="1" x2="23" y2="23"/>';
-  } else {
+ else {
     inp.type = 'password';
     icon.innerHTML = '<path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"/><circle cx="12" cy="12" r="3"/>';
   }
 }
 
-function doLogin() {
-  const u = document.getElementById('login-user').value.trim().toLowerCase();
-  const p = document.getElementById('login-pass').value;
-  const err = document.getElementById('login-err');
-  const users = JSON.parse(localStorage.getItem('gq_users') || '[{"u":"Admin","p":"1981"}]');
+]');
   
   if (users.some(x => x.u.toLowerCase() === u && x.p === p)) {
     localStorage.setItem('gq_auth', '1');
@@ -409,9 +398,6 @@ body{font-family:'Inter',ui-sans-serif,system-ui,-apple-system,Segoe UI,Roboto,s
 }
 </style>
 <script>
-// El manifest.json se carga directamente desde el archivo físico
-// Esto permite que el navegador detecte correctamente la PWA como instalable
-// Sin conflictos entre el archivo físico y la generación dinámica
 
 function toggleSecPass(inputId, iconId) {
   const inp = document.getElementById(inputId);
@@ -431,6 +417,28 @@ function doLogin() {
   const p = document.getElementById('login-pass').value;
   const err = document.getElementById('login-err');
   const users = JSON.parse(localStorage.getItem('gq_users') || '[{"u":"Admin","p":"1981"}]');
+  if (users.some(x => x.u.toLowerCase() === u && x.p === p)) {
+    localStorage.setItem('gq_auth', '1');
+    document.getElementById('login-screen').style.display = 'none';
+    if(err) err.style.display = 'none';
+  } else {
+    if(err) err.style.display = 'block';
+    document.getElementById('login-pass').value = '';
+    document.getElementById('login-pass').focus();
+  }
+}
+
+// El manifest.json se carga directamente desde el archivo físico
+// Esto permite que el navegador detecte correctamente la PWA como instalable
+// Sin conflictos entre el archivo físico y la generación dinámica
+
+ else {
+    inp.type = 'password';
+    icon.innerHTML = '<path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"/><circle cx="12" cy="12" r="3"/>';
+  }
+}
+
+]');
   
   if (users.some(x => x.u.toLowerCase() === u && x.p === p)) {
     localStorage.setItem('gq_auth', '1');
@@ -445,24 +453,13 @@ function doLogin() {
 
 </script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js">
-function toggleSecPass(inputId, iconId) {
-  const inp = document.getElementById(inputId);
-  const icon = document.getElementById(iconId);
-  if (!inp || !icon) return;
-  if (inp.type === 'password') {
-    inp.type = 'text';
-    icon.innerHTML = '<path d="M17.94 17.94A10.07 10.07 0 0 1 12 20c-7 0-11-8-11-8a18.45 18.45 0 0 1 5.06-5.94M9.9 4.24A9.12 9.12 0 0 1 12 4c7 0 11 8 11 8a18.5 18.5 0 0 1-2.16 3.19m-6.72-1.07a3 3 0 1 1-4.24-4.24"/><line x1="1" y1="1" x2="23" y2="23"/>';
-  } else {
+ else {
     inp.type = 'password';
     icon.innerHTML = '<path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"/><circle cx="12" cy="12" r="3"/>';
   }
 }
 
-function doLogin() {
-  const u = document.getElementById('login-user').value.trim().toLowerCase();
-  const p = document.getElementById('login-pass').value;
-  const err = document.getElementById('login-err');
-  const users = JSON.parse(localStorage.getItem('gq_users') || '[{"u":"Admin","p":"1981"}]');
+]');
   
   if (users.some(x => x.u.toLowerCase() === u && x.p === p)) {
     localStorage.setItem('gq_auth', '1');
@@ -488,24 +485,13 @@ function doLogin() {
   }
 })();
 
-function toggleSecPass(inputId, iconId) {
-  const inp = document.getElementById(inputId);
-  const icon = document.getElementById(iconId);
-  if (!inp || !icon) return;
-  if (inp.type === 'password') {
-    inp.type = 'text';
-    icon.innerHTML = '<path d="M17.94 17.94A10.07 10.07 0 0 1 12 20c-7 0-11-8-11-8a18.45 18.45 0 0 1 5.06-5.94M9.9 4.24A9.12 9.12 0 0 1 12 4c7 0 11 8 11 8a18.5 18.5 0 0 1-2.16 3.19m-6.72-1.07a3 3 0 1 1-4.24-4.24"/><line x1="1" y1="1" x2="23" y2="23"/>';
-  } else {
+ else {
     inp.type = 'password';
     icon.innerHTML = '<path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"/><circle cx="12" cy="12" r="3"/>';
   }
 }
 
-function doLogin() {
-  const u = document.getElementById('login-user').value.trim().toLowerCase();
-  const p = document.getElementById('login-pass').value;
-  const err = document.getElementById('login-err');
-  const users = JSON.parse(localStorage.getItem('gq_users') || '[{"u":"Admin","p":"1981"}]');
+]');
   
   if (users.some(x => x.u.toLowerCase() === u && x.p === p)) {
     localStorage.setItem('gq_auth', '1');
@@ -1914,24 +1900,13 @@ else{
   }
 }
 
-function toggleSecPass(inputId, iconId) {
-  const inp = document.getElementById(inputId);
-  const icon = document.getElementById(iconId);
-  if (!inp || !icon) return;
-  if (inp.type === 'password') {
-    inp.type = 'text';
-    icon.innerHTML = '<path d="M17.94 17.94A10.07 10.07 0 0 1 12 20c-7 0-11-8-11-8a18.45 18.45 0 0 1 5.06-5.94M9.9 4.24A9.12 9.12 0 0 1 12 4c7 0 11 8 11 8a18.5 18.5 0 0 1-2.16 3.19m-6.72-1.07a3 3 0 1 1-4.24-4.24"/><line x1="1" y1="1" x2="23" y2="23"/>';
-  } else {
+ else {
     inp.type = 'password';
     icon.innerHTML = '<path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"/><circle cx="12" cy="12" r="3"/>';
   }
 }
 
-function doLogin() {
-  const u = document.getElementById('login-user').value.trim().toLowerCase();
-  const p = document.getElementById('login-pass').value;
-  const err = document.getElementById('login-err');
-  const users = JSON.parse(localStorage.getItem('gq_users') || '[{"u":"Admin","p":"1981"}]');
+]');
   
   if (users.some(x => x.u.toLowerCase() === u && x.p === p)) {
     localStorage.setItem('gq_auth', '1');
@@ -2640,24 +2615,13 @@ async function docsConfirmMove(){
   finally{ btn.disabled = false; btn.textContent = orig; }
 }
 
-function toggleSecPass(inputId, iconId) {
-  const inp = document.getElementById(inputId);
-  const icon = document.getElementById(iconId);
-  if (!inp || !icon) return;
-  if (inp.type === 'password') {
-    inp.type = 'text';
-    icon.innerHTML = '<path d="M17.94 17.94A10.07 10.07 0 0 1 12 20c-7 0-11-8-11-8a18.45 18.45 0 0 1 5.06-5.94M9.9 4.24A9.12 9.12 0 0 1 12 4c7 0 11 8 11 8a18.5 18.5 0 0 1-2.16 3.19m-6.72-1.07a3 3 0 1 1-4.24-4.24"/><line x1="1" y1="1" x2="23" y2="23"/>';
-  } else {
+ else {
     inp.type = 'password';
     icon.innerHTML = '<path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"/><circle cx="12" cy="12" r="3"/>';
   }
 }
 
-function doLogin() {
-  const u = document.getElementById('login-user').value.trim().toLowerCase();
-  const p = document.getElementById('login-pass').value;
-  const err = document.getElementById('login-err');
-  const users = JSON.parse(localStorage.getItem('gq_users') || '[{"u":"Admin","p":"1981"}]');
+]');
   
   if (users.some(x => x.u.toLowerCase() === u && x.p === p)) {
     localStorage.setItem('gq_auth', '1');
@@ -2734,24 +2698,13 @@ function construirCuerpoPreview(cot) {
   return html;
 }
 
-function toggleSecPass(inputId, iconId) {
-  const inp = document.getElementById(inputId);
-  const icon = document.getElementById(iconId);
-  if (!inp || !icon) return;
-  if (inp.type === 'password') {
-    inp.type = 'text';
-    icon.innerHTML = '<path d="M17.94 17.94A10.07 10.07 0 0 1 12 20c-7 0-11-8-11-8a18.45 18.45 0 0 1 5.06-5.94M9.9 4.24A9.12 9.12 0 0 1 12 4c7 0 11 8 11 8a18.5 18.5 0 0 1-2.16 3.19m-6.72-1.07a3 3 0 1 1-4.24-4.24"/><line x1="1" y1="1" x2="23" y2="23"/>';
-  } else {
+ else {
     inp.type = 'password';
     icon.innerHTML = '<path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"/><circle cx="12" cy="12" r="3"/>';
   }
 }
 
-function doLogin() {
-  const u = document.getElementById('login-user').value.trim().toLowerCase();
-  const p = document.getElementById('login-pass').value;
-  const err = document.getElementById('login-err');
-  const users = JSON.parse(localStorage.getItem('gq_users') || '[{"u":"Admin","p":"1981"}]');
+]');
   
   if (users.some(x => x.u.toLowerCase() === u && x.p === p)) {
     localStorage.setItem('gq_auth', '1');
@@ -2862,24 +2815,13 @@ window.addEventListener("load", () => {
   // Excel import button removed - feature integrated in Insumos page
 });
 
-function toggleSecPass(inputId, iconId) {
-  const inp = document.getElementById(inputId);
-  const icon = document.getElementById(iconId);
-  if (!inp || !icon) return;
-  if (inp.type === 'password') {
-    inp.type = 'text';
-    icon.innerHTML = '<path d="M17.94 17.94A10.07 10.07 0 0 1 12 20c-7 0-11-8-11-8a18.45 18.45 0 0 1 5.06-5.94M9.9 4.24A9.12 9.12 0 0 1 12 4c7 0 11 8 11 8a18.5 18.5 0 0 1-2.16 3.19m-6.72-1.07a3 3 0 1 1-4.24-4.24"/><line x1="1" y1="1" x2="23" y2="23"/>';
-  } else {
+ else {
     inp.type = 'password';
     icon.innerHTML = '<path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"/><circle cx="12" cy="12" r="3"/>';
   }
 }
 
-function doLogin() {
-  const u = document.getElementById('login-user').value.trim().toLowerCase();
-  const p = document.getElementById('login-pass').value;
-  const err = document.getElementById('login-err');
-  const users = JSON.parse(localStorage.getItem('gq_users') || '[{"u":"Admin","p":"1981"}]');
+]');
   
   if (users.some(x => x.u.toLowerCase() === u && x.p === p)) {
     localStorage.setItem('gq_auth', '1');
@@ -2974,24 +2916,13 @@ window.addEventListener('load', () => {
   }
 });
 
-function toggleSecPass(inputId, iconId) {
-  const inp = document.getElementById(inputId);
-  const icon = document.getElementById(iconId);
-  if (!inp || !icon) return;
-  if (inp.type === 'password') {
-    inp.type = 'text';
-    icon.innerHTML = '<path d="M17.94 17.94A10.07 10.07 0 0 1 12 20c-7 0-11-8-11-8a18.45 18.45 0 0 1 5.06-5.94M9.9 4.24A9.12 9.12 0 0 1 12 4c7 0 11 8 11 8a18.5 18.5 0 0 1-2.16 3.19m-6.72-1.07a3 3 0 1 1-4.24-4.24"/><line x1="1" y1="1" x2="23" y2="23"/>';
-  } else {
+ else {
     inp.type = 'password';
     icon.innerHTML = '<path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"/><circle cx="12" cy="12" r="3"/>';
   }
 }
 
-function doLogin() {
-  const u = document.getElementById('login-user').value.trim().toLowerCase();
-  const p = document.getElementById('login-pass').value;
-  const err = document.getElementById('login-err');
-  const users = JSON.parse(localStorage.getItem('gq_users') || '[{"u":"Admin","p":"1981"}]');
+]');
   
   if (users.some(x => x.u.toLowerCase() === u && x.p === p)) {
     localStorage.setItem('gq_auth', '1');
