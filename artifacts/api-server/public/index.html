@@ -552,6 +552,20 @@ body{font-family:'Inter',ui-sans-serif,system-ui,-apple-system,Segoe UI,Roboto,s
           <div style="font-size:11px;color:var(--muted);text-align:right;margin-top:4px">Subtotal servicios: <b id="mx-svc-total" style="color:var(--v2)">$0</b></div>
         </div>
       </div>
+      <!-- Insumos section -->
+      <div class="sec-hdr" onclick="toggleSec('mx-ins')">
+        <span class="sec-hdr-title">📦 Insumos / Productos</span>
+        <span id="sec-arr-mx-ins" class="acc-arrow" style="transform:rotate(90deg)">▶</span>
+      </div>
+      <div class="sec-body open" id="sec-mx-ins">
+        <div class="sec-body-inner">
+          <div class="sbox"><span>🔍</span><input type="text" placeholder="Buscar insumo..." id="mx-ins-search" oninput="renderMixtoIns()"></div>
+          <div id="mx-ins-list"></div>
+          <div id="mx-ins-sel" style="margin-top:8px"></div>
+          <div style="font-size:11px;color:var(--muted);text-align:right;margin-top:4px">Subtotal insumos: <b id="mx-ins-total" style="color:var(--v2)">$0</b></div>
+        </div>
+      </div>
+
     </div>
     <div class="card">
       <div class="card-title">📷 Notas de Terreno</div>
@@ -909,7 +923,7 @@ let DB={
     {id:5,categoria:'Herramientas',producto:'Pala punta cuadrada',proveedor:'Ferreplast',unidad:'ud',precioCompra:15000,precioVenta:22500,notas:''},
   ]
 };
-let currentTipo=null,selectedSps={},selectedSvcs={},photoList=[],costoBase=0,cotizNum=1;
+let currentTipo=null,selectedSps={},selectedSvcs={},selectedIns={},photoList=[],costoBase=0,cotizNum=1;
 let editEspId=null,editSvcId=null,editRiId=null,editCliId=null,editInsId=null;
 let insTab='catalogo',insAccOpen={},insChecks={};
 let filtroQ='',_calc={},_matRows=[];
@@ -1033,7 +1047,12 @@ function calcFinal(){
     rows.push('<tr><td colspan="2" style="font-weight:600;color:var(--v2);padding-top:6px;font-size:11px;text-transform:uppercase;letter-spacing:.04em">🔧 Servicios</td></tr>');
     Object.values(selectedSvcs).forEach(s=>{const sv=DB.servicios.find(x=>x.id==s.id);if(sv){rows.push(`<tr><td>${sv.nombre} <span class="tag">${s.qty} ${sv.unidad}</span></td><td>${fmt(sv.precio*s.qty)}</td></tr>`);matRows.push({desc:sv.nombre,qty:s.qty,unit:sv.unidad,costo:sv.precio,total:sv.precio*s.qty});}});
     const svcSub=Object.values(selectedSvcs).reduce((a,s)=>{const sv=DB.servicios.find(x=>x.id==s.id);return a+(sv?sv.precio*s.qty:0);},0);
+    const insSub=Object.values(selectedIns||{}).reduce((a,s)=>a+(s.p*s.qty),0);
     rows.push(`<tr style="font-weight:600"><td>Subtotal Servicios</td><td>${fmt(svcSub)}</td></tr>`);
+    rows.push('<tr><td colspan="2" style="font-weight:600;color:var(--v2);padding-top:6px;font-size:11px;text-transform:uppercase;letter-spacing:.04em">📦 Insumos</td></tr>');
+    Object.values(selectedIns||{}).forEach(s=>{rows.push(`<tr><td>${s.n} <span class="tag">${s.qty} ${s.u}</span></td><td>${fmt(s.p*s.qty)}</td></tr>`);matRows.push({desc:s.n,qty:s.qty,unit:s.u,costo:s.p,total:s.p*s.qty});});
+    const insSub=Object.values(selectedIns||{}).reduce((a,s)=>a+(s.p*s.qty),0);
+    rows.push(`<tr style="font-weight:600"><td>Subtotal Insumos</td><td>${fmt(insSub)}</td></tr>`);
   }
   rows.push(`<tr style="font-weight:600"><td>Subtotal costo directo</td><td>${fmt(costoBase)}</td></tr>`);
   document.getElementById('res-table').innerHTML=`<thead><tr><th>Descripción</th><th style="text-align:right">Monto</th></tr></thead><tbody>${rows.join('')}</tbody>`;
@@ -1822,6 +1841,40 @@ function renderMxSvcSel(){
   el.innerHTML=keys.map(id=>{const s=DB.servicios.find(x=>x.id==id);const q=selectedSvcs[id].qty;return`<div style="display:flex;align-items:center;gap:7px;margin-bottom:6px;padding:6px;background:var(--c4);border-radius:8px"><span style="flex:1;font-size:12px;font-weight:500;color:var(--v1)">${s.nombre}</span><input type="number" min="1" value="${q}" style="width:50px;padding:4px;border:1px solid var(--border);border-radius:6px;text-align:center;font-size:12px" onchange="setMxSvcQty(${id},this.value)"><span style="font-size:12px;color:var(--v2);min-width:60px;text-align:right">${fmt(s.precio*q)}</span></div>`;}).join('');
 }
 function setMxSvcQty(id,v){selectedSvcs[id].qty=Math.max(1,parseInt(v)||1);renderMxSvcSel();calcMixto();}
+
+function renderMixtoIns(){
+  const q=document.getElementById('mx-ins-search').value.toLowerCase();
+  const list=document.getElementById('mx-ins-list');
+  const data=DB.insumos.filter(x=>!q||x.producto.toLowerCase().includes(q)||(x.categoria||'').toLowerCase().includes(q));
+  list.innerHTML=data.slice(0,5).map(x=>`<div class="spi" onclick="addMixtoIns(${x.id})"><div style="flex:1"><div class="sp-name">${x.producto}</div><div class="sp-sci">${x.categoria} · ${x.unidad}</div></div><div class="sp-price">${fmt(x.precioVenta)}</div></div>`).join('');
+}
+
+function addMixtoIns(id){
+  const x=DB.insumos.find(i=>i.id===id);
+  if(!x)return;
+  if(!selectedIns) selectedIns={};
+  if(selectedIns[id]) selectedIns[id].qty++;
+  else selectedIns[id]={id:x.id,qty:1,p:x.precioVenta,n:x.producto,u:x.unidad};
+  renderSelectedIns();
+  calcMixto();
+}
+
+function renderSelectedIns(){
+  const cont=document.getElementById('mx-ins-sel');
+  const items=Object.values(selectedIns||{});
+  cont.innerHTML=items.map(x=>`<div class="rc"><div class="rc-name">${x.n}<br><span style="font-size:10px;color:var(--muted)">${fmt(x.p)} / ${x.u}</span></div><input class="rc-qty" type="number" value="${x.qty}" min="1" oninput="updateInsQty(${x.id},this.value)"><span class="rc-price">${fmt(x.p*x.qty)}</span><button class="btn bd bsm" style="padding:2px 6px;width:auto;min-height:24px" onclick="removeMixtoIns(${x.id})">×</button></div>`).join('');
+  const total=items.reduce((a,b)=>a+(b.p*b.qty),0);
+  document.getElementById('mx-ins-total').textContent=fmt(total);
+}
+
+function updateInsQty(id,v){
+  if(selectedIns[id]){selectedIns[id].qty=parseFloat(v)||0;renderSelectedIns();calcMixto();}
+}
+
+function removeMixtoIns(id){
+  delete selectedIns[id];renderSelectedIns();calcMixto();
+}
+
 function calcMixto(){
   const spT=Object.values(selectedSps).reduce((s,x)=>{const e=DB.especies.find(y=>y.id==x.id);return s+(e?e.precio*x.qty:0);},0);
   const svcT=Object.values(selectedSvcs).reduce((s,x)=>{const sv=DB.servicios.find(y=>y.id==x.id);return s+(sv?sv.precio*x.qty:0);},0);
