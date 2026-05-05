@@ -1,10 +1,12 @@
-const CACHE = 'operaciones-forestales-v24';
+const CACHE = 'operaciones-forestales-v25';
 const ASSETS = [
   '/',
   '/index.html',
   '/manifest.json',
   '/icon-192.png',
-  '/icon-512.png'
+  '/icon-512.png',
+  '/icon.svg',
+  '/logo.svg'
 ];
 
 self.addEventListener('install', e => {
@@ -17,5 +19,11 @@ self.addEventListener('activate', e => {
 });
 self.addEventListener('fetch', e => {
   if(e.request.method!=='GET')return;
-  e.respondWith(caches.match(e.request).then(r=>r||fetch(e.request)));
+  e.respondWith(
+    fetch(e.request).then(response => {
+      const copy = response.clone();
+      caches.open(CACHE).then(cache => cache.put(e.request, copy));
+      return response;
+    }).catch(() => caches.match(e.request))
+  );
 });
