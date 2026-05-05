@@ -2955,21 +2955,6 @@ window.addEventListener("load", () => {
   // Excel import button removed - feature integrated in Insumos page
 });
 
-}
-
-
-    function togglePasswordVisibility() {
-        var input = document.getElementById('password');
-        var icon = document.querySelector('.eye-icon, #eyeIcon, [onclick*="toggle"]');
-        if (!input) return;
-        if (input.type === 'password') {
-            input.type = 'text';
-            if (icon) icon.textContent = '🙈';
-        } else {
-            input.type = 'password';
-            if (icon) icon.textContent = '👁️';
-        }
-    }
 </script>
 
 </body>
