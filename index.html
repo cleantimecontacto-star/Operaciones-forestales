@@ -991,8 +991,6 @@ function doLogin() {
   <div id="papelera-list"></div>
 </div>
 
-</div></div>
-
 <!-- MODALS -->
 <div class="mo" id="mo-especie"><div class="md"><div class="mh"></div><div class="mt" id="mo-esp-title">Nueva Especie</div>
   <div class="fg"><label class="fl">Nombre Común</label><input class="fi" id="me-nombre" placeholder="Quillay"></div>
@@ -1007,8 +1005,6 @@ function doLogin() {
   <div class="fr"><div class="fg"><label class="fl">Categoría</label><select class="fs" id="ms-cat"><option value="unidad">Por unidad</option><option value="lineal">Metro lineal</option><option value="hectarea">Hectárea</option><option value="sistema">Sistema</option></select></div><div class="fg"><label class="fl">Unidad</label><input class="fi" id="ms-unidad" placeholder="ud / m / Ha"></div></div>
   <div class="fg"><label class="fl">Costo Unitario ($)</label><input class="fi" id="ms-precio" type="number" placeholder="15000"></div>
   <div class="btn-row"><button class="btn bs" onclick="cerrarMo('mo-servicio')">Cancelar</button><button class="btn bp" onclick="saveServicio()">Guardar</button></div>
-</div></div>
-
 </div></div>
 
 <!-- MODAL CATÁLOGO UNIFICADO -->
@@ -1032,13 +1028,7 @@ function doLogin() {
     <div class="fg"><label class="fl">Descripción</label><textarea class="fta" id="cat-desc" placeholder="Opcional..."></textarea></div>
   </div>
 
-      <div class="fg"><label class="fl">Categoría</label><input class="fi" id="cat-categ-ri" placeholder="tubería / emisor / control"></div>
-    </div>
-    <div class="fr">
-      <div class="fg"><label class="fl">🔒 Precio compra ($)</label><input class="fi" id="cat-pcompra-ri" type="number" placeholder="18000" min="0"></div>
-      <div class="fg"><label class="fl">💰 Precio venta ($)</label><input class="fi" id="cat-pventa-ri" type="number" placeholder="25000" min="0"></div>
-    </div>
-  </div>
+      
   <div id="cat-fields-insumo" style="display:none">
     <div class="fr">
       <div class="fg"><label class="fl">Categoría</label><select class="fs" id="cat-categ-ins"><option>Fertilizantes</option><option>Herbicidas</option><option>Fungicidas</option><option>Plantación</option><option>Semillas</option><option>Herramientas</option><option>Riego</option><option>Otro</option></select></div>
