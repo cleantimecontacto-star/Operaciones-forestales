@@ -965,38 +965,8 @@ body{font-family:'Inter',ui-sans-serif,system-ui,-apple-system,Segoe UI,Roboto,s
 
 
 
+
 <script>
-
-
-function toggleSecPass(inputId, iconId) {
-  const inp = document.getElementById(inputId);
-  const icon = document.getElementById(iconId);
-  if (!inp || !icon) return;
-  if (inp.type === 'password') {
-    inp.type = 'text';
-    icon.innerHTML = '<path d="M17.94 17.94A10.07 10.07 0 0 1 12 20c-7 0-11-8-11-8a18.45 18.45 0 0 1 5.06-5.94M9.9 4.24A9.12 9.12 0 0 1 12 4c7 0 11 8 11 8a18.5 18.5 0 0 1-2.16 3.19m-6.72-1.07a3 3 0 1 1-4.24-4.24"/><line x1="1" y1="1" x2="23" y2="23"/>';
-  } else {
-    inp.type = 'password';
-    icon.innerHTML = '<path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"/><circle cx="12" cy="12" r="3"/>';
-  }
-}
-
-function doLogin() {
-  const u = document.getElementById('login-user').value.trim().toLowerCase();
-  const p = document.getElementById('login-pass').value;
-  const err = document.getElementById('login-err');
-  const users = JSON.parse(localStorage.getItem('gq_users') || '[{"u":"Admin","p":"1981"}]');
-  if (users.some(x => x.u.toLowerCase() === u && x.p === p)) {
-    localStorage.setItem('gq_auth', '1');
-    document.getElementById('login-screen').style.display = 'none';
-    if(err) err.style.display = 'none';
-  } else {
-    if(err) err.style.display = 'block';
-    document.getElementById('login-pass').value = '';
-    document.getElementById('login-pass').focus();
-  }
-}
-
 // El manifest.json se carga directamente desde el archivo físico
 // Esto permite que el navegador detecte correctamente la PWA como instalable
 // Sin conflictos entre el archivo físico y la generación dinámica
@@ -1053,6 +1023,367 @@ let catFiltro='',editCatId=null,editCatType=null,currentCatTipo='especie';
 let insTab='catalogo',insAccOpen={},insChecks={};
 let filtroQ='',_calc={},_matRows=[];
 
+if(currentTipo==='mixto'){
+    rows.push('<tr><td colspan="2" style="font-weight:600;color:var(--v2);padding-top:6px;font-size:11px;text-transform:uppercase;letter-spacing:.04em">🌳 Especies</td></tr>');
+    Object.values(selectedSps).forEach(s=>{const e=DB.especies.find(x=>x.id==s.id);if(e){rows.push(`<tr><td>${e.nombre} <span class="tag">${s.qty} ud</span></td><td>${fmt(e.precio*s.qty)}</td></tr>`);matRows.push({desc:e.nombre,qty:s.qty,unit:'ud',costo:e.precio,total:e.precio*s.qty});}});
+    const spSub=Object.values(selectedSps).reduce((a,s)=>{const e=DB.especies.find(x=>x.id==s.id);return a+(e?e.precio*s.qty:0);},0);
+    rows.push(`<tr style="font-weight:600"><td>Subtotal Especies</td><td>${fmt(spSub)}</td></tr>`);
+    rows.push('<tr><td colspan="2" style="font-weight:600;color:var(--v2);padding-top:6px;font-size:11px;text-transform:uppercase;letter-spacing:.04em">🔧 Servicios</td></tr>');
+    Object.values(selectedSvcs).forEach(s=>{const sv=DB.servicios.find(x=>x.id==s.id);if(sv){rows.push(`<tr><td>${sv.nombre} <span class="tag">${s.qty} ${sv.unidad}</span></td><td>${fmt(sv.precio*s.qty)}</td></tr>`);matRows.push({desc:sv.nombre,qty:s.qty,unit:sv.unidad,costo:sv.precio,total:sv.precio*s.qty});}});
+    const svcSub=Object.values(selectedSvcs).reduce((a,s)=>{const sv=DB.servicios.find(x=>x.id==s.id);return a+(sv?sv.precio*s.qty:0);},0);
+    const insSub=Object.values(selectedIns||{}).reduce((a,s)=>a+(s.p*s.qty),0);
+    rows.push(`<tr style="font-weight:600"><td>Subtotal Servicios</td><td>${fmt(svcSub)}</td></tr>`);
+    rows.push('<tr><td colspan="2" style="font-weight:600;color:var(--v2);padding-top:6px;font-size:11px;text-transform:uppercase;letter-spacing:.04em">📦 Insumos</td></tr>');
+    Object.values(selectedIns||{}).forEach(s=>{rows.push(`<tr><td>${s.n} <span class="tag">${s.qty} ${s.u}</span></td><td>${fmt(s.p*s.qty)}</td></tr>`);matRows.push({desc:s.n,qty:s.qty,unit:s.u,costo:s.p,total:s.p*s.qty});});
+    const insSub=Object.values(selectedIns||{}).reduce((a,s)=>a+(s.p*s.qty),0);
+    rows.push(`<tr style="font-weight:600"><td>Subtotal Insumos</td><td>${fmt(insSub)}</td></tr>`);
+  }
+  rows.push(`<tr style="font-weight:600"><td>Subtotal costo directo</td><td>${fmt(costoBase)}</td></tr>`);
+  document.getElementById('res-table').innerHTML=`<thead><tr><th>Descripción</th><th style="text-align:right">Monto</th></tr></thead><tbody>${rows.join('')}</tbody>`;
+  _matRows=matRows;
+  document.getElementById('mat-list').innerHTML=`<p style="font-size:11px;color:var(--muted);margin-bottom:9px">Comparativo costo vs. precio de venta</p><table style="width:100%;border-collapse:collapse;font-size:11px"><thead><tr style="border-bottom:1px solid var(--border)"><th style="text-align:left;padding:4px 0;color:var(--muted)">Item</th><th style="text-align:right;padding:4px 0;color:var(--muted)">Costo</th><th style="text-align:right;padding:4px 0;color:var(--muted)">Venta</th></tr></thead><tbody>${matRows.map(r=>{const v=r.total*(1+cfg.mg/100+cfg.gg/100);return`<tr style="border-bottom:1px solid var(--pl)"><td style="padding:5px 0">${r.desc} ×${r.qty}</td><td style="text-align:right">${fmt(r.total)}</td><td style="text-align:right;color:var(--v2)">${fmt(v)}</td></tr>`;}).join('')}</tbody></table>`;
+
+// ── PAPELERA DE RECICLAJE ─────────────────────────────────────────────
+
+document.querySelectorAll('.mo').forEach(el=>{el.addEventListener('click',function(e){if(e.target===el)el.classList.remove('open');});});
+// Cerrar modales con tecla Escape
+document.addEventListener('keydown',function(e){
+  if(e.key!=='Escape')return;
+  const opened=document.querySelectorAll('.mo.open');
+  if(opened.length){opened[opened.length-1].classList.remove('open');}
+});
+
+// ── CLOUD SYNC (Convex backend) ──────────────────────────────────────────────
+const CONVEX_URL = 'https://polite-ocelot-652.eu-west-1.convex.cloud';
+const _cloudEnabled = !!CONVEX_URL;
+let _saveTimer = null;
+let _saving = false;
+let _initialPullDone = false;
+let _suppressUpload = true; // bloquea uploads hasta terminar la bajada inicial
+
+async
+
+// Resincroniza al volver a la pestana o recuperar conexion
+window.addEventListener('focus', function(){ loadFromCloud(); });
+window.addEventListener('online', function(){ loadFromCloud(); });
+document.addEventListener('visibilitychange', function(){
+  if (document.visibilityState === 'visible') loadFromCloud();
+});
+
+// Polling automatico para sync entre dispositivos / equipos en tiempo casi real
+let _pollTimer = null;
+
+_startPolling();
+
+// ── LOCALSTORAGE PERSISTENCE ─────────────────────────────────────────────────
+
+loadDB();
+// Reparación automática: restaurar precios en 0
+(
+
+)();
+try{ applyEmpresaToUI(); }catch(e){}
+renderDash();
+// Sincronizar con Firebase (async)
+setTimeout(loadFromCloud, 300);
+// initLogo called after definition
+if(DB.empresa&&DB.empresa.nombre)document.getElementById('hdr-empresa').textContent=DB.empresa.nombre;
+
+// ── INSUMOS CATÁLOGO ──────────────────────────────────────────
+
+const cfg=DB.cfg;
+  const gg=cfg.gg||10;
+  const mg=cfg.mg||25;
+  const totalInterno=rows.reduce((s,r)=>s+r.total,0);
+  let html='';
+  html+=`<div class="card" style="margin-bottom:10px">
+    <div style="display:flex;justify-content:space-between;align-items:flex-start;gap:8px">
+      <div style="flex:1;min-width:0">
+        <div style="font-weight:700;font-size:15px;color:var(--v1);overflow:hidden;text-overflow:ellipsis;white-space:nowrap">${c.clienteNombre}</div>
+        <div style="font-size:12px;color:var(--muted);margin-top:2px">${c.proyecto||''} ${c.ubicacion?'· '+c.ubicacion:''}</div>
+        <div style="font-size:11px;color:var(--muted);margin-top:1px">${c.numero} · ${c.tipoLabel||''}</div>
+      </div>
+      <span class="badge b-${c.status}">${statusLabel(c.status)}</span>
+    </div>
+  </div>`;
+  html+=`<div class="card" style="margin-bottom:10px">
+    <div class="card-title">🔒 Lista de Materiales <span class="mat-badge">INTERNO</span></div>
+    <table style="width:100%;border-collapse:collapse;font-size:12px">
+      <thead><tr style="border-bottom:2px solid var(--border)">
+        <th style="text-align:left;padding:6px 2px;color:var(--muted);font-size:10px;text-transform:uppercase;letter-spacing:.04em">Ítem</th>
+        <th style="text-align:center;padding:6px 2px;color:var(--muted);font-size:10px;text-transform:uppercase;letter-spacing:.04em">Qty</th>
+        <th style="text-align:right;padding:6px 2px;color:var(--muted);font-size:10px;text-transform:uppercase;letter-spacing:.04em">P.Compra</th>
+        <th style="text-align:right;padding:6px 2px;color:var(--muted);font-size:10px;text-transform:uppercase;letter-spacing:.04em">Total</th>
+      </tr></thead>
+      <tbody>
+        ${rows.map(r=>{const prov=getProveedor(r.desc);return`<tr style="border-bottom:1px solid var(--pl)">
+          <td style="padding:8px 2px">
+            <div style="font-weight:600;color:var(--c1);font-size:12px">${r.desc}</div>
+            ${prov?`<div style="font-size:10px;color:var(--muted)">🏭 ${prov}</div>`:''}
+          </td>
+          <td style="text-align:center;padding:8px 2px;color:var(--muted);font-size:12px;white-space:nowrap">${r.qty} ${r.unit}</td>
+          <td style="text-align:right;padding:8px 2px;color:var(--muted);font-size:12px">${fmt(r.costo)}</td>
+          <td style="text-align:right;padding:8px 2px;font-weight:700;color:var(--c1);font-size:12px">${fmt(r.total)}</td>
+        </tr>`;}).join('')}
+      </tbody>
+    </table>
+    <div style="margin-top:12px;padding-top:10px;border-top:2px solid var(--border);display:flex;justify-content:space-between;align-items:center">
+      <span style="font-size:12px;font-weight:600;color:var(--muted)">Costo interno total</span>
+      <span style="font-size:20px;font-weight:800;color:var(--v1)">${fmt(totalInterno)}</span>
+    </div>
+  </div>`;
+  html+=`<div style="display:flex;flex-direction:column;gap:9px;margin-bottom:14px">
+    <button class="btn bs" onclick="exportMatCSV(${c.id})">⬇️ Descargar CSV de materiales</button>
+    <button class="btn bp" onclick="generarCotizItemizada(${c.id})">📄 Generar cotización itemizada para cliente</button>
+  </div>`;
+  cont.innerHTML=html;
+
+// ── CATÁLOGO UNIFICADO ─────────────────────────────────────────────────
+
+);
+  if(!catFiltro||catFiltro==='insumo'){
+    DB.insumos.forEach(s=>{if(!q||s.producto.toLowerCase().includes(q)||(s.categoria||'').toLowerCase().includes(q)||(s.proveedor||'').toLowerCase().includes(q))items.push({...s,_tipo:'insumo'});});
+  }
+  const total=DB.especies.length+DB.insumos.length;
+  const countEl=document.getElementById('cat-count');
+  if(countEl)countEl.textContent=items.length+' de '+total+' ítems';
+  const listEl=document.getElementById('cat-list');
+  if(!listEl)return;
+  const tipoBadge={especie:'<span style="font-size:10px;background:#dcfce7;color:#15803d;border-radius:10px;padding:2px 7px;font-weight:600">🌳 Especie</span>',insumo:'<span style="font-size:10px;background:#fef3c7;color:#92400e;border-radius:10px;padding:2px 7px;font-weight:600">📦 Insumo</span>'};
+  listEl.innerHTML=items.length?items.map(x=>{
+    const badge=tipoBadge[x._tipo]||'';
+    if(x._tipo==='especie'){
+      return`<div class="spi" style="cursor:default;flex-direction:column;align-items:stretch;gap:4px">
+        <div style="display:flex;justify-content:space-between;align-items:flex-start">
+          <div><div class="sp-name">${x.nombre}</div><div style="font-size:10px;color:var(--muted);font-style:italic">${x.sci||''}</div><div style="margin-top:3px;display:flex;gap:4px">${badge}<span style="font-size:10px;color:var(--muted)">${x.cat}</span></div></div>
+          <div style="display:flex;flex-direction:column;align-items:flex-end;gap:4px">
+            <div style="text-align:right"><div style="font-size:10px;color:var(--muted)">🔒 ${fmt(x.precioCompra||x.precio)}</div><div style="font-size:11px;color:var(--v1);font-weight:600">💰 ${fmt(x.precioVenta||x.precio)}</div></div>
+            <div style="display:flex;gap:4px"><button class="btn bs bsm" style="padding:3px 7px;font-size:11px" onclick="abrirCatalogo('especie',${x.id})">✏️</button><button class="btn bd bsm" style="padding:3px 7px;font-size:11px" onclick="elimCatalogo('especie',${x.id})">🗑</button></div>
+          </div>
+        </div></div>`;
+    </div><div style="margin-top:3px;display:flex;gap:4px">${badge}<span style="font-size:10px;color:var(--muted)">${x.cat||''} · ${x.unidad}</span></div></div>
+          <div style="display:flex;flex-direction:column;align-items:flex-end;gap:4px">
+            <div style="text-align:right"><div style="font-size:10px;color:var(--muted)">🔒 ${fmt(x.precioCompra||x.precio)}</div><div style="font-size:11px;color:var(--v1);font-weight:600">💰 ${fmt(x.precioVenta||x.precio)}</div></div>
+            <div style="display:flex;gap:4px"><button class="btn bs bsm" style="padding:3px 7px;font-size:11px" onclick="abrirCatalogo(${x.id})">✏️</button><button class="btn bd bsm" style="padding:3px 7px;font-size:11px" onclick="elimCatalogo(${x.id})">🗑</button></div>
+          </div>
+        </div></div>`;
+    }else{
+      return`<div class="spi" style="cursor:default;flex-direction:column;align-items:stretch;gap:4px">
+        <div style="display:flex;justify-content:space-between;align-items:flex-start">
+          <div><div class="sp-name">${x.producto}</div><div style="margin-top:3px;display:flex;gap:4px;flex-wrap:wrap">${badge}<span style="font-size:10px;color:var(--muted)">${x.categoria} · ${x.proveedor||'Sin proveedor'} · ${x.unidad}</span></div></div>
+          <div style="display:flex;flex-direction:column;align-items:flex-end;gap:4px">
+            <div style="text-align:right"><div style="font-size:10px;color:var(--muted)">🔒 ${fmt(x.precioCompra)}</div><div style="font-size:11px;color:var(--v1);font-weight:600">💰 ${fmt(x.precioVenta)}</div></div>
+            <div style="display:flex;gap:4px"><button class="btn bs bsm" style="padding:3px 7px;font-size:11px" onclick="abrirCatalogo('insumo',${x.id})">✏️</button><button class="btn bd bsm" style="padding:3px 7px;font-size:11px" onclick="elimCatalogo('insumo',${x.id})">🗑</button></div>
+          </div>
+        </div></div>`;
+    }
+  }).join(''):'<div style="font-size:13px;color:var(--muted);text-align:center;padding:24px">Sin ítems en el catálogo. Presioná + Añadir</div>';
+
+// ── AJUSTE PORCENTUAL DE PRECIOS ──────────────────────────────────────
+
+// ── LOGIN ──────────────────────────────────────────────────────────────
+(function(){
+  if(localStorage.getItem('gq_auth')==='1'){
+    document.getElementById('login-screen').style.display='none';
+  }
+  document.getElementById('login-pass').addEventListener('keydown',function(e){if(e.key==='Enter')doLogin();});
+  document.getElementById('login-user').addEventListener('keydown',function(e){if(e.key==='Enter')doLogin();});
+})();
+
+// ── SEGURIDAD ────────────────────────────────────────────────
+
+// ── MIXTO ────────────────────────────────────────────────────────────────────
+
+// ── LOGO MANAGEMENT ──────────────────────────────────────────────────────────
+const DEFAULT_LOGO_URI='data:image/svg+xml;base64,PHN2ZyB2aWV3Qm94PSIwIDAgMjAwIDIwMCIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIiB3aWR0aD0iMjAwIiBoZWlnaHQ9IjIwMCI+CiAgICA8ZGVmcz4KICAgICAgPHJhZGlhbEdyYWRpZW50IGlkPSJvZlNvaWwiIGN4PSI1MCUiIGN5PSI1MCUiIHI9IjU1JSI+CiAgICAgICAgPHN0b3Agb2Zmc2V0PSIwJSIgc3RvcC1jb2xvcj0iIzZiM2ExYSIvPgogICAgICAgIDxzdG9wIG9mZnNldD0iNjAlIiBzdG9wLWNvbG9yPSIjNGEyNzEwIi8+CiAgICAgICAgPHN0b3Agb2Zmc2V0PSIxMDAlIiBzdG9wLWNvbG9yPSIjMzIxODA2Ii8+CiAgICAgIDwvcmFkaWFsR3JhZGllbnQ+CiAgICAgIDxsaW5lYXJHcmFkaWVudCBpZD0ib2ZXb29kIiB4MT0iMCIgeTE9IjAiIHgyPSIwIiB5Mj0iMSI+CiAgICAgICAgPHN0b3Agb2Zmc2V0PSIwJSIgc3RvcC1jb2xvcj0iI2EwNjIzNiIvPgogICAgICAgIDxzdG9wIG9mZnNldD0iMTAwJSIgc3RvcC1jb2xvcj0iIzVhMmYxNSIvPgogICAgICA8L2xpbmVhckdyYWRpZW50PgogICAgICA8cmFkaWFsR3JhZGllbnQgaWQ9Im9mQ2Fub3B5MSIgY3g9IjM1JSIgY3k9IjM1JSIgcj0iNjUlIj4KICAgICAgICA8c3RvcCBvZmZzZXQ9IjAlIiBzdG9wLWNvbG9yPSIjOGJlMzdhIi8+CiAgICAgICAgPHN0b3Agb2Zmc2V0PSI2MCUiIHN0b3AtY29sb3I9IiMzZmEwNTUiLz4KICAgICAgICA8c3RvcCBvZmZzZXQ9IjEwMCUiIHN0b3AtY29sb3I9IiMxZjZiMzAiLz4KICAgICAgPC9yYWRpYWxHcmFkaWVudD4KICAgICAgPHJhZGlhbEdyYWRpZW50IGlkPSJvZkNhbm9weTIiIGN4PSIzNSUiIGN5PSIzNSUiIHI9IjY1JSI+CiAgICAgICAgPHN0b3Agb2Zmc2V0PSIwJSIgc3RvcC1jb2xvcj0iI2E4ZTA3ZiIvPgogICAgICAgIDxzdG9wIG9mZnNldD0iNjAlIiBzdG9wLWNvbG9yPSIjNWRiMDU0Ii8+CiAgICAgICAgPHN0b3Agb2Zmc2V0PSIxMDAlIiBzdG9wLWNvbG9yPSIjMmE3YTM2Ii8+CiAgICAgIDwvcmFkaWFsR3JhZGllbnQ+CiAgICAgIDxyYWRpYWxHcmFkaWVudCBpZD0ib2ZDYW5vcHkzIiBjeD0iMzUlIiBjeT0iMzUlIiByPSI2NSUiPgogICAgICAgIDxzdG9wIG9mZnNldD0iMCUiIHN0b3AtY29sb3I9IiNiZmU3ODIiLz4KICAgICAgICA8c3RvcCBvZmZzZXQ9IjYwJSIgc3RvcC1jb2xvcj0iIzdmYjg0YSIvPgogICAgICAgIDxzdG9wIG9mZnNldD0iMTAwJSIgc3RvcC1jb2xvcj0iIzRhOGEyYSIvPgogICAgICA8L3JhZGlhbEdyYWRpZW50PgogICAgPC9kZWZzPgoKICAgIDwhLS0gQ2FyZCBiYWNrZ3JvdW5kIC0tPgogICAgPHJlY3QgeD0iNCIgeT0iNCIgd2lkdGg9IjE5MiIgaGVpZ2h0PSIxOTIiIHJ4PSIyMiIgZmlsbD0iI2Y1ZjFlNiIgc3Ryb2tlPSIjMWY2YjMwIiBzdHJva2Utd2lkdGg9IjIiLz4KCiAgICA8IS0tIE1pY3JvYm9zcXVlIGNlbml0YWwsIHZlcnRpY2FsbHkgY2VudGVyZWQgaW4gdGhlIHVwcGVyIGFyZWEgKHkgY2VudGVyIH4gNzgpIC0tPgogICAgPGcgdHJhbnNmb3JtPSJ0cmFuc2xhdGUoMTAwIDc4KSI+CiAgICAgIDwhLS0gT3V0ZXIgd29vZCByaW5nIC0tPgogICAgICA8Y2lyY2xlIGN4PSIwIiBjeT0iMCIgcj0iNTgiIGZpbGw9InVybCgjb2ZXb29kKSIvPgogICAgICA8Y2lyY2xlIGN4PSIwIiBjeT0iMCIgcj0iNTAiIGZpbGw9InVybCgjb2ZTb2lsKSIvPgogICAgICA8IS0tIE1lc2ggaGF0Y2ggb24gdGhlIHNvaWwgKHZlcnkgc3VidGxlKSAtLT4KICAgICAgPGcgc3Ryb2tlPSIjN2E1YTNhIiBzdHJva2Utd2lkdGg9IjAuNCIgb3BhY2l0eT0iMC4zNSI+CiAgICAgICAgPGxpbmUgeDE9Ii01MCIgeTE9Ii0yNSIgeDI9IjUwIiB5Mj0iLTI1Ii8+CiAgICAgICAgPGxpbmUgeDE9Ii01MCIgeTE9Ii0xMiIgeDI9IjUwIiB5Mj0iLTEyIi8+CiAgICAgICAgPGxpbmUgeDE9Ii01MCIgeTE9IjAiICAgeDI9IjUwIiB5Mj0iMCIvPgogICAgICAgIDxsaW5lIHgxPSItNTAiIHkxPSIxMiIgIHgyPSI1MCIgeTI9IjEyIi8+CiAgICAgICAgPGxpbmUgeDE9Ii01MCIgeTE9IjI1IiAgeDI9IjUwIiB5Mj0iMjUiLz4KICAgICAgICA8bGluZSB4MT0iLTI1IiB5MT0iLTUwIiB4Mj0iLTI1IiB5Mj0iNTAiLz4KICAgICAgICA8bGluZSB4MT0iLTEyIiB5MT0iLTUwIiB4Mj0iLTEyIiB5Mj0iNTAiLz4KICAgICAgICA8bGluZSB4MT0iMCIgICB5MT0iLTUwIiB4Mj0iMCIgICB5Mj0iNTAiLz4KICAgICAgICA8bGluZSB4MT0iMTIiICB5MT0iLTUwIiB4Mj0iMTIiICB5Mj0iNTAiLz4KICAgICAgICA8bGluZSB4MT0iMjUiICB5MT0iLTUwIiB4Mj0iMjUiICB5Mj0iNTAiLz4KICAgICAgPC9nPgogICAgICA8IS0tIFdvb2QgcG9zdHMgYXJvdW5kIHRoZSByaW5nIC0tPgogICAgICA8ZyBmaWxsPSIjM2ExZDBhIj4KICAgICAgICA8Y2lyY2xlIGN4PSIwIiAgIGN5PSItNTQiIHI9IjMuMiIvPgogICAgICAgIDxjaXJjbGUgY3g9IjI3IiAgY3k9Ii00Ni43IiByPSIzLjIiLz4KICAgICAgICA8Y2lyY2xlIGN4PSI0Ni43IiBjeT0iLTI3IiByPSIzLjIiLz4KICAgICAgICA8Y2lyY2xlIGN4PSI1NCIgIGN5PSIwIiByPSIzLjIiLz4KICAgICAgICA8Y2lyY2xlIGN4PSI0Ni43IiBjeT0iMjciIHI9IjMuMiIvPgogICAgICAgIDxjaXJjbGUgY3g9IjI3IiAgY3k9IjQ2LjciIHI9IjMuMiIvPgogICAgICAgIDxjaXJjbGUgY3g9IjAiICAgY3k9IjU0IiByPSIzLjIiLz4KICAgICAgICA8Y2lyY2xlIGN4PSItMjciIGN5PSI0Ni43IiByPSIzLjIiLz4KICAgICAgICA8Y2lyY2xlIGN4PSItNDYuNyIgY3k9IjI3IiByPSIzLjIiLz4KICAgICAgICA8Y2lyY2xlIGN4PSItNTQiIGN5PSIwIiByPSIzLjIiLz4KICAgICAgICA8Y2lyY2xlIGN4PSItNDYuNyIgY3k9Ii0yNyIgcj0iMy4yIi8+CiAgICAgICAgPGNpcmNsZSBjeD0iLTI3IiBjeT0iLTQ2LjciIHI9IjMuMiIvPgogICAgICA8L2c+CiAgICAgIDwhLS0gQ2Fub3BpZXMgKGVzdHJhdG9zKTogdGFsbCB0cmVlcyAtLT4KICAgICAgPGNpcmNsZSBjeD0iLTE0IiBjeT0iLTEyIiByPSIyMCIgZmlsbD0idXJsKCNvZkNhbm9weTEpIi8+CiAgICAgIDxjaXJjbGUgY3g9IjE2IiAgY3k9Ii02IiAgcj0iMjIiIGZpbGw9InVybCgjb2ZDYW5vcHkyKSIvPgogICAgICA8Y2lyY2xlIGN4PSItMiIgIGN5PSIxOCIgIHI9IjE4IiBmaWxsPSJ1cmwoI29mQ2Fub3B5MSkiLz4KICAgICAgPCEtLSBNaWQgdHJlZXMgLS0+CiAgICAgIDxjaXJjbGUgY3g9IjIyIiAgY3k9IjIwIiAgcj0iMTEiIGZpbGw9InVybCgjb2ZDYW5vcHkzKSIvPgogICAgICA8Y2lyY2xlIGN4PSItMjIiIGN5PSIxNCIgIHI9IjEwIiBmaWxsPSJ1cmwoI29mQ2Fub3B5MykiLz4KICAgICAgPGNpcmNsZSBjeD0iLTI2IiBjeT0iLTIyIiByPSI4IiAgZmlsbD0idXJsKCNvZkNhbm9weTIpIi8+CiAgICAgIDxjaXJjbGUgY3g9IjI2IiAgY3k9Ii0yMiIgcj0iOSIgIGZpbGw9InVybCgjb2ZDYW5vcHkzKSIvPgogICAgICA8IS0tIFNocnVicyAvIGN1YnJlc3VlbG8gLS0+CiAgICAgIDxjaXJjbGUgY3g9IjYiICAgY3k9Ii0yNiIgcj0iNSIgZmlsbD0iIzdmYjg0YSIvPgogICAgICA8Y2lyY2xlIGN4PSItOCIgIGN5PSIzMiIgIHI9IjUiIGZpbGw9IiM1ZGIwNTQiLz4KICAgICAgPGNpcmNsZSBjeD0iMzIiICBjeT0iMiIgICByPSI1IiBmaWxsPSIjN2ZiODRhIi8+CiAgICAgIDxjaXJjbGUgY3g9Ii0zMiIgY3k9Ii0yIiAgcj0iNCIgZmlsbD0iIzVkYjA1NCIvPgogICAgICA8IS0tIEZsb3dlcnMgLS0+CiAgICAgIDxjaXJjbGUgY3g9IjEwIiAgY3k9Ii0xOCIgcj0iMS42IiBmaWxsPSIjZmZmNGEzIi8+CiAgICAgIDxjaXJjbGUgY3g9Ii02IiAgY3k9IjYiICAgcj0iMS42IiBmaWxsPSIjZmZiM2Q5Ii8+CiAgICAgIDxjaXJjbGUgY3g9IjIwIiAgY3k9IjEwIiAgcj0iMS42IiBmaWxsPSIjZmZkMjdmIi8+CiAgICAgIDxjaXJjbGUgY3g9Ii0xOCIgY3k9IjIyIiAgcj0iMS42IiBmaWxsPSIjZmZmNGEzIi8+CiAgICAgIDxjaXJjbGUgY3g9Ii0xMCIgY3k9Ii0yNiIgcj0iMS40IiBmaWxsPSIjZmZiM2Q5Ii8+CiAgICAgIDwhLS0gU3VidGxlIGhpZ2hsaWdodCBvbiBjYW5vcGllcyAtLT4KICAgICAgPGVsbGlwc2UgY3g9Ii0yMCIgY3k9Ii0yMCIgcng9IjUiIHJ5PSIzIiBmaWxsPSIjZmZmZmZmIiBvcGFjaXR5PSIwLjE4Ii8+CiAgICAgIDxlbGxpcHNlIGN4PSIxMCIgIGN5PSItMTQiIHJ4PSI2IiByeT0iMy41IiBmaWxsPSIjZmZmZmZmIiBvcGFjaXR5PSIwLjE4Ii8+CiAgICA8L2c+CgogICAgPCEtLSBXb3JkbWFyayAtLT4KICAgIDx0ZXh0IHg9IjEwMCIgeT0iMTU4IiBmb250LWZhbWlseT0iQXJpYWwgQmxhY2ssIEFyaWFsLCBzYW5zLXNlcmlmIiBmb250LXNpemU9IjE3IiBmb250LXdlaWdodD0iOTAwIiBmaWxsPSIjMWY0ZDFmIiB0ZXh0LWFuY2hvcj0ibWlkZGxlIiBsZXR0ZXItc3BhY2luZz0iMS4yIj5PUEVSQUNJT05FUzwvdGV4dD4KICAgIDxsaW5lIHgxPSIzNCIgeTE9IjE3MCIgeDI9Ijc0IiB5Mj0iMTcwIiBzdHJva2U9IiMzZmEwNTUiIHN0cm9rZS13aWR0aD0iMS40Ii8+CiAgICA8bGluZSB4MT0iMTI2IiB5MT0iMTcwIiB4Mj0iMTY2IiB5Mj0iMTcwIiBzdHJva2U9IiMzZmEwNTUiIHN0cm9rZS13aWR0aD0iMS40Ii8+CiAgICA8dGV4dCB4PSIxMDAiIHk9IjE3NCIgZm9udC1mYW1pbHk9IkFyaWFsLCBzYW5zLXNlcmlmIiBmb250LXNpemU9IjkiIGZvbnQtd2VpZ2h0PSI3MDAiIGZpbGw9IiM1YTJmMTUiIHRleHQtYW5jaG9yPSJtaWRkbGUiIGxldHRlci1zcGFjaW5nPSIzIj5GT1JFU1RBTEVTPC90ZXh0PgogICAgPGNpcmNsZSBjeD0iMzAiIGN5PSIxNzAiIHI9IjIuMiIgZmlsbD0iIzNmYTA1NSIvPgogICAgPGNpcmNsZSBjeD0iMTcwIiBjeT0iMTcwIiByPSIyLjIiIGZpbGw9IiM1YTJmMTUiLz4KICA8L3N2Zz4=';
+
+setTimeout(initLogo,50);
+
+// ── CATEGORY MANAGEMENT ───────────────────────────────────────────────────────
+
+// ── PDF GENERATION (jsPDF) ────────────────────────────────────────────────────
+
+if(currentTipo==='mixto'){
+    addRow('ESPECIES / ARBOLES','','',true);
+    let spSub=0;
+    Object.values(selectedSps).forEach(s=>{const e=DB.especies.find(x=>x.id==s.id);if(e){addRow(e.nombre+' ('+s.qty+' ud)',fmt(e.precio*s.qty),false,false);spSub+=e.precio*s.qty;}});
+    addRow('Subtotal Especies',fmt(spSub),true,false);
+    y+=3;
+    addRow('SERVICIOS','','',true);
+    let svcSub=0;
+    Object.values(selectedSvcs).forEach(s=>{const sv=DB.servicios.find(x=>x.id==s.id);if(sv){addRow(sv.nombre+' ('+s.qty+' '+sv.unidad+')',fmt(sv.precio*s.qty),false,false);svcSub+=sv.precio*s.qty;}});
+    addRow('Subtotal Servicios',fmt(svcSub),true,false);
+  }else{
+    _matRows.forEach(r=>addRow(r.desc+' x'+r.qty+' '+r.unit,fmt(r.total),false,false));
+  }
+  addRow('COSTO DIRECTO',fmt(costoBase),true,false);
+  y+=5;
+
+  // Totals
+  const cfg=DB.cfg;
+  const gg=Math.round(costoBase*cfg.gg/100),base2=costoBase+gg,mg=Math.round(base2*cfg.mg/100),subneto=base2+mg,iva=Math.round(subneto*0.19),total=subneto+iva;
+
+addTot('Gastos generales ('+cfg.gg+'%)',fmt(gg),false);
+  addTot('Margen utilidad ('+cfg.mg+'%)',fmt(mg),false);
+  addTot('Subtotal neto',fmt(subneto),true);
+  addTot('IVA 19%',fmt(iva),false);
+  y+=2;
+  if(y>PH-12){doc.addPage();y=20;}
+  doc.setFillColor(230,230,230);doc.rect(120,y,76,10,'F');doc.setDrawColor(180);doc.rect(120,y,76,10,'S');
+  doc.setFont('helvetica','bold');doc.setFontSize(11);doc.setTextColor(0);
+  doc.text('TOTAL CON IVA',123,y+7);doc.text(fmt(total),193,y+7,{align:'right'});
+  y+=18;
+
+  const notas=document.getElementById('n-notas')?.value||'';
+  if(notas.trim()){
+    doc.setFont('helvetica','bold');doc.setFontSize(9);doc.text('OBSERVACIONES',14,y);y+=5;
+    doc.setFont('helvetica','normal');doc.setFontSize(8);doc.setTextColor(60);
+    const lines=doc.splitTextToSize(notas,180);doc.text(lines,14,y);
+  }
+
+  // Footer
+  doc.setFont('helvetica','normal');doc.setFontSize(7);doc.setTextColor(150);
+  doc.text(empresa+' · Cotización válida '+validez+' días · Generado '+dateStr,105,290,{align:'center'});
+
+  doc.save('cotizacion-'+nombre.replace(/\s+/g,'-')+'-'+numStr+'.pdf');
+  toast('✅ PDF generado','ok');
+
+// ── PDF DESDE HISTORIAL ───────────────────────────────────────────────────────
+
+(c.matRows||[]).forEach(r=>addRow2(r.desc+' x'+r.qty+' '+r.unit,fmt(r.total),false,false));
+  addRow2('COSTO DIRECTO',fmt(c.costoBase),true,false);
+  y+=5;
+
+addTot2('Gastos generales',fmt(c.gg),false);
+  addTot2('Margen utilidad',fmt(c.mg),false);
+  addTot2('Subtotal neto',fmt(c.subtotal||0),true);
+  addTot2('IVA 19%',fmt(c.iva),false);
+  y+=2;
+  if(y>PH-12){doc.addPage();y=20;}
+  doc.setFillColor(230,230,230);doc.rect(120,y,76,10,'F');doc.setDrawColor(180);doc.rect(120,y,76,10,'S');
+  doc.setFont('helvetica','bold');doc.setFontSize(11);doc.setTextColor(0);
+  doc.text('TOTAL CON IVA',123,y+7);doc.text(fmt(c.total),193,y+7,{align:'right'});
+  y+=18;
+  if(c.notas&&c.notas.trim()){
+    doc.setFont('helvetica','bold');doc.setFontSize(9);doc.text('OBSERVACIONES',14,y);y+=5;
+    doc.setFont('helvetica','normal');doc.setFontSize(8);doc.setTextColor(60);
+    const notasLines=doc.splitTextToSize(c.notas,180);doc.text(notasLines,14,y);
+  }
+  doc.setFont('helvetica','normal');doc.setFontSize(7);doc.setTextColor(150);
+  doc.text(empresa+' · Cotización válida '+(c.validez||'30')+' días · Generado '+new Date().toLocaleDateString('es-CL'),105,290,{align:'center'});
+  doc.save('cotizacion-'+c.clienteNombre.replace(/\s+/g,'-')+'-'+c.numero+'.pdf');
+  toast('✅ PDF generado','ok');
+  cerrarMo('mo-cotiz');
+
+if('serviceWorker' in navigator){
+
+navigator.serviceWorker.register('./sw.js',{updateViaCache:'none'}).then(function(reg){
+    // Buscar actualizaciones cada vez que se abre la app
+    try{ reg.update(); }catch(e){}
+    if(reg.waiting && navigator.serviceWorker.controller){
+      showUpdateBanner(reg.waiting);
+    }
+    reg.addEventListener('updatefound', function(){
+      var nw = reg.installing;
+      if(nw){ nw.addEventListener('statechange', function(){
+        if(nw.state==='installed' && navigator.serviceWorker.controller){
+          showUpdateBanner(reg.waiting || nw);
+        }
+      });}
+    });
+  }).catch(function(){});
+
+  // Cuando el SW nuevo se activa (tras tocar "Actualizar"), recargar 1 sola vez
+  var _reloaded=false;
+  navigator.serviceWorker.addEventListener('controllerchange', function(){
+    if(_reloaded) return; _reloaded=true;
+    window.location.reload();
+  });
+}
+
+// Buscar actualización manualmente desde el panel de Configuración
+
+// Banner de instalación
+let deferredPrompt;
+
+// Mostrar botón instalar si el navegador soporta PWA y no está instalada
+
+window.addEventListener('beforeinstallprompt', e => {
+  e.preventDefault();
+  deferredPrompt = e;
+  const btn = document.getElementById('btn-instalar');
+  if(btn) btn.style.display = 'flex';
+});
+window.addEventListener('appinstalled', () => {
+  const btn = document.getElementById('btn-instalar');
+  if(btn) btn.style.display = 'none';
+  deferredPrompt = null;
+  toast('✅ App instalada correctamente', 'ok');
+});
+
+// Ejecutar al cargar
+window.addEventListener('load', checkInstallable);
+
+// ── DOCUMENTOS (Convex storage) ──────────────────────────────────────────────
+let _docsCategories = [];
+let _docsAllDocs = [];
+let _docsCurrentCat = null; // null = todos
+let _docsPendingFile = null;
+let _docsRenameId = null;
+
+let _docsMoveId = null;
+let _docsMoveCurrentCat = null;
+
+// --- NUEVAS FUNCIONALIDADES: IMPORTACIÓN EXCEL Y MÁRGENES ---
+
+(function() {
+  const originalCalcFinal = window.calcFinal;
+  window.calcFinal = function() {
+    if (typeof originalCalcFinal === "function") originalCalcFinal();
+    const mgPct = (DB.cfg && DB.cfg.mg) || 25;
+    if (typeof _matRows !== 'undefined') {
+      _matRows.forEach(row => {
+        row.precioVenta = (row.costo || row.precio || 0) * (1 + mgPct / 100);
+        row.totalVenta = row.precioVenta * (row.qty || 0);
+      });
+      updateClientView();
+    }
+  };
+})();
+
+window.addEventListener("load", () => {
+  // Excel import button removed - feature integrated in Insumos page
+});
+
+function toggleSecPass(inputId, iconId) {
+  const inp = document.getElementById(inputId);
+  const icon = document.getElementById(iconId);
+  if (!inp || !icon) return;
+  if (inp.type === 'password') {
+    inp.type = 'text';
+    icon.innerHTML = '<path d="M17.94 17.94A10.07 10.07 0 0 1 12 20c-7 0-11-8-11-8a18.45 18.45 0 0 1 5.06-5.94M9.9 4.24A9.12 9.12 0 0 1 12 4c7 0 11 8 11 8a18.5 18.5 0 0 1-2.16 3.19m-6.72-1.07a3 3 0 1 1-4.24-4.24"/><line x1="1" y1="1" x2="23" y2="23"/>';
+  } else {
+    inp.type = 'password';
+    icon.innerHTML = '<path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"/><circle cx="12" cy="12" r="3"/>';
+  }
+}
+
+function doLogin() {
+  const u = document.getElementById('login-user').value.trim().toLowerCase();
+  const p = document.getElementById('login-pass').value;
+  const err = document.getElementById('login-err');
+  const users = JSON.parse(localStorage.getItem('gq_users') || '[{"u":"Admin","p":"1981"}]');
+  if (users.some(x => x.u.toLowerCase() === u && x.p === p)) {
+    localStorage.setItem('gq_auth', '1');
+    document.getElementById('login-screen').style.display = 'none';
+    if(err) err.style.display = 'none';
+  } else {
+    if(err) err.style.display = 'block';
+    document.getElementById('login-pass').value = '';
+    document.getElementById('login-pass').focus();
+  }
+}
+
 function showPage(p){
   document.querySelectorAll('.page').forEach(x=>x.classList.remove('active'));
   document.querySelectorAll('.nb').forEach(x=>x.classList.remove('active'));
@@ -1088,7 +1419,9 @@ function resetNueva(){
   document.getElementById('n-validez').value='30';
   document.getElementById('ph-cont').innerHTML='<div class="ph-add" onclick="addPhoto()">📷</div>';
 }
+
 function goS1(){show('s1');hide('s2');hide('s3');}
+
 function goS2(){
   if(!currentTipo)return;
   hide('s1');show('s2');hide('s3');
@@ -1096,12 +1429,16 @@ function goS2(){
   if(currentTipo==='plantacion')renderSps();
   if(currentTipo==='mixto'){renderMixtoSps();renderMixtoSvcs();}
 }
+
 function goS3(){
   if(!document.getElementById('n-nombre').value.trim()){toast('Ingresa el nombre del cliente.','err');return;}
   calcFinal();hide('s1');hide('s2');show('s3');
 }
+
 function show(id){document.getElementById(id).style.display='block';}
+
 function hide(id){document.getElementById(id).style.display='none';}
+
 function selTipo(t){currentTipo=t;document.querySelectorAll('.tc').forEach(c=>c.classList.remove('sel'));document.getElementById('t-'+t).classList.add('sel');document.getElementById('btn-s2').disabled=false;}
 
 function renderSps(){
@@ -1110,13 +1447,16 @@ function renderSps(){
   document.getElementById('sp-list').innerHTML=f.slice(0,7).map(e=>`<div class="spi" onclick="toggleSp(${e.id})"><div><div class="sp-name">${selectedSps[e.id]?'✓ ':''}<b>${e.nombre}</b></div><div class="sp-sci">${e.sci}</div><span class="tag">${e.cat}</span></div><div class="sp-price">${fmt(e.precio)}</div></div>`).join('');
   renderSelSps();
 }
+
 function toggleSp(id){if(selectedSps[id])delete selectedSps[id];else selectedSps[id]={id,qty:1};renderSps();}
+
 function renderSelSps(){
   const el=document.getElementById('sp-sel');const keys=Object.keys(selectedSps);
   if(!keys.length){el.innerHTML='';return;}
   el.innerHTML='<div style="font-size:11px;font-weight:500;color:var(--muted);text-transform:uppercase;letter-spacing:.04em;margin-bottom:7px">Seleccionadas</div>'+
     keys.map(id=>{const e=DB.especies.find(x=>x.id==id);const q=selectedSps[id].qty;return`<div style="display:flex;align-items:center;gap:7px;margin-bottom:7px;padding:7px;background:var(--v4);border-radius:8px"><span style="flex:1;font-size:12px;font-weight:500;color:var(--v1)">${e.nombre}</span><input type="number" min="1" value="${q}" style="width:54px;padding:4px;border:1px solid var(--border);border-radius:6px;text-align:center;font-size:12px" onchange="setSpQty(${id},this.value)"><span style="font-size:12px;color:var(--v2);min-width:68px;text-align:right">${fmt(e.precio*q)}</span></div>`;}).join('');
 }
+
 function setSpQty(id,v){selectedSps[id].qty=Math.max(1,parseInt(v)||1);renderSelSps();}
 
 function calcC(){
@@ -1125,12 +1465,14 @@ function calcC(){
   const el=document.getElementById('c-res');
   if(m>0&&p>0){el.style.display='block';el.innerHTML=`<div class="div"></div><div class="cr"><span>Material (${m}ml × ${fmt(p)})</span><span>${fmt(m*p)}</span></div><div class="cr"><span>M.O. (${m}ml × ${fmt(mo)})</span><span>${fmt(m*mo)}</span></div><div class="cr" style="font-weight:600;color:var(--v1)"><span>Costo directo</span><span>${fmt(costoBase)}</span></div>`;}else el.style.display='none';
 }
+
 function calcR(){
   const ha=parseFloat(document.getElementById('r-ha').value)||0,dens=parseFloat(document.getElementById('r-dens').value)||0,pr=parseFloat(document.getElementById('r-esp').value)||0,mo=parseFloat(document.getElementById('r-mo').value)||0,ins=parseFloat(document.getElementById('r-ins').value)||0;
   const plantas=ha*dens*pr,moT=ha*mo,insT=ha*ins;costoBase=plantas+moT+insT;
   const el=document.getElementById('r-res');
   if(ha>0&&dens>0&&pr>0){el.style.display='block';el.innerHTML=`<div class="div"></div><div class="cr"><span>Plantas (${ha}Ha × ${dens}ud × ${fmt(pr)})</span><span>${fmt(plantas)}</span></div><div class="cr"><span>M.O. por Ha</span><span>${fmt(moT)}</span></div><div class="cr"><span>Insumos/Fertilizantes</span><span>${fmt(insT)}</span></div><div class="cr" style="font-weight:600;color:var(--v1)"><span>Costo directo</span><span>${fmt(costoBase)}</span></div>`;}else el.style.display='none';
 }
+
 function calcRi(){
   const cfg=DB.cfg;
   const fields=[{id:'tub',p:cfg.tub},{id:'asp',p:cfg.asp},{id:'got',p:cfg.got},{id:'ctrl',p:cfg.ctrl},{id:'mo',p:cfg.mo}];
@@ -1164,25 +1506,6 @@ function calcFinal(){
   else if(currentTipo==='cerramiento'){const m=document.getElementById('c-ml').value,p=document.getElementById('c-esp').value,mo=document.getElementById('c-mo').value;rows.push(`<tr><td>Material cerramiento (${m} ml)</td><td>${fmt(parseFloat(m)*parseFloat(p||0))}</td></tr>`);rows.push(`<tr><td>Mano de obra</td><td>${fmt(parseFloat(m)*(parseFloat(mo)||0))}</td></tr>`);matRows.push({desc:'Cerramiento',qty:m,unit:'ml',costo:p,total:parseFloat(m)*parseFloat(p||0)});}
   else if(currentTipo==='reforestacion'){const ha=document.getElementById('r-ha').value,dens=document.getElementById('r-dens').value,pr=document.getElementById('r-esp').value,mo=document.getElementById('r-mo').value,ins=document.getElementById('r-ins').value;rows.push(`<tr><td>Plantas (${ha}Ha × ${dens}ud)</td><td>${fmt(parseFloat(ha)*parseFloat(dens)*(parseFloat(pr)||0))}</td></tr>`);rows.push(`<tr><td>Mano de obra</td><td>${fmt(parseFloat(ha)*(parseFloat(mo)||0))}</td></tr>`);rows.push(`<tr><td>Insumos/Fertilizantes</td><td>${fmt(parseFloat(ha)*(parseFloat(ins)||0))}</td></tr>`);matRows.push({desc:'Plantas',qty:parseFloat(ha)*parseFloat(dens),unit:'ud',costo:pr,total:parseFloat(ha)*parseFloat(dens)*(parseFloat(pr)||0)});}
   ,{id:'asp',n:'Aspersores',u:'ud',p:cfg.asp},{id:'got',n:'Goteros',u:'ud',p:cfg.got},{id:'ctrl',n:'Controlador',u:'ud',p:cfg.ctrl},{id:'mo',n:'M.O.',u:'ml',p:cfg.mo}];rI.forEach(x=>{const q=parseFloat(document.getElementById('ri-'+x.id)?.value)||0;if(q>0){rows.push(`<tr><td>${x.n} (×${q} ${x.u})</td><td>${fmt(q*x.p)}</td></tr>`);matRows.push({desc:x.n,qty:q,unit:x.u,costo:x.p,total:q*x.p});}});}
-  if(currentTipo==='mixto'){
-    rows.push('<tr><td colspan="2" style="font-weight:600;color:var(--v2);padding-top:6px;font-size:11px;text-transform:uppercase;letter-spacing:.04em">🌳 Especies</td></tr>');
-    Object.values(selectedSps).forEach(s=>{const e=DB.especies.find(x=>x.id==s.id);if(e){rows.push(`<tr><td>${e.nombre} <span class="tag">${s.qty} ud</span></td><td>${fmt(e.precio*s.qty)}</td></tr>`);matRows.push({desc:e.nombre,qty:s.qty,unit:'ud',costo:e.precio,total:e.precio*s.qty});}});
-    const spSub=Object.values(selectedSps).reduce((a,s)=>{const e=DB.especies.find(x=>x.id==s.id);return a+(e?e.precio*s.qty:0);},0);
-    rows.push(`<tr style="font-weight:600"><td>Subtotal Especies</td><td>${fmt(spSub)}</td></tr>`);
-    rows.push('<tr><td colspan="2" style="font-weight:600;color:var(--v2);padding-top:6px;font-size:11px;text-transform:uppercase;letter-spacing:.04em">🔧 Servicios</td></tr>');
-    Object.values(selectedSvcs).forEach(s=>{const sv=DB.servicios.find(x=>x.id==s.id);if(sv){rows.push(`<tr><td>${sv.nombre} <span class="tag">${s.qty} ${sv.unidad}</span></td><td>${fmt(sv.precio*s.qty)}</td></tr>`);matRows.push({desc:sv.nombre,qty:s.qty,unit:sv.unidad,costo:sv.precio,total:sv.precio*s.qty});}});
-    const svcSub=Object.values(selectedSvcs).reduce((a,s)=>{const sv=DB.servicios.find(x=>x.id==s.id);return a+(sv?sv.precio*s.qty:0);},0);
-    const insSub=Object.values(selectedIns||{}).reduce((a,s)=>a+(s.p*s.qty),0);
-    rows.push(`<tr style="font-weight:600"><td>Subtotal Servicios</td><td>${fmt(svcSub)}</td></tr>`);
-    rows.push('<tr><td colspan="2" style="font-weight:600;color:var(--v2);padding-top:6px;font-size:11px;text-transform:uppercase;letter-spacing:.04em">📦 Insumos</td></tr>');
-    Object.values(selectedIns||{}).forEach(s=>{rows.push(`<tr><td>${s.n} <span class="tag">${s.qty} ${s.u}</span></td><td>${fmt(s.p*s.qty)}</td></tr>`);matRows.push({desc:s.n,qty:s.qty,unit:s.u,costo:s.p,total:s.p*s.qty});});
-    const insSub=Object.values(selectedIns||{}).reduce((a,s)=>a+(s.p*s.qty),0);
-    rows.push(`<tr style="font-weight:600"><td>Subtotal Insumos</td><td>${fmt(insSub)}</td></tr>`);
-  }
-  rows.push(`<tr style="font-weight:600"><td>Subtotal costo directo</td><td>${fmt(costoBase)}</td></tr>`);
-  document.getElementById('res-table').innerHTML=`<thead><tr><th>Descripción</th><th style="text-align:right">Monto</th></tr></thead><tbody>${rows.join('')}</tbody>`;
-  _matRows=matRows;
-  document.getElementById('mat-list').innerHTML=`<p style="font-size:11px;color:var(--muted);margin-bottom:9px">Comparativo costo vs. precio de venta</p><table style="width:100%;border-collapse:collapse;font-size:11px"><thead><tr style="border-bottom:1px solid var(--border)"><th style="text-align:left;padding:4px 0;color:var(--muted)">Item</th><th style="text-align:right;padding:4px 0;color:var(--muted)">Costo</th><th style="text-align:right;padding:4px 0;color:var(--muted)">Venta</th></tr></thead><tbody>${matRows.map(r=>{const v=r.total*(1+cfg.mg/100+cfg.gg/100);return`<tr style="border-bottom:1px solid var(--pl)"><td style="padding:5px 0">${r.desc} ×${r.qty}</td><td style="text-align:right">${fmt(r.total)}</td><td style="text-align:right;color:var(--v2)">${fmt(v)}</td></tr>`;}).join('')}</tbody></table>`;
 
 function guardar(){
   const n=nextCotizNum();
@@ -1200,6 +1523,7 @@ function whatsappNueva(){
   const msg=(DB.empresa.wa||'Cotización {total}').replace('{cliente}',nombre).replace('{numero}',num).replace('{tipo}',tipoLabel(currentTipo)).replace('{total}',total).replace('{validez}',validez+' días').replace('{empresa}',DB.empresa.nombre||'Operaciones Forestales');
   window.open('https://api.whatsapp.com/send?phone='+(tel||'56912345678')+'&text='+encodeURIComponent(msg),'_blank');
 }
+
 function whatsappCotiz(id){
   const c=DB.cotizaciones.find(x=>x.id===id);if(!c)return;
   const tel=(c.tel||'').replace(/\D/g,'');
@@ -1208,6 +1532,7 @@ function whatsappCotiz(id){
 }
 
 function setFiltro(f){filtroQ=f;renderCotiz();}
+
 function renderCotiz(){
   const q=(document.getElementById('cq-search')?.value||'').toLowerCase();
   let data=[...DB.cotizaciones].reverse();
@@ -1215,25 +1540,31 @@ function renderCotiz(){
   if(q)data=data.filter(c=>c.clienteNombre.toLowerCase().includes(q)||(c.proyecto||'').toLowerCase().includes(q));
   document.getElementById('cotiz-list').innerHTML=data.length?data.map(renderQCard).join(''):`<div class="empty"><div class="empty-icon">🌲</div><div style="font-size:14px">Sin cotizaciones</div></div>`;
 }
+
 function renderQCard(c){return`<div class="li" onclick="verCotiz(${c.id})"><div class="li-top"><div><div class="li-name">${c.proyecto||c.clienteNombre}</div><div class="li-sub">${c.clienteNombre} · ${c.numero}</div></div><span class="badge b-${c.status}">${statusLabel(c.status)}</span></div><div class="li-bot"><button onclick="event.stopPropagation();abrirPreview(${c.id})" style="background:none;border:none;cursor:pointer;padding:4px 6px;border-radius:6px;font-size:14px;color:#888" title="Ver cotización">👁️</button><span class="li-tipo">${c.tipoLabel} · ${new Date(c.createdAt).toLocaleDateString('es-CL')}</span><span class="li-monto">${fmt(c.total)}</span></div></div>`;}
+
 function verCotiz(id){
   const c=DB.cotizaciones.find(x=>x.id===id);if(!c)return;
   document.getElementById('mo-cotiz-body').innerHTML=`<div class="mt">${c.numero}</div><div style="margin-bottom:12px"><div style="font-weight:600;font-size:15px;color:var(--v1)">${c.clienteNombre}</div><div style="font-size:12px;color:var(--muted)">${c.proyecto||''}</div><div style="font-size:12px;color:var(--muted)">${c.rut||''} ${c.tel?'· '+c.tel:''}</div><div style="font-size:12px;color:var(--muted)">📍 ${c.ubicacion||'Sin ubicación'}</div></div><div class="div"></div><div style="display:flex;gap:6px;flex-wrap:wrap;margin-bottom:11px"><span class="tag">${c.tipoLabel}</span><span class="tag">Validez: ${c.validez} días</span><span class="tag">${new Date(c.createdAt).toLocaleDateString('es-CL')}</span></div><div class="cr"><span style="color:var(--muted)">Costo directo</span><span>${fmt(c.costoBase)}</span></div><div class="cr"><span style="color:var(--muted)">Gastos generales</span><span>${fmt(c.gg)}</span></div><div class="cr"><span style="color:var(--muted)">Margen utilidad</span><span>${fmt(c.mg)}</span></div><div class="cr"><span style="color:var(--muted)">IVA 19%</span><span>${fmt(c.iva)}</span></div><div class="tbox" style="margin-top:10px"><div class="tl">Total con IVA</div><div class="tv">${fmt(c.total)}</div></div>${c.notas?`<div style="margin-top:10px;padding:10px;background:var(--c4);border-radius:9px;font-size:12px">📝 ${c.notas}</div>`:''}<div class="fg" style="margin-top:13px"><label class="fl">Cambiar estado</label><select class="fs" onchange="cambiarStatus(${c.id},this.value)"><option value="borrador" ${c.status==='borrador'?'selected':''}>Borrador</option><option value="enviada" ${c.status==='enviada'?'selected':''}>Enviada</option><option value="aprobada" ${c.status==='aprobada'?'selected':''}>Aprobada</option><option value="rechazada" ${c.status==='rechazada'?'selected':''}>Rechazada</option></select></div><div style="display:flex;flex-direction:column;gap:8px;margin-top:4px"><button class="btn bp" onclick="generarPDFCotiz(${c.id})">📄 Descargar PDF</button><button class="btn bg" onclick="whatsappCotiz(${c.id})">📱 Enviar WhatsApp</button><button class="btn bd bsm" onclick="eliminarCotiz(${c.id})">🗑 Eliminar</button><button class="btn bs" onclick="cerrarMo('mo-cotiz')">Cerrar</button></div>`;
   document.getElementById('mo-cotiz').classList.add('open');
 }
+
 function cambiarStatus(id,st){const c=DB.cotizaciones.find(x=>x.id===id);if(c){c.status=st;saveDB();cerrarMo('mo-cotiz');renderCotiz();renderDash();toast('Estado actualizado: '+statusLabel(st),'ok');}}
-// ── PAPELERA DE RECICLAJE ─────────────────────────────────────────────
+
 function _papPush(tipo, item){
   if(!Array.isArray(DB.papelera)) DB.papelera=[];
   DB.papelera.unshift({pid:'p'+Date.now()+Math.random().toString(36).slice(2,7), tipo:tipo, item:JSON.parse(JSON.stringify(item)), eliminadoEn:Date.now()});
 }
+
 function _papLabelTipo(t){
   return ({cotizaciones:'Cotización',especies:'Especie',servicios:'Servicio',stock:'Insumo',clientes:'Cliente'})[t]||t;
 }
+
 function _papDescItem(t,it){
   if(t==='cotizaciones') return (it.numero?('N° '+it.numero):'')+(it.cliente?(' — '+it.cliente):'');
   return it.nombre || it.razon || ('ID '+(it.id||''));
 }
+
 function restaurarPap(pid){
   const i=DB.papelera.findIndex(x=>x.pid===pid); if(i<0) return;
   const e=DB.papelera[i];
@@ -1250,18 +1581,21 @@ function restaurarPap(pid){
        renderDash && renderDash(); }catch(_){}
   toast('Restaurado','ok');
 }
+
 function eliminarPapPerm(pid){
   if(!confirm('¿Eliminar definitivamente este elemento? No se puede deshacer.')) return;
   DB.papelera=DB.papelera.filter(x=>x.pid!==pid);
   saveDB(); renderPapelera();
   toast('Eliminado definitivamente','ok');
 }
+
 function vaciarPapelera(){
   if(!Array.isArray(DB.papelera)||!DB.papelera.length){ toast('La papelera ya está vacía','ok'); return; }
   if(!confirm('¿Vaciar toda la papelera ('+DB.papelera.length+' elementos)? No se puede deshacer.')) return;
   DB.papelera=[]; saveDB(); renderPapelera();
   toast('Papelera vaciada','ok');
 }
+
 function renderPapelera(){
   const cont=document.getElementById('papelera-list'); if(!cont) return;
   if(!Array.isArray(DB.papelera)) DB.papelera=[];
@@ -1295,8 +1629,11 @@ function renderClientes(){
   const data=DB.clientes.filter(c=>c.nombre.toLowerCase().includes(q));
   document.getElementById('cli-list').innerHTML=data.length?data.map(c=>`<div class="cli-card"><div style="display:flex;align-items:center;gap:11px"><div class="cli-av">${c.nombre.charAt(0).toUpperCase()}</div><div style="flex:1"><div style="font-weight:600;font-size:14px;color:var(--v1)">${c.nombre}</div><div style="font-size:11px;color:var(--muted)">${c.rut||''} ${c.email?'· '+c.email:''}</div><div style="font-size:11px;color:var(--muted)">${c.tel||''}</div></div><button class="btn bs bsm" onclick="editarCliente(${c.id})" style="padding:5px 10px;font-size:11px">✏️</button></div></div>`).join(''):`<div class="empty"><div class="empty-icon">👥</div><div style="font-size:14px">Sin clientes registrados</div></div>`;
 }
+
 function abrirModalCli(){editCliId=null;['mc-nombre','mc-rut','mc-tel','mc-email','mc-dir','mc-notas'].forEach(id=>document.getElementById(id).value='');document.getElementById('mo-cli-title').textContent='Nuevo Cliente';document.getElementById('mo-cliente').classList.add('open');}
+
 function editarCliente(id){editCliId=id;const c=DB.clientes.find(x=>x.id===id);document.getElementById('mc-nombre').value=c.nombre;document.getElementById('mc-rut').value=c.rut||'';document.getElementById('mc-tel').value=c.tel||'';document.getElementById('mc-email').value=c.email||'';document.getElementById('mc-dir').value=c.dir||'';document.getElementById('mc-notas').value=c.notas||'';document.getElementById('mo-cli-title').textContent='Editar Cliente';document.getElementById('mo-cliente').classList.add('open');}
+
 function saveCliente(){
   const n=document.getElementById('mc-nombre').value.trim();if(!n){toast('Ingresa el nombre','err');return;}
   const obj={nombre:n,rut:document.getElementById('mc-rut').value,tel:document.getElementById('mc-tel').value,email:document.getElementById('mc-email').value,dir:document.getElementById('mc-dir').value,notas:document.getElementById('mc-notas').value};
@@ -1312,11 +1649,14 @@ function showTab(t){
   if(t==='servicios')renderServicios();
   if(t==='seguridad')loadSeguridad();
 }
+
 function loadAdminEmpresa(){
   document.getElementById('e-nombre').value=DB.empresa.nombre||'';document.getElementById('e-rut').value=DB.empresa.rut||'';document.getElementById('e-tel').value=DB.empresa.tel||'';document.getElementById('e-dir').value=DB.empresa.dir||'';document.getElementById('e-email').value=DB.empresa.email||'';document.getElementById('e-wa').value=DB.empresa.wa||'';
   document.getElementById('cfg-gg').value=DB.cfg.gg;document.getElementById('cfg-mg').value=DB.cfg.mg;document.getElementById('cfg-tub').value=DB.cfg.tub;document.getElementById('cfg-asp').value=DB.cfg.asp;document.getElementById('cfg-got').value=DB.cfg.got;document.getElementById('cfg-ctrl').value=DB.cfg.ctrl;document.getElementById('cfg-mo').value=DB.cfg.mo;
 }
+
 function saveEmpresa(){DB.empresa={nombre:document.getElementById('e-nombre').value,rut:document.getElementById('e-rut').value,tel:document.getElementById('e-tel').value,dir:document.getElementById('e-dir').value,email:document.getElementById('e-email').value,wa:document.getElementById('e-wa').value};applyEmpresaToUI();saveDB();toast('Datos guardados','ok');}
+
 function applyEmpresaToUI(){
   try{
     var nombre=(DB.empresa&&DB.empresa.nombre)?DB.empresa.nombre:'Operaciones';
@@ -1333,6 +1673,7 @@ function syncNow(){
   toast('Sincronizando...','ok');
   loadFromCloud();
 }
+
 function saveCfg(){DB.cfg={gg:parseInt(document.getElementById('cfg-gg').value)||10,mg:parseInt(document.getElementById('cfg-mg').value)||25,tub:parseInt(document.getElementById('cfg-tub').value)||850,asp:parseInt(document.getElementById('cfg-asp').value)||12500,got:parseInt(document.getElementById('cfg-got').value)||3200,ctrl:parseInt(document.getElementById('cfg-ctrl').value)||85000,mo:parseInt(document.getElementById('cfg-mo').value)||2500};saveDB();toast('Variables guardadas','ok');}
 
 function renderEspecies(){
@@ -1341,24 +1682,30 @@ function renderEspecies(){
   document.getElementById('esp-count').textContent=DB.especies.length+' especies';
   document.getElementById('esp-list').innerHTML=data.map(e=>`<div class="spi" style="cursor:default"><div style="flex:1"><div class="sp-name">${e.nombre}</div><div class="sp-sci">${e.sci}</div><span class="tag">${e.cat}</span></div><div style="display:flex;flex-direction:column;align-items:flex-end;gap:5px"><span class="sp-price">${fmt(e.precio)}</span><div style="display:flex;gap:5px"><button class="btn bs bsm" style="padding:4px 8px;font-size:11px" onclick="abrirEspecie(${e.id})">✏️</button><button class="btn bd bsm" style="padding:4px 8px;font-size:11px" onclick="elimEspecie(${e.id})">🗑</button></div></div></div>`).join('');
 }
+
 function abrirEspecie(id=null){editEspId=id;if(id){const e=DB.especies.find(x=>x.id===id);document.getElementById('me-nombre').value=e.nombre;document.getElementById('me-sci').value=e.sci;document.getElementById('me-precio').value=e.precio;document.getElementById('me-cat').value=e.cat;document.getElementById('me-desc').value=e.desc||'';document.getElementById('mo-esp-title').textContent='Editar Especie';}else{['me-nombre','me-sci','me-precio','me-desc'].forEach(i=>document.getElementById(i).value='');document.getElementById('mo-esp-title').textContent='Nueva Especie';}document.getElementById('mo-especie').classList.add('open');}
+
 function saveEspecie(){const n=document.getElementById('me-nombre').value.trim(),p=parseInt(document.getElementById('me-precio').value);if(!n||!p){toast('Completa nombre y precio','err');return;}const obj={nombre:n,sci:document.getElementById('me-sci').value,precio:p,cat:document.getElementById('me-cat').value,desc:document.getElementById('me-desc').value};if(editEspId){Object.assign(DB.especies.find(x=>x.id===editEspId),obj);}else{obj.id=Date.now();DB.especies.push(obj);}saveDB();cerrarMo('mo-especie');renderEspecies();toast(editEspId?'Especie actualizada':'Especie agregada','ok');}
+
 function elimEspecie(id){if(!confirm('¿Mover esta especie a la papelera?'))return;const _it=DB.especies.find(x=>x.id===id);if(_it)_papPush('especies',_it);DB.especies=DB.especies.filter(x=>x.id!==id);saveDB();renderEspecies();toast('Movida a papelera','ok');}
 
 function renderServicios(){
   document.getElementById('svc-count').textContent=DB.servicios.length+' servicios';
   document.getElementById('svc-list').innerHTML=DB.servicios.map(s=>`<div class="spi" style="cursor:default"><div style="flex:1"><div class="sp-name">${s.nombre}</div><span class="tag">${s.cat}</span><span class="tag">${s.unidad}</span></div><div style="display:flex;flex-direction:column;align-items:flex-end;gap:5px"><span class="sp-price">${fmt(s.precio)}</span><div style="display:flex;gap:5px"><button class="btn bs bsm" style="padding:4px 8px;font-size:11px" onclick="abrirServicio(${s.id})">✏️</button><button class="btn bd bsm" style="padding:4px 8px;font-size:11px" onclick="elimServicio(${s.id})">🗑</button></div></div></div>`).join('');
 }
-function abrirServicio(id=null){editSvcId=id;if(id){const s=DB.servicios.find(x=>x.id===id);document.getElementById('ms-nombre').value=s.nombre;document.getElementById('ms-cat').value=s.cat;document.getElementById('ms-unidad').value=s.unidad;document.getElementById('ms-precio').value=s.precio;document.getElementById('mo-svc-title').textContent='Editar Servicio';}else{['ms-nombre','ms-unidad','ms-precio'].forEach(i=>document.getElementById(i).value='');document.getElementById('mo-svc-title').textContent='Nuevo Servicio';}document.getElementById('mo-servicio').classList.add('open');}
-function saveServicio(){const n=document.getElementById('ms-nombre').value.trim(),p=parseInt(document.getElementById('ms-precio').value);if(!n||!p){toast('Completa los campos','err');return;}const obj={nombre:n,cat:document.getElementById('ms-cat').value,unidad:document.getElementById('ms-unidad').value||'ud',precio:p};if(editSvcId){Object.assign(DB.servicios.find(x=>x.id===editSvcId),obj);}else{obj.id=Date.now();DB.servicios.push(obj);}saveDB();cerrarMo('mo-servicio');renderServicios();toast(editSvcId?'Servicio actualizado':'Servicio agregado','ok');}
-function elimServicio(id){if(!confirm('¿Mover este servicio a la papelera?'))return;const _it=DB.servicios.find(x=>x.id===id);if(_it)_papPush('servicios',_it);DB.servicios=DB.servicios.filter(x=>x.id!==id);saveDB();renderServicios();toast('Movido a papelera','ok');}
 
+function abrirServicio(id=null){editSvcId=id;if(id){const s=DB.servicios.find(x=>x.id===id);document.getElementById('ms-nombre').value=s.nombre;document.getElementById('ms-cat').value=s.cat;document.getElementById('ms-unidad').value=s.unidad;document.getElementById('ms-precio').value=s.precio;document.getElementById('mo-svc-title').textContent='Editar Servicio';}else{['ms-nombre','ms-unidad','ms-precio'].forEach(i=>document.getElementById(i).value='');document.getElementById('mo-svc-title').textContent='Nuevo Servicio';}document.getElementById('mo-servicio').classList.add('open');}
+
+function saveServicio(){const n=document.getElementById('ms-nombre').value.trim(),p=parseInt(document.getElementById('ms-precio').value);if(!n||!p){toast('Completa los campos','err');return;}const obj={nombre:n,cat:document.getElementById('ms-cat').value,unidad:document.getElementById('ms-unidad').value||'ud',precio:p};if(editSvcId){Object.assign(DB.servicios.find(x=>x.id===editSvcId),obj);}else{obj.id=Date.now();DB.servicios.push(obj);}saveDB();cerrarMo('mo-servicio');renderServicios();toast(editSvcId?'Servicio actualizado':'Servicio agregado','ok');}
+
+function elimServicio(id){if(!confirm('¿Mover este servicio a la papelera?'))return;const _it=DB.servicios.find(x=>x.id===id);if(_it)_papPush('servicios',_it);DB.servicios=DB.servicios.filter(x=>x.id!==id);saveDB();renderServicios();toast('Movido a papelera','ok');}
 
 function csvEsc(v){
   if(v===null||v===undefined)return'""';
   const s=String(v).replace(/"/g,'""');
   return'"'+s+'"';
 }
+
 function exportCSV(tipo){
   let csv='',fn='';
   if(tipo==='financiero'){
@@ -1372,11 +1719,13 @@ function exportCSV(tipo){
   }
   dlCSV(csv,fn);
 }
+
 function exportCSVCotiz(){
   const cfg=DB.cfg;let csv='Item,Cantidad,Unidad,Costo Unit.,Total Costo,Total Venta\n';
   _matRows.forEach(r=>{const v=r.total*(1+cfg.mg/100+cfg.gg/100);csv+=[csvEsc(r.desc),r.qty,csvEsc(r.unit),r.costo,r.total,Math.round(v)].join(',')+'\n';});
   dlCSV(csv,'materiales-cotizacion.csv');
 }
+
 function dlCSV(csv,fn){const a=document.createElement('a');a.href='data:text/csv;charset=utf-8,\uFEFF'+encodeURIComponent(csv);a.download=fn;a.click();}
 
 function addPhoto(){
@@ -1392,8 +1741,11 @@ function addPhoto(){
 }
 
 function fmt(n){return'$'+Math.round(n||0).toLocaleString('es-CL');}
+
 function fmtK(n){if(n>=1000000)return'$'+(n/1000000).toFixed(1)+'M';if(n>=1000)return'$'+(n/1000).toFixed(0)+'K';return fmt(n);}
+
 function tipoLabel(t){return{plantacion:'Plantación',cerramiento:'Cerramiento',reforestacion:'Reforestación',mixto:'Servicios Mixtos'}[t]||t||'';}
+
 function nextCotizNum(){
   // Calcula el siguiente número siempre desde los datos guardados,
   // evitando duplicados cuando otra pestaña/equipo agrega cotizaciones.
@@ -1405,24 +1757,10 @@ function nextCotizNum(){
   if(typeof cotizNum==='number'&&cotizNum-1>max)max=cotizNum-1;
   return max+1;
 }
+
 function statusLabel(s){return{borrador:'Borrador',enviada:'Enviada',aprobada:'Aprobada',rechazada:'Rechazada'}[s]||s||'';}
+
 function cerrarMo(id){document.getElementById(id).classList.remove('open');}
-
-document.querySelectorAll('.mo').forEach(el=>{el.addEventListener('click',function(e){if(e.target===el)el.classList.remove('open');});});
-// Cerrar modales con tecla Escape
-document.addEventListener('keydown',function(e){
-  if(e.key!=='Escape')return;
-  const opened=document.querySelectorAll('.mo.open');
-  if(opened.length){opened[opened.length-1].classList.remove('open');}
-});
-
-// ── CLOUD SYNC (Convex backend) ──────────────────────────────────────────────
-const CONVEX_URL = 'https://polite-ocelot-652.eu-west-1.convex.cloud';
-const _cloudEnabled = !!CONVEX_URL;
-let _saveTimer = null;
-let _saving = false;
-let _initialPullDone = false;
-let _suppressUpload = true; // bloquea uploads hasta terminar la bajada inicial
 
 function setSyncBadge(state, msg) {
   const el = document.getElementById('sync-badge');
@@ -1440,7 +1778,7 @@ function setSyncBadge(state, msg) {
   el.title = title;
 }
 
-async function _convexCall(kind, path, args) {
+function _convexCall(kind, path, args) {
   const r = await fetch(CONVEX_URL + '/api/' + kind, {
     method: 'POST',
     headers: { 'Content-Type': 'application/json' },
@@ -1451,7 +1789,7 @@ async function _convexCall(kind, path, args) {
   return j.value;
 }
 
-async function saveToCloud(payload) {
+function saveToCloud(payload) {
   if (!_cloudEnabled) { setSyncBadge('disabled'); return; }
   if (_suppressUpload || !_initialPullDone) return;
   if (_saveTimer) clearTimeout(_saveTimer);
@@ -1476,7 +1814,7 @@ async function saveToCloud(payload) {
   }, 400);
 }
 
-async function loadFromCloud() {
+function loadFromCloud() {
   if (!_cloudEnabled) { setSyncBadge('disabled'); return; }
   setSyncBadge('syncing');
   try {
@@ -1535,7 +1873,7 @@ async function loadFromCloud() {
   }
 }
 
-async function _pushLocalToCloud() {
+function _pushLocalToCloud() {
   if (!_cloudEnabled) return;
     const users = JSON.parse(localStorage.getItem('gq_users') || '[]');
   await saveToCloud({
@@ -1553,15 +1891,6 @@ async function _pushLocalToCloud() {
   });
 }
 
-// Resincroniza al volver a la pestana o recuperar conexion
-window.addEventListener('focus', function(){ loadFromCloud(); });
-window.addEventListener('online', function(){ loadFromCloud(); });
-document.addEventListener('visibilitychange', function(){
-  if (document.visibilityState === 'visible') loadFromCloud();
-});
-
-// Polling automatico para sync entre dispositivos / equipos en tiempo casi real
-let _pollTimer = null;
 function _startPolling() {
   if (_pollTimer) return;
   _pollTimer = setInterval(function(){
@@ -1570,9 +1899,7 @@ function _startPolling() {
     }
   }, 5000);
 }
-_startPolling();
 
-// ── LOCALSTORAGE PERSISTENCE ─────────────────────────────────────────────────
 function saveDB(){
   try{
     localStorage.setItem('gq_ts', Date.now());
@@ -1604,6 +1931,7 @@ function saveDB(){
     });
   }catch(e){console.error('saveDB:',e);}
 }
+
 function loadDB(){
   try{
     const p=(k,d)=>{const v=localStorage.getItem(k);return v?JSON.parse(v):d;};
@@ -1619,9 +1947,8 @@ function loadDB(){
     const n=localStorage.getItem('gq_cotnum');if(n)cotizNum=parseInt(n)||1;
   }catch(e){console.error('loadDB:',e);}
 }
-loadDB();
-// Reparación automática: restaurar precios en 0
-(function repairZeroPrices(){
+
+function repairZeroPrices(){
   let repaired=0;
   // Reparar especies
   DB.especies.forEach(e=>{
@@ -1655,13 +1982,7 @@ loadDB();
     saveDB();
     console.log('Reparación automática: '+repaired+' precios restaurados');
   }
-})();
-try{ applyEmpresaToUI(); }catch(e){}
-renderDash();
-// Sincronizar con Firebase (async)
-setTimeout(loadFromCloud, 300);
-// initLogo called after definition
-if(DB.empresa&&DB.empresa.nombre)document.getElementById('hdr-empresa').textContent=DB.empresa.nombre;
+}
 
 function toast(msg,type=''){
   const c=document.getElementById('toast-cont');
@@ -1670,7 +1991,6 @@ function toast(msg,type=''){
   setTimeout(()=>{t.classList.remove('show');setTimeout(()=>t.remove(),300);},2600);
 }
 
-// ── INSUMOS CATÁLOGO ──────────────────────────────────────────
 function showInsTab(t){
   insTab=t;
   renderMateriales();
@@ -1745,6 +2065,11 @@ function renderMateriales(){
   </div>`;
   cont.innerHTML=html;
 }
+
+function getProveedor(desc){
+    const ins=(DB.insumos||[]).find(x=>x.producto&&desc&&x.producto.toLowerCase().startsWith(desc.toLowerCase().substring(0,8)));
+    return ins?ins.proveedor:'';
+  }
 
 function exportMatCSV(id){
   const c=DB.cotizaciones.find(x=>x.id===id);
@@ -1863,7 +2188,6 @@ function renderAdminInsumos(){
   </div>`).join(''):'<div style="font-size:13px;color:var(--muted);text-align:center;padding:20px">Sin insumos. Presioná + Añadir</div>';
 }
 
-// ── CATÁLOGO UNIFICADO ─────────────────────────────────────────────────
 function setCatFiltro(f){
   catFiltro=f;
   ['all','especie','insumo'].forEach(k=>{
@@ -1956,52 +2280,15 @@ function renderCatalogo(){
   if(!catFiltro||catFiltro==='especie'){
     DB.especies.forEach(e=>{if(!q||e.nombre.toLowerCase().includes(q)||(e.sci||'').toLowerCase().includes(q))items.push({...e,_tipo:'especie'});});
   }
-  );});
-  if(!catFiltro||catFiltro==='insumo'){
-    DB.insumos.forEach(s=>{if(!q||s.producto.toLowerCase().includes(q)||(s.categoria||'').toLowerCase().includes(q)||(s.proveedor||'').toLowerCase().includes(q))items.push({...s,_tipo:'insumo'});});
-  }
-  const total=DB.especies.length+DB.insumos.length;
-  const countEl=document.getElementById('cat-count');
-  if(countEl)countEl.textContent=items.length+' de '+total+' ítems';
-  const listEl=document.getElementById('cat-list');
-  if(!listEl)return;
-  const tipoBadge={especie:'<span style="font-size:10px;background:#dcfce7;color:#15803d;border-radius:10px;padding:2px 7px;font-weight:600">🌳 Especie</span>',insumo:'<span style="font-size:10px;background:#fef3c7;color:#92400e;border-radius:10px;padding:2px 7px;font-weight:600">📦 Insumo</span>'};
-  listEl.innerHTML=items.length?items.map(x=>{
-    const badge=tipoBadge[x._tipo]||'';
-    if(x._tipo==='especie'){
-      return`<div class="spi" style="cursor:default;flex-direction:column;align-items:stretch;gap:4px">
-        <div style="display:flex;justify-content:space-between;align-items:flex-start">
-          <div><div class="sp-name">${x.nombre}</div><div style="font-size:10px;color:var(--muted);font-style:italic">${x.sci||''}</div><div style="margin-top:3px;display:flex;gap:4px">${badge}<span style="font-size:10px;color:var(--muted)">${x.cat}</span></div></div>
-          <div style="display:flex;flex-direction:column;align-items:flex-end;gap:4px">
-            <div style="text-align:right"><div style="font-size:10px;color:var(--muted)">🔒 ${fmt(x.precioCompra||x.precio)}</div><div style="font-size:11px;color:var(--v1);font-weight:600">💰 ${fmt(x.precioVenta||x.precio)}</div></div>
-            <div style="display:flex;gap:4px"><button class="btn bs bsm" style="padding:3px 7px;font-size:11px" onclick="abrirCatalogo('especie',${x.id})">✏️</button><button class="btn bd bsm" style="padding:3px 7px;font-size:11px" onclick="elimCatalogo('especie',${x.id})">🗑</button></div>
-          </div>
-        </div></div>`;
-    </div><div style="margin-top:3px;display:flex;gap:4px">${badge}<span style="font-size:10px;color:var(--muted)">${x.cat||''} · ${x.unidad}</span></div></div>
-          <div style="display:flex;flex-direction:column;align-items:flex-end;gap:4px">
-            <div style="text-align:right"><div style="font-size:10px;color:var(--muted)">🔒 ${fmt(x.precioCompra||x.precio)}</div><div style="font-size:11px;color:var(--v1);font-weight:600">💰 ${fmt(x.precioVenta||x.precio)}</div></div>
-            <div style="display:flex;gap:4px"><button class="btn bs bsm" style="padding:3px 7px;font-size:11px" onclick="abrirCatalogo(${x.id})">✏️</button><button class="btn bd bsm" style="padding:3px 7px;font-size:11px" onclick="elimCatalogo(${x.id})">🗑</button></div>
-          </div>
-        </div></div>`;
-    }else{
-      return`<div class="spi" style="cursor:default;flex-direction:column;align-items:stretch;gap:4px">
-        <div style="display:flex;justify-content:space-between;align-items:flex-start">
-          <div><div class="sp-name">${x.producto}</div><div style="margin-top:3px;display:flex;gap:4px;flex-wrap:wrap">${badge}<span style="font-size:10px;color:var(--muted)">${x.categoria} · ${x.proveedor||'Sin proveedor'} · ${x.unidad}</span></div></div>
-          <div style="display:flex;flex-direction:column;align-items:flex-end;gap:4px">
-            <div style="text-align:right"><div style="font-size:10px;color:var(--muted)">🔒 ${fmt(x.precioCompra)}</div><div style="font-size:11px;color:var(--v1);font-weight:600">💰 ${fmt(x.precioVenta)}</div></div>
-            <div style="display:flex;gap:4px"><button class="btn bs bsm" style="padding:3px 7px;font-size:11px" onclick="abrirCatalogo('insumo',${x.id})">✏️</button><button class="btn bd bsm" style="padding:3px 7px;font-size:11px" onclick="elimCatalogo('insumo',${x.id})">🗑</button></div>
-          </div>
-        </div></div>`;
-    }
-  }).join(''):'<div style="font-size:13px;color:var(--muted);text-align:center;padding:24px">Sin ítems en el catálogo. Presioná + Añadir</div>';
+  );}
 
-// ── AJUSTE PORCENTUAL DE PRECIOS ──────────────────────────────────────
 function togglePctPanel(){
   const p=document.getElementById('pct-adj-panel');
   const open=p.style.display==='none';
   p.style.display=open?'block':'none';
   if(open)updatePctPreview();
 }
+
 function updatePctPreview(){
   const tipo=document.getElementById('pct-tipo')?.value||'';
   const campo=document.getElementById('pct-campo')?.value||'ambos';
@@ -2015,6 +2302,7 @@ function updatePctPreview(){
   const el=document.getElementById('pct-preview');
   if(el) el.textContent=count+' ítems · '+campoLabel+' '+dir+' '+Math.abs(pct)+'%';
 }
+
 function applyPctPrices(){
   const pct=parseFloat(document.getElementById('pct-val')?.value);
   if(isNaN(pct)||pct===0){toast('Ingresá un porcentaje válido','err');return;}
@@ -2045,28 +2333,20 @@ function applyPctPrices(){
   document.getElementById('pct-adj-panel').style.display='none';
   toast((pct>0?'▲':'▼')+' '+Math.abs(pct)+'% aplicado a '+count+' ítems','ok');
 }
-// ── LOGIN ──────────────────────────────────────────────────────────────
-(function(){
-  if(localStorage.getItem('gq_auth')==='1'){
-    document.getElementById('login-screen').style.display='none';
-  }
-  document.getElementById('login-pass').addEventListener('keydown',function(e){if(e.key==='Enter')doLogin();});
-  document.getElementById('login-user').addEventListener('keydown',function(e){if(e.key==='Enter')doLogin();});
-})();
-
 
 function doLogout(){
   localStorage.removeItem('gq_auth');
   location.reload();
 }
 
-// ── SEGURIDAD ────────────────────────────────────────────────
 function getUsers(){
   return JSON.parse(localStorage.getItem('gq_users')||'[{"u":"Admin","p":"1981"}]');
 }
+
 function setUsers(arr){
   localStorage.setItem('gq_users',JSON.stringify(arr));
 }
+
 function loadSeguridad(){
   // Pre-fill current username field
   const users=getUsers();
@@ -2076,6 +2356,7 @@ function loadSeguridad(){
   document.getElementById('sec-p-nuevo').value='';
   document.getElementById('sec-p-conf').value='';
 }
+
 function saveSecUser(){
   const actual=document.getElementById('sec-u-actual').value.trim();
   const nuevo=document.getElementById('sec-u-nuevo').value.trim();
@@ -2089,6 +2370,7 @@ function saveSecUser(){
   document.getElementById('sec-u-nuevo').value='';
   toast('✅ Usuario actualizado correctamente','ok');
 }
+
 function saveSecPass(){
   const actual=document.getElementById('sec-p-actual').value;
   const nuevo=document.getElementById('sec-p-nuevo').value;
@@ -2107,25 +2389,23 @@ function saveSecPass(){
   toast('✅ Contraseña actualizada correctamente','ok');
 }
 
-
-
-
-
-
-// ── MIXTO ────────────────────────────────────────────────────────────────────
 function renderMixtoSps(){
   const q=(document.getElementById('mx-sp-search')?.value||'').toLowerCase();
   const f=DB.especies.filter(e=>e.nombre.toLowerCase().includes(q)||e.sci.toLowerCase().includes(q));
   document.getElementById('mx-sp-list').innerHTML=f.slice(0,8).map(e=>`<div class="spi" onclick="toggleMxSp(${e.id})" style="cursor:pointer"><div><div class="sp-name">${selectedSps[e.id]?'✓ ':''}<b>${e.nombre}</b></div><div class="sp-sci">${e.sci}</div></div><div class="sp-price">${fmt(e.precio)}</div></div>`).join('');
   renderMxSpSel();
 }
+
 function toggleMxSp(id){if(selectedSps[id])delete selectedSps[id];else selectedSps[id]={id,qty:1};renderMixtoSps();calcMixto();}
+
 function renderMxSpSel(){
   const el=document.getElementById('mx-sp-sel');const keys=Object.keys(selectedSps);
   if(!keys.length){el.innerHTML='';return;}
   el.innerHTML=keys.map(id=>{const e=DB.especies.find(x=>x.id==id);const q=selectedSps[id].qty;return`<div style="display:flex;align-items:center;gap:7px;margin-bottom:6px;padding:6px;background:var(--v4);border-radius:8px"><span style="flex:1;font-size:12px;font-weight:500;color:var(--v1)">${e.nombre}</span><input type="number" min="1" value="${q}" style="width:50px;padding:4px;border:1px solid var(--border);border-radius:6px;text-align:center;font-size:12px" onchange="setMxSpQty(${id},this.value)"><span style="font-size:12px;color:var(--v2);min-width:60px;text-align:right">${fmt(e.precio*q)}</span></div>`;}).join('');
 }
+
 function setMxSpQty(id,v){selectedSps[id].qty=Math.max(1,parseInt(v)||1);renderMxSpSel();calcMixto();}
+
 function renderMixtoSvcs(){
   document.getElementById('mx-svc-list').innerHTML=DB.servicios.map(s=>{
     const sel=selectedSvcs[s.id];
@@ -2133,12 +2413,15 @@ function renderMixtoSvcs(){
   }).join('');
   renderMxSvcSel();
 }
+
 function toggleMxSvc(id){if(selectedSvcs[id])delete selectedSvcs[id];else selectedSvcs[id]={id,qty:1};renderMixtoSvcs();calcMixto();}
+
 function renderMxSvcSel(){
   const el=document.getElementById('mx-svc-sel');const keys=Object.keys(selectedSvcs);
   if(!keys.length){el.innerHTML='';return;}
   el.innerHTML=keys.map(id=>{const s=DB.servicios.find(x=>x.id==id);const q=selectedSvcs[id].qty;return`<div style="display:flex;align-items:center;gap:7px;margin-bottom:6px;padding:6px;background:var(--c4);border-radius:8px"><span style="flex:1;font-size:12px;font-weight:500;color:var(--v1)">${s.nombre}</span><input type="number" min="1" value="${q}" style="width:50px;padding:4px;border:1px solid var(--border);border-radius:6px;text-align:center;font-size:12px" onchange="setMxSvcQty(${id},this.value)"><span style="font-size:12px;color:var(--v2);min-width:60px;text-align:right">${fmt(s.precio*q)}</span></div>`;}).join('');
 }
+
 function setMxSvcQty(id,v){selectedSvcs[id].qty=Math.max(1,parseInt(v)||1);renderMxSvcSel();calcMixto();}
 
 function renderMixtoIns(){
@@ -2181,6 +2464,7 @@ function calcMixto(){
   const elSp=document.getElementById('mx-sp-total');if(elSp)elSp.textContent=fmt(spT);
   const elSvc=document.getElementById('mx-svc-total');if(elSvc)elSvc.textContent=fmt(svcT);
 }
+
 function toggleSec(id){
   const body=document.getElementById('sec-'+id);
   const arr=document.getElementById('sec-arr-'+id);
@@ -2189,26 +2473,22 @@ function toggleSec(id){
   if(arr)arr.style.transform=open?'rotate(90deg)':'rotate(0deg)';
 }
 
-// ── LOGO MANAGEMENT ──────────────────────────────────────────────────────────
-const DEFAULT_LOGO_URI='data:image/svg+xml;base64,PHN2ZyB2aWV3Qm94PSIwIDAgMjAwIDIwMCIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIiB3aWR0aD0iMjAwIiBoZWlnaHQ9IjIwMCI+CiAgICA8ZGVmcz4KICAgICAgPHJhZGlhbEdyYWRpZW50IGlkPSJvZlNvaWwiIGN4PSI1MCUiIGN5PSI1MCUiIHI9IjU1JSI+CiAgICAgICAgPHN0b3Agb2Zmc2V0PSIwJSIgc3RvcC1jb2xvcj0iIzZiM2ExYSIvPgogICAgICAgIDxzdG9wIG9mZnNldD0iNjAlIiBzdG9wLWNvbG9yPSIjNGEyNzEwIi8+CiAgICAgICAgPHN0b3Agb2Zmc2V0PSIxMDAlIiBzdG9wLWNvbG9yPSIjMzIxODA2Ii8+CiAgICAgIDwvcmFkaWFsR3JhZGllbnQ+CiAgICAgIDxsaW5lYXJHcmFkaWVudCBpZD0ib2ZXb29kIiB4MT0iMCIgeTE9IjAiIHgyPSIwIiB5Mj0iMSI+CiAgICAgICAgPHN0b3Agb2Zmc2V0PSIwJSIgc3RvcC1jb2xvcj0iI2EwNjIzNiIvPgogICAgICAgIDxzdG9wIG9mZnNldD0iMTAwJSIgc3RvcC1jb2xvcj0iIzVhMmYxNSIvPgogICAgICA8L2xpbmVhckdyYWRpZW50PgogICAgICA8cmFkaWFsR3JhZGllbnQgaWQ9Im9mQ2Fub3B5MSIgY3g9IjM1JSIgY3k9IjM1JSIgcj0iNjUlIj4KICAgICAgICA8c3RvcCBvZmZzZXQ9IjAlIiBzdG9wLWNvbG9yPSIjOGJlMzdhIi8+CiAgICAgICAgPHN0b3Agb2Zmc2V0PSI2MCUiIHN0b3AtY29sb3I9IiMzZmEwNTUiLz4KICAgICAgICA8c3RvcCBvZmZzZXQ9IjEwMCUiIHN0b3AtY29sb3I9IiMxZjZiMzAiLz4KICAgICAgPC9yYWRpYWxHcmFkaWVudD4KICAgICAgPHJhZGlhbEdyYWRpZW50IGlkPSJvZkNhbm9weTIiIGN4PSIzNSUiIGN5PSIzNSUiIHI9IjY1JSI+CiAgICAgICAgPHN0b3Agb2Zmc2V0PSIwJSIgc3RvcC1jb2xvcj0iI2E4ZTA3ZiIvPgogICAgICAgIDxzdG9wIG9mZnNldD0iNjAlIiBzdG9wLWNvbG9yPSIjNWRiMDU0Ii8+CiAgICAgICAgPHN0b3Agb2Zmc2V0PSIxMDAlIiBzdG9wLWNvbG9yPSIjMmE3YTM2Ii8+CiAgICAgIDwvcmFkaWFsR3JhZGllbnQ+CiAgICAgIDxyYWRpYWxHcmFkaWVudCBpZD0ib2ZDYW5vcHkzIiBjeD0iMzUlIiBjeT0iMzUlIiByPSI2NSUiPgogICAgICAgIDxzdG9wIG9mZnNldD0iMCUiIHN0b3AtY29sb3I9IiNiZmU3ODIiLz4KICAgICAgICA8c3RvcCBvZmZzZXQ9IjYwJSIgc3RvcC1jb2xvcj0iIzdmYjg0YSIvPgogICAgICAgIDxzdG9wIG9mZnNldD0iMTAwJSIgc3RvcC1jb2xvcj0iIzRhOGEyYSIvPgogICAgICA8L3JhZGlhbEdyYWRpZW50PgogICAgPC9kZWZzPgoKICAgIDwhLS0gQ2FyZCBiYWNrZ3JvdW5kIC0tPgogICAgPHJlY3QgeD0iNCIgeT0iNCIgd2lkdGg9IjE5MiIgaGVpZ2h0PSIxOTIiIHJ4PSIyMiIgZmlsbD0iI2Y1ZjFlNiIgc3Ryb2tlPSIjMWY2YjMwIiBzdHJva2Utd2lkdGg9IjIiLz4KCiAgICA8IS0tIE1pY3JvYm9zcXVlIGNlbml0YWwsIHZlcnRpY2FsbHkgY2VudGVyZWQgaW4gdGhlIHVwcGVyIGFyZWEgKHkgY2VudGVyIH4gNzgpIC0tPgogICAgPGcgdHJhbnNmb3JtPSJ0cmFuc2xhdGUoMTAwIDc4KSI+CiAgICAgIDwhLS0gT3V0ZXIgd29vZCByaW5nIC0tPgogICAgICA8Y2lyY2xlIGN4PSIwIiBjeT0iMCIgcj0iNTgiIGZpbGw9InVybCgjb2ZXb29kKSIvPgogICAgICA8Y2lyY2xlIGN4PSIwIiBjeT0iMCIgcj0iNTAiIGZpbGw9InVybCgjb2ZTb2lsKSIvPgogICAgICA8IS0tIE1lc2ggaGF0Y2ggb24gdGhlIHNvaWwgKHZlcnkgc3VidGxlKSAtLT4KICAgICAgPGcgc3Ryb2tlPSIjN2E1YTNhIiBzdHJva2Utd2lkdGg9IjAuNCIgb3BhY2l0eT0iMC4zNSI+CiAgICAgICAgPGxpbmUgeDE9Ii01MCIgeTE9Ii0yNSIgeDI9IjUwIiB5Mj0iLTI1Ii8+CiAgICAgICAgPGxpbmUgeDE9Ii01MCIgeTE9Ii0xMiIgeDI9IjUwIiB5Mj0iLTEyIi8+CiAgICAgICAgPGxpbmUgeDE9Ii01MCIgeTE9IjAiICAgeDI9IjUwIiB5Mj0iMCIvPgogICAgICAgIDxsaW5lIHgxPSItNTAiIHkxPSIxMiIgIHgyPSI1MCIgeTI9IjEyIi8+CiAgICAgICAgPGxpbmUgeDE9Ii01MCIgeTE9IjI1IiAgeDI9IjUwIiB5Mj0iMjUiLz4KICAgICAgICA8bGluZSB4MT0iLTI1IiB5MT0iLTUwIiB4Mj0iLTI1IiB5Mj0iNTAiLz4KICAgICAgICA8bGluZSB4MT0iLTEyIiB5MT0iLTUwIiB4Mj0iLTEyIiB5Mj0iNTAiLz4KICAgICAgICA8bGluZSB4MT0iMCIgICB5MT0iLTUwIiB4Mj0iMCIgICB5Mj0iNTAiLz4KICAgICAgICA8bGluZSB4MT0iMTIiICB5MT0iLTUwIiB4Mj0iMTIiICB5Mj0iNTAiLz4KICAgICAgICA8bGluZSB4MT0iMjUiICB5MT0iLTUwIiB4Mj0iMjUiICB5Mj0iNTAiLz4KICAgICAgPC9nPgogICAgICA8IS0tIFdvb2QgcG9zdHMgYXJvdW5kIHRoZSByaW5nIC0tPgogICAgICA8ZyBmaWxsPSIjM2ExZDBhIj4KICAgICAgICA8Y2lyY2xlIGN4PSIwIiAgIGN5PSItNTQiIHI9IjMuMiIvPgogICAgICAgIDxjaXJjbGUgY3g9IjI3IiAgY3k9Ii00Ni43IiByPSIzLjIiLz4KICAgICAgICA8Y2lyY2xlIGN4PSI0Ni43IiBjeT0iLTI3IiByPSIzLjIiLz4KICAgICAgICA8Y2lyY2xlIGN4PSI1NCIgIGN5PSIwIiByPSIzLjIiLz4KICAgICAgICA8Y2lyY2xlIGN4PSI0Ni43IiBjeT0iMjciIHI9IjMuMiIvPgogICAgICAgIDxjaXJjbGUgY3g9IjI3IiAgY3k9IjQ2LjciIHI9IjMuMiIvPgogICAgICAgIDxjaXJjbGUgY3g9IjAiICAgY3k9IjU0IiByPSIzLjIiLz4KICAgICAgICA8Y2lyY2xlIGN4PSItMjciIGN5PSI0Ni43IiByPSIzLjIiLz4KICAgICAgICA8Y2lyY2xlIGN4PSItNDYuNyIgY3k9IjI3IiByPSIzLjIiLz4KICAgICAgICA8Y2lyY2xlIGN4PSItNTQiIGN5PSIwIiByPSIzLjIiLz4KICAgICAgICA8Y2lyY2xlIGN4PSItNDYuNyIgY3k9Ii0yNyIgcj0iMy4yIi8+CiAgICAgICAgPGNpcmNsZSBjeD0iLTI3IiBjeT0iLTQ2LjciIHI9IjMuMiIvPgogICAgICA8L2c+CiAgICAgIDwhLS0gQ2Fub3BpZXMgKGVzdHJhdG9zKTogdGFsbCB0cmVlcyAtLT4KICAgICAgPGNpcmNsZSBjeD0iLTE0IiBjeT0iLTEyIiByPSIyMCIgZmlsbD0idXJsKCNvZkNhbm9weTEpIi8+CiAgICAgIDxjaXJjbGUgY3g9IjE2IiAgY3k9Ii02IiAgcj0iMjIiIGZpbGw9InVybCgjb2ZDYW5vcHkyKSIvPgogICAgICA8Y2lyY2xlIGN4PSItMiIgIGN5PSIxOCIgIHI9IjE4IiBmaWxsPSJ1cmwoI29mQ2Fub3B5MSkiLz4KICAgICAgPCEtLSBNaWQgdHJlZXMgLS0+CiAgICAgIDxjaXJjbGUgY3g9IjIyIiAgY3k9IjIwIiAgcj0iMTEiIGZpbGw9InVybCgjb2ZDYW5vcHkzKSIvPgogICAgICA8Y2lyY2xlIGN4PSItMjIiIGN5PSIxNCIgIHI9IjEwIiBmaWxsPSJ1cmwoI29mQ2Fub3B5MykiLz4KICAgICAgPGNpcmNsZSBjeD0iLTI2IiBjeT0iLTIyIiByPSI4IiAgZmlsbD0idXJsKCNvZkNhbm9weTIpIi8+CiAgICAgIDxjaXJjbGUgY3g9IjI2IiAgY3k9Ii0yMiIgcj0iOSIgIGZpbGw9InVybCgjb2ZDYW5vcHkzKSIvPgogICAgICA8IS0tIFNocnVicyAvIGN1YnJlc3VlbG8gLS0+CiAgICAgIDxjaXJjbGUgY3g9IjYiICAgY3k9Ii0yNiIgcj0iNSIgZmlsbD0iIzdmYjg0YSIvPgogICAgICA8Y2lyY2xlIGN4PSItOCIgIGN5PSIzMiIgIHI9IjUiIGZpbGw9IiM1ZGIwNTQiLz4KICAgICAgPGNpcmNsZSBjeD0iMzIiICBjeT0iMiIgICByPSI1IiBmaWxsPSIjN2ZiODRhIi8+CiAgICAgIDxjaXJjbGUgY3g9Ii0zMiIgY3k9Ii0yIiAgcj0iNCIgZmlsbD0iIzVkYjA1NCIvPgogICAgICA8IS0tIEZsb3dlcnMgLS0+CiAgICAgIDxjaXJjbGUgY3g9IjEwIiAgY3k9Ii0xOCIgcj0iMS42IiBmaWxsPSIjZmZmNGEzIi8+CiAgICAgIDxjaXJjbGUgY3g9Ii02IiAgY3k9IjYiICAgcj0iMS42IiBmaWxsPSIjZmZiM2Q5Ii8+CiAgICAgIDxjaXJjbGUgY3g9IjIwIiAgY3k9IjEwIiAgcj0iMS42IiBmaWxsPSIjZmZkMjdmIi8+CiAgICAgIDxjaXJjbGUgY3g9Ii0xOCIgY3k9IjIyIiAgcj0iMS42IiBmaWxsPSIjZmZmNGEzIi8+CiAgICAgIDxjaXJjbGUgY3g9Ii0xMCIgY3k9Ii0yNiIgcj0iMS40IiBmaWxsPSIjZmZiM2Q5Ii8+CiAgICAgIDwhLS0gU3VidGxlIGhpZ2hsaWdodCBvbiBjYW5vcGllcyAtLT4KICAgICAgPGVsbGlwc2UgY3g9Ii0yMCIgY3k9Ii0yMCIgcng9IjUiIHJ5PSIzIiBmaWxsPSIjZmZmZmZmIiBvcGFjaXR5PSIwLjE4Ii8+CiAgICAgIDxlbGxpcHNlIGN4PSIxMCIgIGN5PSItMTQiIHJ4PSI2IiByeT0iMy41IiBmaWxsPSIjZmZmZmZmIiBvcGFjaXR5PSIwLjE4Ii8+CiAgICA8L2c+CgogICAgPCEtLSBXb3JkbWFyayAtLT4KICAgIDx0ZXh0IHg9IjEwMCIgeT0iMTU4IiBmb250LWZhbWlseT0iQXJpYWwgQmxhY2ssIEFyaWFsLCBzYW5zLXNlcmlmIiBmb250LXNpemU9IjE3IiBmb250LXdlaWdodD0iOTAwIiBmaWxsPSIjMWY0ZDFmIiB0ZXh0LWFuY2hvcj0ibWlkZGxlIiBsZXR0ZXItc3BhY2luZz0iMS4yIj5PUEVSQUNJT05FUzwvdGV4dD4KICAgIDxsaW5lIHgxPSIzNCIgeTE9IjE3MCIgeDI9Ijc0IiB5Mj0iMTcwIiBzdHJva2U9IiMzZmEwNTUiIHN0cm9rZS13aWR0aD0iMS40Ii8+CiAgICA8bGluZSB4MT0iMTI2IiB5MT0iMTcwIiB4Mj0iMTY2IiB5Mj0iMTcwIiBzdHJva2U9IiMzZmEwNTUiIHN0cm9rZS13aWR0aD0iMS40Ii8+CiAgICA8dGV4dCB4PSIxMDAiIHk9IjE3NCIgZm9udC1mYW1pbHk9IkFyaWFsLCBzYW5zLXNlcmlmIiBmb250LXNpemU9IjkiIGZvbnQtd2VpZ2h0PSI3MDAiIGZpbGw9IiM1YTJmMTUiIHRleHQtYW5jaG9yPSJtaWRkbGUiIGxldHRlci1zcGFjaW5nPSIzIj5GT1JFU1RBTEVTPC90ZXh0PgogICAgPGNpcmNsZSBjeD0iMzAiIGN5PSIxNzAiIHI9IjIuMiIgZmlsbD0iIzNmYTA1NSIvPgogICAgPGNpcmNsZSBjeD0iMTcwIiBjeT0iMTcwIiByPSIyLjIiIGZpbGw9IiM1YTJmMTUiLz4KICA8L3N2Zz4=';
 function getCurrentLogo(){return localStorage.getItem('op_logo')||DEFAULT_LOGO_URI;}
+
 function initLogo(){
   const src=getCurrentLogo();
   document.querySelectorAll('.app-logo').forEach(el=>el.src=src);
 }
+
 function saveLogoFromFile(input){
   const file=input.files[0];if(!file)return;
   const reader=new FileReader();
   reader.onload=e=>{localStorage.setItem('op_logo',e.target.result);initLogo();toast('Logo actualizado','ok');};
   reader.readAsDataURL(file);
 }
+
 function deleteLogo(){if(!confirm('¿Restablecer el logo al valor por defecto?'))return;localStorage.removeItem('op_logo');initLogo();toast('Logo restablecido','ok');}
 
-setTimeout(initLogo,50);
-
-// ── CATEGORY MANAGEMENT ───────────────────────────────────────────────────────
-
-// ── PDF GENERATION (jsPDF) ────────────────────────────────────────────────────
 function generarPDF(){
   if(!window.jspdf){toast('jsPDF no disponible','err');return;}
   const {jsPDF}=window.jspdf;
@@ -2335,7 +2615,25 @@ function generarPDF(){
   toast('✅ PDF generado','ok');
 }
 
-// ── PDF DESDE HISTORIAL ───────────────────────────────────────────────────────
+function addRow(desc,monto,bold,section){
+    if(y>PH){doc.addPage();y=20;}
+    if(section){
+      doc.setFillColor(248,248,248);doc.rect(14,y,182,7,'F');
+      doc.setDrawColor(200);doc.rect(14,y,182,7,'S');
+      doc.setFont('helvetica','bold');doc.setFontSize(8);doc.setTextColor(60);
+      doc.text(desc,17,y+5);y+=7;return;
+    }
+    doc.setFont('helvetica',bold?'bold':'normal');doc.setFontSize(9);doc.setTextColor(0);
+    doc.text(String(desc).slice(0,70),17,y+5);doc.text(monto,193,y+5,{align:'right'});
+    doc.setDrawColor(220);doc.line(14,y+7,196,y+7);y+=7;
+  }
+
+function addTot(lbl,val,bold){
+    if(y>PH){doc.addPage();y=20;}
+    doc.setFont('helvetica',bold?'bold':'normal');doc.setFontSize(9);doc.setTextColor(bold?0:80);
+    doc.text(lbl,120,y);doc.text(val,193,y,{align:'right'});y+=6;
+  }
+
 function generarPDFCotiz(id){
   if(!window.jspdf){toast('jsPDF no disponible','err');return;}
   const c=DB.cotizaciones.find(x=>x.id===id);if(!c){toast('Cotización no encontrada','err');return;}
@@ -2417,8 +2715,21 @@ function generarPDFCotiz(id){
   cerrarMo('mo-cotiz');
 }
 
-if('serviceWorker' in navigator){
-  function showUpdateBanner(waiting){
+function addRow2(desc,monto,bold,section){
+    if(y>PH){doc.addPage();y=20;}
+    if(section){doc.setFillColor(248,248,248);doc.rect(14,y,182,7,'F');doc.setDrawColor(200);doc.rect(14,y,182,7,'S');doc.setFont('helvetica','bold');doc.setFontSize(8);doc.setTextColor(60);doc.text(desc,17,y+5);y+=7;return;}
+    doc.setFont('helvetica',bold?'bold':'normal');doc.setFontSize(9);doc.setTextColor(0);
+    doc.text(String(desc).slice(0,70),17,y+5);doc.text(String(monto),193,y+5,{align:'right'});
+    doc.setDrawColor(220);doc.line(14,y+7,196,y+7);y+=7;
+  }
+
+function addTot2(lbl,val,bold){
+    if(y>PH){doc.addPage();y=20;}
+    doc.setFont('helvetica',bold?'bold':'normal');doc.setFontSize(9);doc.setTextColor(bold?0:80);
+    doc.text(lbl,120,y);doc.text(String(val),193,y,{align:'right'});y+=6;
+  }
+
+function showUpdateBanner(waiting){
     if(!waiting || document.getElementById('update-banner')) return;
     var b = document.createElement('div');
     b.id = 'update-banner';
@@ -2439,31 +2750,6 @@ if('serviceWorker' in navigator){
     document.getElementById('update-dismiss').onclick = function(){ b.remove(); };
   }
 
-  navigator.serviceWorker.register('./sw.js',{updateViaCache:'none'}).then(function(reg){
-    // Buscar actualizaciones cada vez que se abre la app
-    try{ reg.update(); }catch(e){}
-    if(reg.waiting && navigator.serviceWorker.controller){
-      showUpdateBanner(reg.waiting);
-    }
-    reg.addEventListener('updatefound', function(){
-      var nw = reg.installing;
-      if(nw){ nw.addEventListener('statechange', function(){
-        if(nw.state==='installed' && navigator.serviceWorker.controller){
-          showUpdateBanner(reg.waiting || nw);
-        }
-      });}
-    });
-  }).catch(function(){});
-
-  // Cuando el SW nuevo se activa (tras tocar "Actualizar"), recargar 1 sola vez
-  var _reloaded=false;
-  navigator.serviceWorker.addEventListener('controllerchange', function(){
-    if(_reloaded) return; _reloaded=true;
-    window.location.reload();
-  });
-}
-
-// Buscar actualización manualmente desde el panel de Configuración
 function buscarActualizacion(){
   if(!('serviceWorker' in navigator)){
     try{ toast('Tu navegador no soporta actualizaciones automáticas','err'); }catch(e){}
@@ -2492,10 +2778,6 @@ function buscarActualizacion(){
   });
 }
 
-// Banner de instalación
-let deferredPrompt;
-
-// Mostrar botón instalar si el navegador soporta PWA y no está instalada
 function checkInstallable(){
   const btn = document.getElementById('btn-instalar');
   if(!btn) return;
@@ -2507,18 +2789,6 @@ function checkInstallable(){
   if(!isIOS){ btn.style.display='flex'; }
 }
 
-window.addEventListener('beforeinstallprompt', e => {
-  e.preventDefault();
-  deferredPrompt = e;
-  const btn = document.getElementById('btn-instalar');
-  if(btn) btn.style.display = 'flex';
-});
-window.addEventListener('appinstalled', () => {
-  const btn = document.getElementById('btn-instalar');
-  if(btn) btn.style.display = 'none';
-  deferredPrompt = null;
-  toast('✅ App instalada correctamente', 'ok');
-});
 function instalarApp(){
   if(deferredPrompt){
     deferredPrompt.prompt();
@@ -2535,15 +2805,6 @@ function instalarApp(){
     }
   }
 }
-// Ejecutar al cargar
-window.addEventListener('load', checkInstallable);
-
-// ── DOCUMENTOS (Convex storage) ──────────────────────────────────────────────
-let _docsCategories = [];
-let _docsAllDocs = [];
-let _docsCurrentCat = null; // null = todos
-let _docsPendingFile = null;
-let _docsRenameId = null;
 
 function fmtBytes(n){
   if(!n||n<1024) return (n||0)+' B';
@@ -2551,6 +2812,7 @@ function fmtBytes(n){
   if(n<1024*1024*1024) return (n/1024/1024).toFixed(1)+' MB';
   return (n/1024/1024/1024).toFixed(2)+' GB';
 }
+
 function docsIcon(t){
   t=(t||'').toLowerCase();
   if(t.includes('pdf')) return '📕';
@@ -2563,13 +2825,15 @@ function docsIcon(t){
   if(t.includes('presentation')||t.includes('powerpoint')) return '📈';
   return '📄';
 }
+
 function fmtDate(v){
   if(!v) return '';
   try{ return new Date(v).toLocaleDateString('es-CL',{day:'2-digit',month:'2-digit',year:'numeric'}); }catch(e){ return ''; }
 }
+
 function _docTime(d){ return d && d.uploadedAt ? new Date(d.uploadedAt).getTime() : 0; }
 
-async function docsRenderAll(){
+function docsRenderAll(){
   const list = document.getElementById('docs-list');
   list.innerHTML = '<div style="text-align:center;padding:20px;color:var(--muted);font-size:12px">Cargando...</div>';
   try{
@@ -2639,9 +2903,10 @@ function docsRenderDocs(){
 function docsSelectCategory(id){ _docsCurrentCat = id; docsRenderCategories(); docsRenderDocs(); }
 
 function docsShowAddCategory(){ document.getElementById('docs-add-cat-row').style.display='block'; setTimeout(()=>{const i=document.getElementById('docs-new-cat-name');i.value='';i.focus();},50); }
+
 function docsHideAddCategory(){ document.getElementById('docs-add-cat-row').style.display='none'; }
 
-async function docsAddCategory(){
+function docsAddCategory(){
   const name = document.getElementById('docs-new-cat-name').value.trim();
   if(!name){ toast('Ingresa un nombre','err'); return; }
   try{
@@ -2658,7 +2923,8 @@ function docsRenameCategory(id, currentName){
   document.getElementById('mo-doc-rename').classList.add('open');
   setTimeout(()=>document.getElementById('mo-doc-rename-input').focus(),100);
 }
-async function docsConfirmRename(){
+
+function docsConfirmRename(){
   const name = document.getElementById('mo-doc-rename-input').value.trim();
   if(!name){ toast('Ingresa un nombre','err'); return; }
   try{
@@ -2669,7 +2935,7 @@ async function docsConfirmRename(){
   }catch(e){ toast('Error: '+(e.message||e),'err'); }
 }
 
-async function docsDeleteCategory(id, name){
+function docsDeleteCategory(id, name){
   const docsInCat = _docsAllDocs.filter(d=>d.categoryId===id).length;
   let msg = '¿Eliminar la categoría "'+name+'"?';
   if(docsInCat>0) msg += '\n\nContiene '+docsInCat+' documento(s) que también se eliminarán.';
@@ -2687,6 +2953,7 @@ function docsResetUpload(){
   document.getElementById('docs-file-input').value = '';
   document.getElementById('mo-doc-name').value = '';
 }
+
 function docsTriggerUpload(){
   if(!_docsCategories.length){
     toast('Crea primero una categoría','err');
@@ -2694,6 +2961,7 @@ function docsTriggerUpload(){
   }
   document.getElementById('docs-file-input').click();
 }
+
 function docsHandleFileSelected(ev){
   const f = ev.target.files && ev.target.files[0];
   if(!f) return;
@@ -2712,7 +2980,8 @@ function docsHandleFileSelected(ev){
   sel.value = (_docsCurrentCat && _docsCategories.some(c=>c._id===_docsCurrentCat)) ? _docsCurrentCat : _docsCategories[0]._id;
   document.getElementById('mo-doc-upload').classList.add('open');
 }
-async function docsConfirmUpload(){
+
+function docsConfirmUpload(){
   if(!_docsPendingFile){ toast('Selecciona un archivo','err'); return; }
   const name = document.getElementById('mo-doc-name').value.trim();
   if(!name){ toast('Ingresa un nombre','err'); return; }
@@ -2749,7 +3018,7 @@ async function docsConfirmUpload(){
   }
 }
 
-async function docsDownload(storageId, name){
+function docsDownload(storageId, name){
   try{
     const url = await _convexCall('query','documents:getDownloadUrl',{ storageId: storageId });
     if(!url) throw new Error('no_url');
@@ -2759,7 +3028,7 @@ async function docsDownload(storageId, name){
   }catch(e){ toast('Error al descargar: '+(e.message||e),'err'); }
 }
 
-async function docsDelete(id, name){
+function docsDelete(id, name){
   if(!confirm('¿Eliminar el documento "'+name+'"?')) return;
   try{
     await _convexCall('mutation','documents:deleteDocument',{ id: id });
@@ -2768,8 +3037,6 @@ async function docsDelete(id, name){
   }catch(e){ toast('Error: '+(e.message||e),'err'); }
 }
 
-let _docsMoveId = null;
-let _docsMoveCurrentCat = null;
 function docsMove(id, name, currentCatId){
   _docsMoveId = id;
   _docsMoveCurrentCat = currentCatId;
@@ -2780,7 +3047,8 @@ function docsMove(id, name, currentCatId){
   ).join('');
   document.getElementById('mo-doc-move').classList.add('open');
 }
-async function docsConfirmMove(){
+
+function docsConfirmMove(){
   const sel = document.getElementById('mo-doc-move-cat');
   const newCat = sel.value;
   if(!newCat || !_docsMoveId){ toast('Selecciona una categoría','err'); return; }
@@ -2797,9 +3065,6 @@ async function docsConfirmMove(){
   finally{ btn.disabled = false; btn.textContent = orig; }
 }
 
-
-
-
 function abrirPreview(cotId) {
   var cot = DB.cotizaciones.find(function(c){ return c.id === cotId; });
   if (!cot) return;
@@ -2813,10 +3078,12 @@ function abrirPreview(cotId) {
   document.getElementById('preview-modal').style.display = 'flex';
   document.body.style.overflow = 'hidden';
 }
+
 function cerrarPreview() {
   document.getElementById('preview-modal').style.display = 'none';
   document.body.style.overflow = '';
 }
+
 function construirCuerpoPreview(cot) {
   var html = '';
   if (cot.createdAt) html += '<div style="display:flex;justify-content:space-between"><span style="color:#888">Fecha</span><span>' + new Date(cot.createdAt).toLocaleDateString('es-CL') + '</span></div>';
@@ -2846,11 +3113,6 @@ function construirCuerpoPreview(cot) {
   if (cot.notas) html += '<p style="font-size:12px;color:#888;border-top:1px solid #e2e8f0;padding-top:10px">📝 ' + cot.notas + '</p>';
   return html;
 }
-
-
-
-
-// --- NUEVAS FUNCIONALIDADES: IMPORTACIÓN EXCEL Y MÁRGENES ---
 
 function triggerImportExcel() {
   const input = document.createElement("input");
@@ -2902,21 +3164,6 @@ function processExcelData(data) {
   toast(`Se importaron/actualizaron ${count} insumos`, "ok");
 }
 
-(function() {
-  const originalCalcFinal = window.calcFinal;
-  window.calcFinal = function() {
-    if (typeof originalCalcFinal === "function") originalCalcFinal();
-    const mgPct = (DB.cfg && DB.cfg.mg) || 25;
-    if (typeof _matRows !== 'undefined') {
-      _matRows.forEach(row => {
-        row.precioVenta = (row.costo || row.precio || 0) * (1 + mgPct / 100);
-        row.totalVenta = row.precioVenta * (row.qty || 0);
-      });
-      updateClientView();
-    }
-  };
-})();
-
 function updateClientView() {
   const resTable = document.getElementById("res-table");
   if (!resTable) return;
@@ -2941,12 +3188,6 @@ function updateClientView() {
     }
   });
 }
-
-window.addEventListener("load", () => {
-  // Excel import button removed - feature integrated in Insumos page
-});
-
-
 </script>
 </body>
 </html>
