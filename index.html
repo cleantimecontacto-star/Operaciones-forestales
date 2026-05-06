@@ -1031,7 +1031,6 @@ if(currentTipo==='mixto'){
     rows.push('<tr><td colspan="2" style="font-weight:600;color:var(--v2);padding-top:6px;font-size:11px;text-transform:uppercase;letter-spacing:.04em">🔧 Servicios</td></tr>');
     Object.values(selectedSvcs).forEach(s=>{const sv=DB.servicios.find(x=>x.id==s.id);if(sv){rows.push(`<tr><td>${sv.nombre} <span class="tag">${s.qty} ${sv.unidad}</span></td><td>${fmt(sv.precio*s.qty)}</td></tr>`);matRows.push({desc:sv.nombre,qty:s.qty,unit:sv.unidad,costo:sv.precio,total:sv.precio*s.qty});}});
     const svcSub=Object.values(selectedSvcs).reduce((a,s)=>{const sv=DB.servicios.find(x=>x.id==s.id);return a+(sv?sv.precio*s.qty:0);},0);
-    const insSub=Object.values(selectedIns||{}).reduce((a,s)=>a+(s.p*s.qty),0);
     rows.push(`<tr style="font-weight:600"><td>Subtotal Servicios</td><td>${fmt(svcSub)}</td></tr>`);
     rows.push('<tr><td colspan="2" style="font-weight:600;color:var(--v2);padding-top:6px;font-size:11px;text-transform:uppercase;letter-spacing:.04em">📦 Insumos</td></tr>');
     Object.values(selectedIns||{}).forEach(s=>{rows.push(`<tr><td>${s.n} <span class="tag">${s.qty} ${s.u}</span></td><td>${fmt(s.p*s.qty)}</td></tr>`);matRows.push({desc:s.n,qty:s.qty,unit:s.u,costo:s.p,total:s.p*s.qty});});
